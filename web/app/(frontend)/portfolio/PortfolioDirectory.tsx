@@ -15,22 +15,6 @@ type Venture = {
   url?: string;
 };
 
-// Portfolio data - plausible NE-rooted agri ventures
-const VENTURES: Venture[] = [
-  { name: "Kaziranga Bio",  sector: "Agri-Input",    stage: "growth", year: "'24", program: "Saranya · RKVY", loc: "Jorhat, AS",  desc: "Microbial bio-stimulants for tea estates. Replacing chemical inputs in 9 Assam gardens.", photo: "tea", url: "/portfolio/kaziranga-bio" },
-  { name: "Thalo Cold",     sector: "Post-Harvest",  stage: "growth", year: "'23", program: "RKVY",           loc: "Tezpur, AS",  desc: "Solar cold-chain micro-units for FPO-led aggregation. 14 nodes operational.", photo: "" },
-  { name: "Brahma Aqua",    sector: "Aqua",          stage: "early",  year: "'24", program: "AIC",            loc: "Guwahati, AS", desc: "Indigenous fish-feed formulation. 30% cost reduction vs imports.", photo: "copper" },
-  { name: "Mati Labs",      sector: "Agri-Input",    stage: "idea",   year: "'25", program: "Isanya",         loc: "Jorhat, AS",  desc: "Mobile soil-testing rig for KVKs. ₹40 per test, 14-min turnaround.", photo: "" },
-  { name: "Eri Threads",    sector: "Food",          stage: "early",  year: "'23", program: "ASRLM",          loc: "Sualkuchi, AS", desc: "Eri silk by-product proteins for nutraceutical use. Producer-owned.", photo: "tea" },
-  { name: "Naga Greens",    sector: "Food",          stage: "growth", year: "'22", program: "RKVY",           loc: "Dimapur, NL", desc: "Naga king-chilli supply chain - direct from grower to processor.", photo: "copper" },
-  { name: "Sirohi Dairy",   sector: "Livestock",     stage: "early",  year: "'24", program: "AIC",            loc: "Sivasagar, AS", desc: "Smallholder dairy aggregation with chilling at every collection point.", photo: "" },
-  { name: "Hilltop Coffee", sector: "Food",          stage: "early",  year: "'24", program: "Saranya",        loc: "Aizawl, MZ",  desc: "Specialty coffee co-operative across 80 Mizoram smallholders.", photo: "" },
-  { name: "Khasi Honey",    sector: "Food",          stage: "growth", year: "'22", program: "RKVY",           loc: "Shillong, ML", desc: "Single-origin honey, FSSAI-certified, exporting to Singapore.", photo: "copper" },
-  { name: "Pukhuri Fish",   sector: "Aqua",          stage: "idea",   year: "'25", program: "Isanya",         loc: "Nagaon, AS",  desc: "Pond-based aquaculture sensor pack. Pilot with 200 ponds.", photo: "tea" },
-  { name: "Bambusa Build",  sector: "Agri-Input",    stage: "growth", year: "'21", program: "RKVY · AIC",     loc: "Imphal, MN",  desc: "Engineered bamboo for agri-shelter construction. 2,300 units shipped.", photo: "" },
-  { name: "Charai Foods",   sector: "Food",          stage: "early",  year: "'23", program: "Saranya",        loc: "Agartala, TR", desc: "Smoked-pork product line with FSSAI clearance and 6-state distribution.", photo: "copper" },
-];
-
 function slugify(name: string): string {
   return name
     .toLowerCase()
@@ -69,7 +53,11 @@ const STAGE_CHIPS = [
   { value: "growth", label: "Growth" },
 ];
 
-export default function PortfolioDirectory() {
+export default function PortfolioDirectory({
+  ventures,
+}: {
+  ventures: Venture[];
+}) {
   const [program, setProgram] = useState<string>("all");
   const [sector, setSector] = useState<string | null>(null);
   const [stage, setStage] = useState<string | null>(null);
@@ -77,7 +65,7 @@ export default function PortfolioDirectory() {
   const [view, setView] = useState<"grid" | "list">("grid");
 
   const list = useMemo(() => {
-    let out = VENTURES.slice();
+    let out = ventures.slice();
     if (program && program !== "all") {
       out = out.filter((v) => v.program.toLowerCase().includes(program));
     }
@@ -97,7 +85,7 @@ export default function PortfolioDirectory() {
           .includes(query)
       );
     return out;
-  }, [program, sector, stage, q]);
+  }, [ventures, program, sector, stage, q]);
 
   function toggleFilter(key: FilterKey, value: string) {
     if (key === "program") {

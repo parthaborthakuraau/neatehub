@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./portfolio.css";
 import PortfolioDirectory from "./PortfolioDirectory";
+import { getVentureCards } from "../lib/ventures";
 
 export const metadata: Metadata = {
   title: "Portfolio",
@@ -8,7 +9,11 @@ export const metadata: Metadata = {
     "A working directory of 250+ ventures across the Northeast — agri-input, post-harvest, livestock, aquaculture, processing, and rural fintech. Filter by program, sector, stage, year, or state.",
 };
 
-export default function PortfolioPage() {
+// Always reflect the latest CMS content (new ventures added in /admin show immediately).
+export const dynamic = "force-dynamic";
+
+export default async function PortfolioPage() {
+  const ventures = await getVentureCards();
   return (
     <>
       {/* HERO */}
@@ -79,7 +84,7 @@ export default function PortfolioPage() {
       </div>
 
       {/* FILTERS + GRID + PAGINATION (client) */}
-      <PortfolioDirectory />
+      <PortfolioDirectory ventures={ventures} />
     </>
   );
 }
