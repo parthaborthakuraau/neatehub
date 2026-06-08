@@ -1,0 +1,14 @@
+.if-hero { padding: clamp(48px, 6vw, 80px) 0 clamp(40px, 5vw, 64px); }
+.if-hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(40px, 6vw, 88px); letter-spacing: -0.02em; line-height: 0.98; margin: 16px 0 0; max-width: 16ch; }
+.lab { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 4vw, 56px); align-items: center; padding: clamp(48px, 6vw, 80px) 0; border-top: 1px solid var(--line); }
+.lab:nth-child(even) > .lab__media { order: 2; }
+.lab__media .photo { aspect-ratio: 4/3; border-radius: var(--r-md); }
+.lab .num { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; color: var(--copper-600); }
+.lab h2 { font-family: var(--display); font-weight: 400; font-size: clamp(28px, 3.5vw, 48px); letter-spacing: -0.01em; line-height: 1.05; margin: 12px 0 0; }
+.lab p { color: var(--ink-700); margin: 20px 0 0; max-width: 50ch; }
+.lab__specs { display: grid; grid-template-columns: 1fr 1fr 1fr; margin-top: 28px; border-top: 1px solid var(--line-soft); border-bottom: 1px solid var(--line-soft); }
+.lab__specs > div { padding: 14px 14px 14px 0; border-right: 1px solid var(--line-soft); }
+.lab__specs > div:last-child { border-right: 0; }
+.lab__specs .k { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-500); }
+.lab__specs .v { font-family: var(--display); font-size: 20px; margin-top: 4px; letter-spacing: -0.01em; }
+@media (max-width: 800px) { .lab, .lab:nth-child(even) { grid-template-columns: 1fr; } .lab:nth-child(even) > .lab__media { order: 0; } .lab__specs { grid-template-columns: 1fr 1fr; } }
