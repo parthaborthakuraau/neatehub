@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Programs - NEATeHUB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .pg-hero { padding: clamp(48px, 6vw, 80px) 0 clamp(40px, 5vw, 64px); }
+  .pg-hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(36px, 4.4vw, 60px); letter-spacing: -0.02em; line-height: 1.04; margin: 16px 0 0; max-width: 22ch; }
+  .pg-hero .lede { margin-top: 22px; max-width: 60ch; }
+  .pg-stats { display: grid; grid-template-columns: repeat(4,1fr); border-top: 1px solid var(--line); margin-top: 56px; }
+  .pg-stats > div { padding: 24px 24px 0 0; border-right: 1px solid var(--line-soft); }
+  .pg-stats > div:last-child { border-right: 0; }
+  .pg-stats .num { font-family: var(--display); font-size: clamp(28px, 3vw, 44px); letter-spacing: -0.02em; line-height: 1; }
+  .pg-stats .lbl { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 0.01em; text-transform: none; color: var(--ink-500); margin-top: 8px; }
+
+  .section-bar {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin: clamp(40px, 5vw, 56px) 0 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .section-bar h2 { font-family: var(--display); font-weight: 400; font-size: clamp(24px, 2.4vw, 32px); letter-spacing: -0.02em; margin: 0; line-height: 1.05; }
+  .section-bar .ix { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 0.01em; text-transform: none; color: var(--copper-700); }
+
+  /* RKVY featured block */
+  .rkvy-feature {
+    background: var(--tea-900);
+    color: var(--cream-50);
+    border-radius: var(--r-lg);
+    padding: clamp(32px, 4vw, 56px);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+  .rkvy-feature::before {
+    content: ""; position: absolute; inset: 0;
+    background:
+      linear-gradient(rgba(216,205,181,0.05) 1px, transparent 1px) 0 0 / 36px 36px,
+      linear-gradient(90deg, rgba(216,205,181,0.05) 1px, transparent 1px) 0 0 / 36px 36px,
+      repeating-linear-gradient(45deg, transparent 0 17px, rgba(216,205,181,0.02) 17px 18px);
+    pointer-events: none;
+  }
+  .rkvy-feature > * { position: relative; z-index: 1; }
+  .rkvy-feature__head {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: clamp(28px, 4vw, 56px);
+    align-items: end;
+    padding-bottom: 28px;
+    border-bottom: 1px solid rgba(216,205,181,0.18);
+    margin-bottom: 28px;
+  }
+  .rkvy-feature__head .num { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 0.01em; text-transform: none; color: var(--copper-500); }
+  .rkvy-feature__head h3 { font-family: var(--display); font-weight: 400; font-size: clamp(36px, 4.5vw, 64px); letter-spacing: -0.02em; line-height: 1; margin: 12px 0 0; }
+  .rkvy-feature__head h3 small { display: block; font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.01em; text-transform: none; color: var(--cream-300); margin-top: 14px; }
+  .rkvy-feature__head .desc { color: var(--cream-100); font-size: 15px; line-height: 1.6; max-width: 44ch; margin: 0 0 20px; }
+  .rkvy-feature__head .row { gap: 8px; }
+  .rkvy-feature__head .btn-primary { background: var(--copper-500); color: var(--cream-50); }
+  .rkvy-feature__head .btn-primary:hover { background: var(--copper-600); }
+  .rkvy-feature__head .btn-ghost { color: var(--cream-50); border-color: rgba(216,205,181,0.3); }
+  .rkvy-feature__head .btn-ghost:hover { background: rgba(250,246,238,0.06); color: var(--cream-50); }
+
+  .subprograms-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .sp-mini {
+    background: rgba(250,246,238,0.04);
+    border: 1px solid rgba(216,205,181,0.18);
+    border-radius: var(--r-md);
+    padding: 22px;
+    display: flex; flex-direction: column;
+    transition: background .2s, border-color .2s;
+  }
+  .sp-mini:hover { background: rgba(250,246,238,0.08); border-color: rgba(216,205,181,0.35); }
+  .sp-mini .stage { font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.01em; text-transform: none; color: var(--copper-500); }
+  .sp-mini h4 { font-family: var(--display); font-weight: 400; font-size: 28px; letter-spacing: -0.02em; line-height: 1; margin: 10px 0 4px; color: var(--cream-50); }
+  .sp-mini h4 small { display: block; font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 0.01em; text-transform: none; color: var(--cream-300); margin-top: 8px; font-weight: 400; }
+  .sp-mini p { color: var(--cream-100); font-size: 13px; line-height: 1.5; margin: 14px 0 16px; flex: 1; }
+  .sp-mini__spec {
+    display: flex; gap: 18px;
+    padding: 12px 0;
+    border-top: 1px solid rgba(216,205,181,0.15);
+    margin-bottom: 14px;
+  }
+  .sp-mini__spec .k { font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.01em; color: var(--cream-300); }
+  .sp-mini__spec .v { font-family: var(--display); font-size: 18px; color: var(--cream-50); letter-spacing: -0.01em; margin-top: 2px; }
+  .sp-mini__status {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 8px; border-radius: 999px;
+    font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.01em; text-transform: none;
+  }
+  .sp-mini__status.open { background: rgba(201,120,73,0.25); color: var(--copper-500); }
+  .sp-mini__status.open .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--copper-500); }
+  .sp-mini__status.rolling { background: rgba(74,111,84,0.25); color: var(--tea-500); }
+  .sp-mini__status.rolling .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--tea-500); }
+
+  /* Other programs grid */
+  .programs-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .program-card {
+    display: flex; flex-direction: column;
+    background: var(--cream-50);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    padding: 28px;
+    transition: border-color .2s, transform .2s;
+  }
+  .program-card:hover { border-color: var(--ink-900); transform: translateY(-1px); }
+  .program-card__num { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 0.01em; text-transform: none; color: var(--copper-700); }
+  .program-card h3 {
+    font-family: var(--display); font-weight: 400;
+    font-size: clamp(28px, 3vw, 40px);
+    letter-spacing: -0.02em; line-height: 1;
+    margin: 12px 0 4px;
+  }
+  .program-card h3 small {
+    display: block;
+    font-family: var(--sans); font-size: 12px; font-weight: 600;
+    letter-spacing: 0.01em; text-transform: none;
+    color: var(--ink-500);
+    margin-top: 10px; font-weight: 400;
+  }
+  .program-card .pitch { color: var(--ink-700); font-size: 14.5px; line-height: 1.55; margin: 16px 0 20px; }
+  .program-card__spec {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    border-top: 1px solid var(--line-soft);
+    margin-bottom: 18px;
+  }
+  .program-card__spec > div { padding: 14px 14px 14px 0; border-right: 1px solid var(--line-soft); }
+  .program-card__spec > div:last-child { border-right: 0; padding-right: 0; padding-left: 14px; border-left: 1px solid var(--line-soft); margin-left: -1px; }
+  .program-card__spec .k { font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.01em; text-transform: none; color: var(--ink-500); }
+  .program-card__spec .v { font-family: var(--display); font-size: 19px; letter-spacing: -0.01em; margin-top: 4px; }
+  .program-card__status {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 999px;
+    font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.01em; text-transform: none;
+    margin-bottom: 4px;
+  }
+  .program-card__status.open { background: rgba(74,111,84,0.12); color: var(--tea-700); }
+  .program-card__status.rolling { background: var(--cream-100); color: var(--ink-700); border: 1px solid var(--line); }
+  .program-card__status.closed { background: transparent; color: var(--ink-500); border: 1px solid var(--line); }
+  .program-card__status .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .program-card .actions { margin-top: auto; display: flex; gap: 8px; padding-top: 14px; }
+  .program-card .actions .btn { flex: 1; }
+
+  @media (max-width: 900px) {
+    .pg-stats { grid-template-columns: 1fr 1fr; }
+    .rkvy-feature__head { grid-template-columns: 1fr; }
+    .subprograms-grid { grid-template-columns: 1fr; }
+    .programs-grid { grid-template-columns: 1fr; }
+    .program-card__spec { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body data-page="programs" data-screen-label="03 Programs">
+
+<div data-chrome-top></div>
+
+<section class="pg-hero">
+  <div class="container">
+    <div class="eyebrow">Programs · FY26</div>
+    <h1>Five programs. One institution.</h1>
+    <p class="lede">RKVY RAFTAAR is our flagship (with three stage-based sub-programs), and we run four additional programs under different funders. Each has its own eligibility envelope, capital ceiling, and intake cadence.</p>
+
+    <div class="pg-stats">
+      <div><div class="num">5</div><div class="lbl">Programs</div></div>
+      <div><div class="num">3</div><div class="lbl">Sub-programs under RKVY</div></div>
+      <div><div class="num">₹25 L</div><div class="lbl">Maximum grant-in-aid</div></div>
+      <div><div class="num">24 mo</div><div class="lbl">Longest engagement</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+
+  <!-- Featured: RKVY RAFTAAR -->
+  <div class="section-bar">
+    <h2>The flagship</h2>
+    <span class="ix">Program 01 · with 3 sub-programs</span>
+  </div>
+
+  <div class="rkvy-feature">
+    <div class="rkvy-feature__head">
+      <div>
+        <div class="num">Program 01 · Central Government</div>
+        <h3>RKVY RAFTAAR <small>Rashtriya Krishi Vikas Yojana · MoA&FW</small></h3>
+      </div>
+      <div>
+        <p class="desc">A central-government scheme with three stage-based sub-programs inside it. Founders enter at the stage that fits, and the structure allows movement between sub-programs as the venture matures.</p>
+        <div class="row">
+          <a href="programs-rkvy.html" class="btn btn-primary">View RKVY <span class="arrow">→</span></a>
+          <a href="for-founders.html#wizard" class="btn btn-ghost">Check eligibility</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="subprograms-grid">
+      <a class="sp-mini" href="programs-rkvy.html#navyam">
+        <div class="stage">Sub-program 01 · Student</div>
+        <h4>Navyam <small>Student stage</small></h4>
+        <p>Curriculum-integrated pathway for student founders at AAU and NE universities. Sandbox grant, lab time, mentor.</p>
+        <div class="sp-mini__spec">
+          <div><div class="k">Grant</div><div class="v">₹2 L</div></div>
+          <div><div class="k">Format</div><div class="v">2 sem.</div></div>
+        </div>
+        <span class="sp-mini__status rolling"><span class="dot"></span> Annual · Apr 2026</span>
+      </a>
+      <a class="sp-mini" href="programs-rkvy.html#isanya">
+        <div class="stage">Sub-program 02 · Idea</div>
+        <h4>Isanya <small>Idea-stage residential</small></h4>
+        <p>8-week residential at AAU. Cohort of 12, full-time, in-residence. Lab access, agronomist mentorship.</p>
+        <div class="sp-mini__spec">
+          <div><div class="k">Grant</div><div class="v">₹5 L</div></div>
+          <div><div class="k">Format</div><div class="v">8 wk</div></div>
+        </div>
+        <span class="sp-mini__status rolling"><span class="dot"></span> Cohort 7 · Sep 2026</span>
+      </a>
+      <a class="sp-mini" href="programs-rkvy.html#saranya">
+        <div class="stage">Sub-program 03 · Growth</div>
+        <h4>Saranya <small>Early & growth-stage</small></h4>
+        <p>For ventures past pilot with paying customers. Milestone-tranched capital, dedicated GTM mentorship, follow-on networks.</p>
+        <div class="sp-mini__spec">
+          <div><div class="k">Capital</div><div class="v">₹25 L</div></div>
+          <div><div class="k">Format</div><div class="v">12-18 mo</div></div>
+        </div>
+        <span class="sp-mini__status open"><span class="dot"></span> Cohort 4 · Apply by 30 Jun</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Other programs -->
+  <div class="section-bar">
+    <h2>Other programs</h2>
+    <span class="ix">4 programs · Different funders</span>
+  </div>
+
+  <div class="programs-grid">
+
+    <!-- AIC -->
+    <article class="program-card">
+      <div class="program-card__num">Program 02 · National</div>
+      <h3>AIC <small>Atal Incubation Centre · NITI Aayog</small></h3>
+      <span class="program-card__status rolling"><span class="dot"></span> Quarterly intake</span>
+      <p class="pitch">National-level incubation under NITI Aayog's Atal Innovation Mission. Pan-India mentor network, dedicated investor days, central-government recognition that opens institutional doors.</p>
+      <div class="program-card__spec">
+        <div><div class="k">Grant</div><div class="v">₹10 L</div></div>
+        <div><div class="k">Duration</div><div class="v">18 mo</div></div>
+        <div><div class="k">Network</div><div class="v">Pan-India</div></div>
+      </div>
+      <div class="actions">
+        <a href="programs-aic.html" class="btn btn-primary btn-sm">View AIC</a>
+        <a href="for-founders.html#wizard" class="btn btn-ghost btn-sm">Check fit</a>
+      </div>
+    </article>
+
+    <!-- ASRLM -->
+    <article class="program-card">
+      <div class="program-card__num">Program 03 · State</div>
+      <h3>ASRLM <small>Assam State Rural Livelihoods Mission</small></h3>
+      <span class="program-card__status rolling"><span class="dot"></span> Continuous</span>
+      <p class="pitch">A rural-enterprise program backing FPOs, producer-led startups, and ventures whose customers are rural households. SHG-linked, deeply embedded in state-government livelihoods infrastructure.</p>
+      <div class="program-card__spec">
+        <div><div class="k">Grant</div><div class="v">₹8 L</div></div>
+        <div><div class="k">Focus</div><div class="v">Producer-led</div></div>
+        <div><div class="k">Geo</div><div class="v">Assam</div></div>
+      </div>
+      <div class="actions">
+        <a href="programs-asrlm.html" class="btn btn-primary btn-sm">View ASRLM</a>
+        <a href="for-founders.html#wizard" class="btn btn-ghost btn-sm">Check fit</a>
+      </div>
+    </article>
+
+    <!-- Student First -->
+    <article class="program-card">
+      <div class="program-card__num">Program 04 · Campus</div>
+      <h3>Student First <small>Campus entrepreneurship</small></h3>
+      <span class="program-card__status open"><span class="dot"></span> Apply by 15 Aug</span>
+      <p class="pitch">Campus-level program partnered with NE universities. Builds entrepreneurial capacity through workshops, hackathons, founder office hours, and pre-incubation sandbox grants.</p>
+      <div class="program-card__spec">
+        <div><div class="k">Grant</div><div class="v">₹1 L</div></div>
+        <div><div class="k">Format</div><div class="v">1 sem.</div></div>
+        <div><div class="k">Campuses</div><div class="v">8</div></div>
+      </div>
+      <div class="actions">
+        <a href="programs-student-first.html" class="btn btn-primary btn-sm">View Student First</a>
+        <a href="for-founders.html#wizard" class="btn btn-ghost btn-sm">Check fit</a>
+      </div>
+    </article>
+
+    <!-- TIC (IITG) - AISF -->
+    <article class="program-card">
+      <div class="program-card__num">Program 05 · Deep-tech</div>
+      <h3>TIC (IITG) - AISF <small>Tech-Incubation Centre · IIT Guwahati · AISF</small></h3>
+      <span class="program-card__status closed"><span class="dot"></span> Closed · Reopens Q3</span>
+      <p class="pitch">A joint program with IIT Guwahati for deep-tech agri innovation - robotics, sensing, ML applied to crop and livestock systems. Engineering-heavy founders only. Uses NEATeHUB's Robotics Lab and AI First infrastructure.</p>
+      <div class="program-card__spec">
+        <div><div class="k">Capital</div><div class="v">Project-based</div></div>
+        <div><div class="k">Focus</div><div class="v">Deep-tech</div></div>
+        <div><div class="k">Partner</div><div class="v">IIT-G</div></div>
+      </div>
+      <div class="actions">
+        <a href="programs-ticiitg.html" class="btn btn-primary btn-sm">View TIC-AISF</a>
+        <a href="for-founders.html#wizard" class="btn btn-ghost btn-sm">Check fit</a>
+      </div>
+    </article>
+
+  </div>
+</div>
+
+<!-- Eligibility CTA -->
+<section class="tight bg-cream-100" style="margin-top: 56px;">
+  <div class="container">
+    <div style="display:grid; grid-template-columns: 1.4fr 1fr; gap: 48px; align-items: center;">
+      <div>
+        <div class="eyebrow">Not sure which one fits?</div>
+        <h2 class="display display-m mt-2">Two minutes to know where you stand.</h2>
+        <p class="lede mt-2">Answer six questions about your venture, your stage, and your sector. The wizard points you at the program - and the sub-program, if RKVY - that actually fits. No email required to see the result.</p>
+        <div class="row mt-3">
+          <a href="for-founders.html#wizard" class="btn btn-copper btn-lg">Run the eligibility wizard <span class="arrow">→</span></a>
+          <a href="ai-assistant.html" class="btn btn-ghost btn-lg">Or ask our AI assistant</a>
+        </div>
+      </div>
+      <div class="photo" style="aspect-ratio: 4/3; border-radius: var(--r-lg);" aria-hidden="true">
+        <div class="photo-label">PHOTO: Founder reading at NEATeHUB co-working space, top-down or shoulder angle</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div data-chrome-bottom></div>
+
+<script src="chrome.js"></script>
+<script src="shared.js"></script>
+</body>
+</html>

@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portfolio - NEATeHUB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .pf-hero { padding: clamp(48px, 6vw, 80px) 0 24px; }
+  .pf-hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(40px, 5.5vw, 80px); letter-spacing: -0.02em; line-height: 1; margin: 16px 0 0; }
+  .pf-hero .lede { margin-top: 18px; }
+  .pf-hero__meta { display: flex; gap: 16px; align-items: baseline; margin-top: 28px; font-family: var(--mono); font-size: 12px; color: var(--ink-500); letter-spacing: 0.08em; text-transform: uppercase; }
+  .pf-hero__meta strong { font-family: var(--display); font-size: 36px; font-weight: 400; color: var(--ink-900); letter-spacing: -0.02em; }
+
+  /* Filters */
+  .pf-filters {
+    position: sticky;
+    top: 67px;
+    background: rgba(250,246,238,0.92);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    z-index: 20;
+  }
+  .pf-filters__inner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px var(--gutter);
+    max-width: var(--max);
+    margin: 0 auto;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .pf-filters__inner::-webkit-scrollbar { display: none; }
+  .pf-search {
+    position: relative;
+    flex: 0 0 240px;
+  }
+  .pf-search input {
+    width: 100%;
+    height: 38px;
+    padding: 0 12px 0 34px;
+    background: var(--cream-50);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font: inherit;
+    font-size: 13px;
+  }
+  .pf-search input:focus { outline: 2px solid var(--copper-500); outline-offset: 1px; border-color: var(--copper-500); }
+  .pf-search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--ink-500); }
+
+  .pf-chips { display: flex; gap: 6px; align-items: center; flex: 1; flex-wrap: nowrap; }
+  .pf-chip {
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: transparent;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-700);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .15s, color .15s, border-color .15s;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .pf-chip:hover { border-color: var(--line-strong); }
+  .pf-chip.is-active { background: var(--ink-900); color: var(--cream-50); border-color: var(--ink-900); }
+  .pf-chip .count { opacity: .55; font-size: 10px; }
+  .pf-chip-group { display: flex; gap: 4px; padding: 0 8px 0 0; border-right: 1px solid var(--line-soft); margin-right: 4px; }
+  .pf-chip-group:last-of-type { border-right: 0; }
+  .pf-chip-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-500); padding: 0 4px; }
+
+  .pf-meta-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px var(--gutter);
+    max-width: var(--max);
+    margin: 0 auto;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-500);
+  }
+  .pf-meta-row .view-toggle { display: flex; gap: 4px; border: 1px solid var(--line); border-radius: 999px; padding: 3px; }
+  .pf-meta-row .view-toggle button {
+    background: none; border: 0; padding: 4px 10px; font: inherit; color: var(--ink-500); border-radius: 999px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+    cursor: pointer;
+  }
+  .pf-meta-row .view-toggle button.is-active { background: var(--ink-900); color: var(--cream-50); }
+
+  /* Grid */
+  .pf-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    padding: 32px var(--gutter) 80px;
+    max-width: var(--max);
+    margin: 0 auto;
+  }
+  @media (max-width: 1100px) { .pf-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 800px)  { .pf-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 520px)  { .pf-grid { grid-template-columns: 1fr; } }
+
+  .pf-card {
+    display: flex; flex-direction: column;
+    background: transparent;
+    cursor: pointer;
+    transition: transform .25s;
+  }
+  .pf-card:hover { transform: translateY(-2px); }
+  .pf-card .photo { aspect-ratio: 4/5; border-radius: var(--r-md); margin-bottom: 14px; }
+  .pf-card__head {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  }
+  .pf-card__name {
+    font-family: var(--display);
+    font-size: 22px;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    color: var(--ink-900);
+  }
+  .pf-card__year {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-500);
+    letter-spacing: 0.08em;
+  }
+  .pf-card__sector {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--copper-700);
+    margin-top: 4px;
+  }
+  .pf-card__desc {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-700);
+    margin-top: 10px;
+  }
+  .pf-card__foot {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--line-soft);
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--ink-500);
+  }
+  .pf-card__foot .pgm { color: var(--ink-700); }
+  .pf-card__foot .loc { display: inline-flex; align-items: center; gap: 4px; }
+
+  /* List view */
+  .pf-grid.is-list { grid-template-columns: 1fr; gap: 0; }
+  .pf-grid.is-list .pf-card { flex-direction: row; align-items: center; gap: 24px; padding: 18px 0; border-bottom: 1px solid var(--line-soft); }
+  .pf-grid.is-list .pf-card:hover { background: var(--cream-100); padding-left: 12px; padding-right: 12px; transform: none; }
+  .pf-grid.is-list .pf-card .photo { width: 96px; height: 96px; aspect-ratio: 1; flex: 0 0 96px; margin: 0; border-radius: 8px; }
+  .pf-grid.is-list .pf-card__head { flex: 0 0 220px; flex-direction: column; align-items: flex-start; gap: 4px; }
+  .pf-grid.is-list .pf-card__sector { display: none; }
+  .pf-grid.is-list .pf-card__desc { flex: 1; margin: 0; }
+  .pf-grid.is-list .pf-card__foot { border: 0; padding: 0; margin: 0; flex: 0 0 200px; justify-content: flex-end; gap: 16px; }
+
+  /* Pagination */
+  .pf-pagination {
+    display: flex; justify-content: center; align-items: center; gap: 4px;
+    padding-bottom: 80px;
+  }
+  .pf-pagination button {
+    width: 38px; height: 38px;
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font: inherit; font-size: 13px;
+    color: var(--ink-700);
+    cursor: pointer;
+  }
+  .pf-pagination button.is-active { background: var(--ink-900); color: var(--cream-50); border-color: var(--ink-900); }
+  .pf-pagination button:hover:not(.is-active) { background: var(--cream-100); }
+  .pf-pagination .ellipsis { padding: 0 8px; color: var(--ink-500); }
+
+  /* Empty state */
+  .pf-empty {
+    grid-column: 1 / -1;
+    padding: 80px 40px;
+    text-align: center;
+    border: 1px dashed var(--line-strong);
+    border-radius: var(--r-lg);
+    background: var(--cream-100);
+  }
+  .pf-empty h3 { font-family: var(--display); font-weight: 400; font-size: 32px; letter-spacing: -0.01em; margin: 0 0 8px; }
+  .pf-empty p { color: var(--ink-700); max-width: 40ch; margin: 0 auto 24px; }
+
+  /* Featured strip */
+  .pf-featured {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    padding: 0 var(--gutter) 16px;
+    max-width: var(--max);
+    margin: 0 auto;
+  }
+  .pf-featured .card-tea { padding: 24px; border-radius: var(--r-lg); display: flex; flex-direction: column; justify-content: space-between; min-height: 180px; }
+  .pf-featured .badge { background: rgba(250,246,238,0.1); color: var(--cream-100); border-color: rgba(250,246,238,0.15); }
+  .pf-featured .num { font-family: var(--display); font-size: 56px; letter-spacing: -0.02em; line-height: 1; color: var(--copper-500); }
+  .pf-featured .lbl { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream-300); margin-top: 6px; }
+  .pf-featured .desc { color: var(--cream-100); font-size: 14px; line-height: 1.5; max-width: 32ch; }
+
+  @media (max-width: 800px) {
+    .pf-featured { grid-template-columns: 1fr; }
+    .pf-filters__inner { padding: 12px var(--gutter); gap: 10px; }
+    .pf-search { flex: 0 0 180px; }
+    .pf-grid.is-list .pf-card { flex-direction: column; align-items: flex-start; }
+    .pf-grid.is-list .pf-card__head, .pf-grid.is-list .pf-card__foot { flex: 1; width: 100%; }
+    .pf-grid.is-list .pf-card__foot { justify-content: flex-start; }
+  }
+</style>
+</head>
+<body data-page="portfolio" data-screen-label="04 Portfolio">
+
+<div data-chrome-top></div>
+
+<!-- HERO -->
+<section class="pf-hero">
+  <div class="container">
+    <div class="eyebrow">Portfolio · FY18-FY26</div>
+    <h1>Every venture we've backed.</h1>
+    <p class="lede mt-3">A working directory of 250+ ventures across the Northeast - agri-input, post-harvest, livestock, aquaculture, processing, and rural fintech. Filter by program, sector, stage, year, or state. Cards link to public profiles.</p>
+    <div class="pf-hero__meta">
+      <span><strong>252</strong> startups</span>
+      <span>·</span>
+      <span><strong>74</strong> funded</span>
+      <span>·</span>
+      <span><strong>₹7.2 Cr</strong> deployed</span>
+      <span>·</span>
+      <span><strong>8</strong> states</span>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED STRIP -->
+<div class="pf-featured">
+  <div class="card-tea">
+    <span class="badge">Spotlight · This quarter</span>
+    <div>
+      <div class="num">3<span style="font-size:0.4em;color:var(--cream-300);">×</span></div>
+      <div class="lbl">Revenue growth in the FY26 Saranya cohort</div>
+    </div>
+  </div>
+  <div class="card-tea">
+    <span class="badge">Spotlight · This quarter</span>
+    <div>
+      <div class="num" style="font-size:32px; color:var(--cream-50);">Kaziranga Bio</div>
+      <div class="lbl">Closed pre-Series A · ₹3.2 Cr · April 2026</div>
+    </div>
+  </div>
+  <div class="card-tea">
+    <span class="badge">Filter idea</span>
+    <div>
+      <div class="num" style="font-size:32px; color:var(--cream-50);">Women-led →</div>
+      <div class="desc mt-2">42 ventures led by women founders, across 6 programs. <a href="#" style="color:var(--copper-500); border-bottom: 1px solid;">See filter →</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- FILTERS -->
+<div class="pf-filters">
+  <div class="pf-filters__inner">
+    <div class="pf-search">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M10 10l3 3" stroke="currentColor" stroke-width="1.4"/></svg>
+      <input type="search" placeholder="Search ventures…" id="pf-search">
+    </div>
+    <div class="pf-chips" id="pf-chips">
+      <span class="pf-chip-label">Program</span>
+      <div class="pf-chip-group">
+        <button class="pf-chip is-active" data-filter="program" data-value="all">All <span class="count">252</span></button>
+        <button class="pf-chip" data-filter="program" data-value="rkvy">RKVY <span class="count">68</span></button>
+        <button class="pf-chip" data-filter="program" data-value="saranya">Saranya <span class="count">42</span></button>
+        <button class="pf-chip" data-filter="program" data-value="isanya">Isanya <span class="count">81</span></button>
+        <button class="pf-chip" data-filter="program" data-value="aic">AIC <span class="count">34</span></button>
+        <button class="pf-chip" data-filter="program" data-value="asrlm">ASRLM <span class="count">27</span></button>
+      </div>
+      <span class="pf-chip-label">Sector</span>
+      <div class="pf-chip-group">
+        <button class="pf-chip" data-filter="sector" data-value="agri-input">Agri-Input</button>
+        <button class="pf-chip" data-filter="sector" data-value="post-harvest">Post-Harvest</button>
+        <button class="pf-chip" data-filter="sector" data-value="livestock">Livestock</button>
+        <button class="pf-chip" data-filter="sector" data-value="aqua">Aqua</button>
+        <button class="pf-chip" data-filter="sector" data-value="food">Food</button>
+        <button class="pf-chip" data-filter="sector" data-value="fintech">Rural Fintech</button>
+      </div>
+      <span class="pf-chip-label">Stage</span>
+      <div class="pf-chip-group">
+        <button class="pf-chip" data-filter="stage" data-value="idea">Idea</button>
+        <button class="pf-chip" data-filter="stage" data-value="early">Early</button>
+        <button class="pf-chip" data-filter="stage" data-value="growth">Growth</button>
+      </div>
+    </div>
+  </div>
+  <div class="pf-meta-row">
+    <span id="pf-count">Showing 1-12 of 252 ventures</span>
+    <div style="display:flex; gap: 16px; align-items: center;">
+      <span>Sort: Most recent</span>
+      <div class="view-toggle">
+        <button class="is-active" data-view="grid">▦ Grid</button>
+        <button data-view="list">≡ List</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GRID -->
+<div class="pf-grid" id="pf-grid">
+  <!-- cards injected by script -->
+</div>
+
+<!-- PAGINATION -->
+<div class="pf-pagination">
+  <button>‹</button>
+  <button class="is-active">1</button>
+  <button>2</button>
+  <button>3</button>
+  <button>4</button>
+  <span class="ellipsis">…</span>
+  <button>21</button>
+  <button>›</button>
+</div>
+
+<div data-chrome-bottom></div>
+
+<script src="chrome.js"></script>
+<script src="shared.js"></script>
+<script>
+// Portfolio data - plausible NE-rooted agri ventures
+const VENTURES = [
+  { name: "Kaziranga Bio",  sector: "Agri-Input",    stage: "growth", year: "'24", program: "Saranya · RKVY", loc: "Jorhat, AS",  desc: "Microbial bio-stimulants for tea estates. Replacing chemical inputs in 9 Assam gardens.", photo: "tea", url: "portfolio-kaziranga-bio.html" },
+  { name: "Thalo Cold",     sector: "Post-Harvest",  stage: "growth", year: "'23", program: "RKVY",           loc: "Tezpur, AS",  desc: "Solar cold-chain micro-units for FPO-led aggregation. 14 nodes operational.", photo: "" },
+  { name: "Brahma Aqua",    sector: "Aqua",          stage: "early",  year: "'24", program: "AIC",            loc: "Guwahati, AS", desc: "Indigenous fish-feed formulation. 30% cost reduction vs imports.", photo: "copper" },
+  { name: "Mati Labs",      sector: "Agri-Input",    stage: "idea",   year: "'25", program: "Isanya",         loc: "Jorhat, AS",  desc: "Mobile soil-testing rig for KVKs. ₹40 per test, 14-min turnaround.", photo: "" },
+  { name: "Eri Threads",    sector: "Food",          stage: "early",  year: "'23", program: "ASRLM",          loc: "Sualkuchi, AS", desc: "Eri silk by-product proteins for nutraceutical use. Producer-owned.", photo: "tea" },
+  { name: "Naga Greens",    sector: "Food",          stage: "growth", year: "'22", program: "RKVY",           loc: "Dimapur, NL", desc: "Naga king-chilli supply chain - direct from grower to processor.", photo: "copper" },
+  { name: "Sirohi Dairy",   sector: "Livestock",     stage: "early",  year: "'24", program: "AIC",            loc: "Sivasagar, AS", desc: "Smallholder dairy aggregation with chilling at every collection point.", photo: "" },
+  { name: "Hilltop Coffee", sector: "Food",          stage: "early",  year: "'24", program: "Saranya",        loc: "Aizawl, MZ",  desc: "Specialty coffee co-operative across 80 Mizoram smallholders.", photo: "" },
+  { name: "Khasi Honey",    sector: "Food",          stage: "growth", year: "'22", program: "RKVY",           loc: "Shillong, ML", desc: "Single-origin honey, FSSAI-certified, exporting to Singapore.", photo: "copper" },
+  { name: "Pukhuri Fish",   sector: "Aqua",          stage: "idea",   year: "'25", program: "Isanya",         loc: "Nagaon, AS",  desc: "Pond-based aquaculture sensor pack. Pilot with 200 ponds.", photo: "tea" },
+  { name: "Bambusa Build",  sector: "Agri-Input",    stage: "growth", year: "'21", program: "RKVY · AIC",     loc: "Imphal, MN",  desc: "Engineered bamboo for agri-shelter construction. 2,300 units shipped.", photo: "" },
+  { name: "Charai Foods",   sector: "Food",          stage: "early",  year: "'23", program: "Saranya",        loc: "Agartala, TR", desc: "Smoked-pork product line with FSSAI clearance and 6-state distribution.", photo: "copper" },
+];
+
+const grid = document.getElementById('pf-grid');
+function render(list) {
+  if (!list.length) {
+    grid.innerHTML = `
+      <div class="pf-empty">
+        <h3>No ventures match those filters.</h3>
+        <p>Try clearing a filter, or browse all 252 ventures. If you're looking for a specific company, search by name.</p>
+        <button class="btn btn-ghost" onclick="resetFilters()">Clear filters</button>
+      </div>`;
+    return;
+  }
+  grid.innerHTML = list.map(v => `
+    <a class="pf-card" href="${v.url || '#'}">
+      <div class="photo ${v.photo === 'tea' ? 'photo-tea' : v.photo === 'copper' ? 'photo-copper' : ''}">
+        <div class="photo-label">PHOTO: ${v.name} - founder + product, ${v.loc.split(',')[0]}</div>
+      </div>
+      <div class="pf-card__head">
+        <div>
+          <div class="pf-card__name">${v.name}</div>
+          <div class="pf-card__sector">${v.sector}</div>
+        </div>
+        <div class="pf-card__year">${v.year}</div>
+      </div>
+      <p class="pf-card__desc">${v.desc}</p>
+      <div class="pf-card__foot">
+        <span class="pgm">${v.program}</span>
+        <span class="loc">⌖ ${v.loc}</span>
+      </div>
+    </a>
+  `).join('');
+}
+render(VENTURES);
+
+// Filtering
+const active = { program: 'all', sector: null, stage: null, q: '' };
+document.querySelectorAll('.pf-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const f = chip.dataset.filter, v = chip.dataset.value;
+    // toggle
+    const sameGroup = document.querySelectorAll(`.pf-chip[data-filter="${f}"]`);
+    if (chip.classList.contains('is-active') && f !== 'program') {
+      chip.classList.remove('is-active');
+      active[f] = null;
+    } else {
+      sameGroup.forEach(c => c.classList.remove('is-active'));
+      chip.classList.add('is-active');
+      active[f] = v;
+    }
+    applyFilters();
+  });
+});
+document.getElementById('pf-search').addEventListener('input', (e) => {
+  active.q = e.target.value.toLowerCase().trim();
+  applyFilters();
+});
+function applyFilters() {
+  let list = VENTURES.slice();
+  if (active.program && active.program !== 'all') {
+    list = list.filter(v => v.program.toLowerCase().includes(active.program));
+  }
+  if (active.sector) list = list.filter(v => v.sector.toLowerCase().includes(active.sector.replace('-', ' ')) || v.sector.toLowerCase().includes(active.sector));
+  if (active.stage)  list = list.filter(v => v.stage === active.stage);
+  if (active.q)      list = list.filter(v => (v.name + ' ' + v.desc + ' ' + v.sector + ' ' + v.loc).toLowerCase().includes(active.q));
+  document.getElementById('pf-count').textContent = list.length
+    ? `Showing 1-${list.length} of ${list.length} ventures`
+    : `No matches`;
+  render(list);
+}
+function resetFilters() {
+  document.querySelectorAll('.pf-chip').forEach(c => c.classList.remove('is-active'));
+  document.querySelector('.pf-chip[data-value="all"]').classList.add('is-active');
+  document.getElementById('pf-search').value = '';
+  active.program = 'all'; active.sector = null; active.stage = null; active.q = '';
+  applyFilters();
+}
+window.resetFilters = resetFilters;
+
+// View toggle
+document.querySelectorAll('.view-toggle button').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.view-toggle button').forEach(x => x.classList.remove('is-active'));
+    b.classList.add('is-active');
+    grid.classList.toggle('is-list', b.dataset.view === 'list');
+  });
+});
+</script>
+
+</body>
+</html>

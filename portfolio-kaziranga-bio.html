@@ -1,0 +1,760 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kaziranga Bio - Portfolio · NEATeHUB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  /* Breadcrumb */
+  .crumb {
+    padding: 16px var(--gutter) 0;
+    max-width: var(--max);
+    margin: 0 auto;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-500);
+  }
+  .crumb a:hover { color: var(--ink-900); }
+  .crumb .sep { margin: 0 8px; opacity: 0.5; }
+  .crumb .cur { color: var(--ink-900); }
+
+  /* Hero */
+  .vp-hero { padding: clamp(28px, 4vw, 48px) 0 0; }
+  .vp-hero__head {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: clamp(28px, 5vw, 64px);
+    align-items: end;
+    margin-bottom: clamp(32px, 4vw, 56px);
+  }
+  .vp-hero__chips {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .vp-hero h1 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(56px, 8vw, 124px);
+    letter-spacing: -0.025em;
+    line-height: 0.94;
+    margin: 0;
+  }
+  .vp-hero__pitch {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(20px, 1.8vw, 26px);
+    line-height: 1.3;
+    color: var(--ink-900);
+    margin: 0 0 24px;
+    max-width: 36ch;
+    text-wrap: pretty;
+  }
+  .vp-hero__visit {
+    border-top: 1px solid var(--line);
+    padding-top: 20px;
+  }
+  .vp-hero__visit .k {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-500);
+  }
+  .vp-hero__visit .v {
+    font-family: var(--display);
+    font-size: 20px;
+    letter-spacing: -0.01em;
+    margin-top: 6px;
+  }
+  .vp-hero__visit a { border-bottom: 1px solid currentColor; padding-bottom: 1px; }
+  .vp-hero__row { display: flex; gap: 32px; flex-wrap: wrap; margin-top: 14px; }
+
+  /* Hero image */
+  .vp-hero__photo {
+    aspect-ratio: 16/8;
+    margin: 0 calc(-1 * var(--gutter)) 0;
+    border-radius: 0;
+  }
+  .vp-hero__photo .photo-label { font-size: 11px; }
+
+  /* Quick facts */
+  .vp-facts {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    margin: clamp(40px, 5vw, 64px) 0;
+  }
+  .vp-facts > div {
+    padding: 24px 24px 24px 0;
+    border-right: 1px solid var(--line-soft);
+  }
+  .vp-facts > div:last-child { border-right: 0; }
+  .vp-facts .k { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-500); }
+  .vp-facts .v {
+    font-family: var(--display);
+    font-size: clamp(22px, 2.2vw, 32px);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    margin-top: 8px;
+    color: var(--ink-900);
+  }
+  .vp-facts .v small { font-family: var(--sans); font-size: 12px; font-weight: 400; color: var(--ink-500); letter-spacing: 0; display: block; margin-top: 4px; }
+
+  /* Body grid */
+  .vp-body {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: clamp(28px, 5vw, 80px);
+    padding-bottom: clamp(48px, 6vw, 80px);
+  }
+  .vp-main h2 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(28px, 3vw, 40px);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin: clamp(40px, 5vw, 64px) 0 16px;
+    max-width: 22ch;
+  }
+  .vp-main h2:first-child { margin-top: 0; }
+  .vp-main h3 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(20px, 1.8vw, 24px);
+    letter-spacing: -0.01em;
+    margin: 40px 0 12px;
+  }
+  .vp-main p { font-size: 17px; line-height: 1.65; color: var(--ink-900); max-width: 60ch; margin: 0 0 18px; }
+  .vp-main p:has(+ p) { margin-bottom: 18px; }
+  .vp-main .eyebrow { margin-top: 8px; }
+  .vp-main blockquote {
+    margin: 32px 0;
+    padding: 0 0 0 28px;
+    border-left: 2px solid var(--copper-600);
+    font-family: var(--display);
+    font-size: clamp(22px, 2vw, 28px);
+    line-height: 1.35;
+    color: var(--ink-900);
+    letter-spacing: -0.01em;
+    max-width: 50ch;
+    text-wrap: pretty;
+  }
+  .vp-main blockquote cite {
+    display: block;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-500);
+    font-style: normal;
+    margin-top: 18px;
+  }
+
+  /* Inline figure with photo + caption */
+  .vp-figure { margin: 36px 0; }
+  .vp-figure .photo { aspect-ratio: 16/9; border-radius: var(--r-md); }
+  .vp-figure figcaption {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--ink-500);
+    margin-top: 12px;
+    line-height: 1.55;
+    max-width: 50ch;
+  }
+
+  /* Sidebar */
+  .vp-side {
+    position: sticky;
+    top: 100px;
+    align-self: start;
+    border-left: 1px solid var(--line-soft);
+    padding-left: 28px;
+  }
+  .vp-side__block { padding: 18px 0 22px; border-bottom: 1px solid var(--line-soft); }
+  .vp-side__block:last-child { border-bottom: 0; }
+  .vp-side h4 {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-500);
+    margin: 0 0 12px;
+    font-weight: 500;
+  }
+  .vp-side ul { list-style: none; padding: 0; margin: 0; }
+  .vp-side li {
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink-700);
+    padding: 6px 0;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .vp-side li strong { color: var(--ink-900); font-weight: 500; }
+  .vp-side .program-pill {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--cream-100);
+    color: var(--ink-900);
+    margin-right: 6px;
+    margin-bottom: 4px;
+  }
+  .vp-side .program-pill.is-current { background: var(--copper-600); color: var(--cream-50); }
+
+  /* Founders */
+  .founders { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px; }
+  .founder {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: 16px;
+    padding: 18px 0;
+    border-top: 1px solid var(--line-soft);
+  }
+  .founder:first-of-type { border-top: 0; padding-top: 0; }
+  .founder .photo { aspect-ratio: 1; border-radius: 50%; overflow: hidden; }
+  .founder h4 { font-family: var(--display); font-weight: 400; font-size: 20px; letter-spacing: -0.01em; margin: 0 0 4px; }
+  .founder .role { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--copper-700); margin-bottom: 8px; }
+  .founder p { font-size: 13px; line-height: 1.55; color: var(--ink-700); margin: 0; max-width: none; }
+
+  /* Milestones timeline */
+  .milestones { margin: 24px 0 0; }
+  .milestone {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 24px;
+    padding: 14px 0;
+    border-top: 1px solid var(--line-soft);
+  }
+  .milestone:first-child { border-top: 0; padding-top: 0; }
+  .milestone .when {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-500);
+    padding-top: 3px;
+  }
+  .milestone .what {
+    font-family: var(--display);
+    font-size: 18px;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    color: var(--ink-900);
+  }
+  .milestone .what small {
+    display: block;
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--ink-700);
+    margin-top: 4px;
+    font-weight: 400;
+    line-height: 1.55;
+  }
+  .milestone--funded .what { color: var(--copper-700); }
+
+  /* Funding table */
+  .funding {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+  }
+  .funding th, .funding td {
+    text-align: left;
+    padding: 14px 12px 14px 0;
+    font-size: 14px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .funding th {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-500);
+    font-weight: 500;
+    border-bottom-color: var(--line);
+  }
+  .funding td.amt {
+    font-family: var(--display);
+    font-size: 18px;
+    letter-spacing: -0.01em;
+    color: var(--copper-700);
+  }
+  .funding td.role { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; color: var(--ink-500); }
+
+  /* Press */
+  .press { list-style: none; padding: 0; margin: 16px 0 0; }
+  .press li {
+    padding: 14px 0;
+    border-top: 1px solid var(--line-soft);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    align-items: baseline;
+  }
+  .press li:first-child { border-top: 0; padding-top: 0; }
+  .press .outlet { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-500); }
+  .press .headline {
+    font-family: var(--display);
+    font-size: 18px;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    color: var(--ink-900);
+    margin-top: 4px;
+  }
+  .press .when { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; color: var(--ink-500); white-space: nowrap; }
+  .press a:hover .headline { color: var(--copper-700); }
+
+  /* Engagement quote block */
+  .engagement {
+    background: var(--cream-100);
+    border-radius: var(--r-lg);
+    padding: clamp(28px, 4vw, 48px);
+    margin: 24px 0 0;
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+  .engagement .av {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: var(--tea-800);
+    color: var(--cream-50);
+    display: grid; place-items: center;
+    font-family: var(--display); font-size: 28px; letter-spacing: -0.01em;
+  }
+  .engagement blockquote {
+    font-family: var(--display);
+    font-size: clamp(20px, 1.8vw, 24px);
+    line-height: 1.4;
+    margin: 0;
+    color: var(--ink-900);
+    border-left: 0;
+    padding-left: 0;
+    text-wrap: pretty;
+    max-width: 50ch;
+  }
+  .engagement .attr {
+    margin-top: 18px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-500);
+  }
+  .engagement .attr strong { color: var(--ink-900); font-weight: 500; }
+
+  /* Related ventures */
+  .related-vens { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .rv {
+    display: flex; flex-direction: column;
+    background: var(--cream-50);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    overflow: hidden;
+    transition: border-color .2s, transform .2s;
+  }
+  .rv:hover { border-color: var(--ink-900); transform: translateY(-1px); }
+  .rv .photo { aspect-ratio: 4/3; }
+  .rv__body { padding: 18px 20px 20px; }
+  .rv__name { font-family: var(--display); font-size: 22px; letter-spacing: -0.01em; }
+  .rv__sector { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--copper-700); margin-top: 4px; }
+  .rv__desc { color: var(--ink-700); font-size: 13.5px; line-height: 1.5; margin: 12px 0 0; }
+
+  @media (max-width: 1000px) {
+    .vp-body { grid-template-columns: 1fr; }
+    .vp-side { position: static; border-left: 0; border-top: 1px solid var(--line); padding-left: 0; padding-top: 28px; margin-top: 40px; }
+    .founders { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 900px) {
+    .vp-hero__head { grid-template-columns: 1fr; gap: 16px; align-items: start; }
+    .vp-facts { grid-template-columns: 1fr 1fr; }
+    .vp-facts > div:nth-child(2n) { border-right: 0; }
+    .vp-facts > div { border-bottom: 1px solid var(--line-soft); }
+    .related-vens { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .vp-facts { grid-template-columns: 1fr; }
+    .vp-facts > div { border-right: 0; }
+    .milestone { grid-template-columns: 1fr; gap: 4px; }
+    .funding th:nth-child(3), .funding td:nth-child(3) { display: none; }
+    .press li { grid-template-columns: 1fr; }
+    .engagement { grid-template-columns: 1fr; gap: 16px; }
+    .engagement .av { width: 56px; height: 56px; font-size: 22px; }
+  }
+</style>
+</head>
+<body data-page="portfolio" data-screen-label="04 Venture profile · Kaziranga Bio">
+
+<div data-chrome-top></div>
+
+<nav class="crumb" aria-label="Breadcrumb">
+  <a href="index.html">Home</a><span class="sep">/</span><a href="portfolio.html">Portfolio</a><span class="sep">/</span><span class="cur">Kaziranga Bio</span>
+</nav>
+
+<!-- Hero -->
+<section class="vp-hero">
+  <div class="container">
+    <div class="vp-hero__head">
+      <div>
+        <div class="vp-hero__chips">
+          <span class="badge badge-copper">Series A · April 2026</span>
+          <span class="badge">Bio-inputs</span>
+          <span class="badge">RKVY · Saranya '24</span>
+          <span class="badge">Jorhat, Assam</span>
+        </div>
+        <h1>Kaziranga Bio</h1>
+        <p class="vp-hero__pitch" style="margin-top: 24px;">Microbial bio-stimulants for tea estates - replacing chemical inputs in nine Assam gardens, and counting.</p>
+      </div>
+      <div class="vp-hero__visit">
+        <div class="vp-hero__row">
+          <div>
+            <div class="k">Website</div>
+            <div class="v"><a href="#" target="_blank" rel="noreferrer">kazirangabio.com ↗</a></div>
+          </div>
+          <div>
+            <div class="k">Founded</div>
+            <div class="v">2021</div>
+          </div>
+        </div>
+        <div class="vp-hero__row" style="margin-top: 18px;">
+          <div>
+            <div class="k">Team size</div>
+            <div class="v">14 <small>HQ in Jorhat</small></div>
+          </div>
+          <div>
+            <div class="k">Sector</div>
+            <div class="v">Bio-inputs</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero photo, full-bleed within container -->
+    <div class="photo photo-tea vp-hero__photo">
+      <div class="photo-label">PHOTO: Wide field shot - Kaziranga Bio founder walking between rows of tea bushes at a partner garden in Sonitpur, late afternoon, low-angle</div>
+    </div>
+  </div>
+</section>
+
+<!-- Quick facts -->
+<section style="padding: 0;">
+  <div class="container">
+    <div class="vp-facts">
+      <div><div class="k">Total raised</div><div class="v">₹3.2 Cr <small>incl. grant</small></div></div>
+      <div><div class="k">Grant from NEATeHUB</div><div class="v">₹25 L <small>RKVY · Saranya</small></div></div>
+      <div><div class="k">Active partners</div><div class="v">9 <small>Assam tea estates</small></div></div>
+      <div><div class="k">Patents</div><div class="v">2 <small>1 granted, 1 pending</small></div></div>
+      <div><div class="k">Stage</div><div class="v">Series A</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Body -->
+<section style="padding-top: 0;">
+  <div class="container">
+    <div class="vp-body">
+
+      <article class="vp-main">
+        <div class="eyebrow">The work</div>
+        <h2>Tea estates have a soil problem, and a chemical-input habit.</h2>
+
+        <p>The North Indian tea industry has been on chemical fertilisers and synthetic pesticides for half a century. The cost - to soils, to yields, to producer balance sheets, and increasingly to export buyers - has compounded quietly. Kaziranga Bio's bet is that microbial bio-stimulants can replace a meaningful share of those inputs, at parity cost, with measurable yield improvement after the second season.</p>
+
+        <p>The science isn't novel - bio-stimulant research has existed for decades in academic settings. The hard part has been delivering it. Most bio-input ventures fail at the 200-bush mark: lab-grade efficacy collapses in field conditions, and the unit economics of small-batch production don't survive contact with a real tea garden's procurement cycle.</p>
+
+        <p>Kaziranga Bio's contribution is twofold: a stable formulation that maintains efficacy in Assam's monsoon humidity, and a contract-manufacturing model that lets gardens trial the input without committing capital. The first is a science problem, eight years in the lab. The second is a commercial design problem they solved with NEATeHUB's RKVY · Saranya programme manager.</p>
+
+        <figure class="vp-figure">
+          <div class="photo">
+            <div class="photo-label">PHOTO: Close-up of bio-stimulant application equipment in field, hands of plucker visible, mid-morning sun</div>
+          </div>
+          <figcaption>Application of the KB-04 formulation at a partner garden in Sonitpur, May 2025. Treatment density is calibrated per-bush, not per-acre.</figcaption>
+        </figure>
+
+        <h3>What changed in the FY24 cohort</h3>
+        <p>Kaziranga Bio entered Saranya in October 2023 with three gardens trialling and one paying customer. By the end of the 14-month engagement, that number had moved to nine, with two converted to long-term contracts and three more in late-stage trial.</p>
+
+        <p>The capital tranches mattered, but the introductions mattered more. Saranya's GTM mentor - a former tea-industry operator with 20 years of garden-side experience - opened doors that a cold-call founder would not have walked through in a decade. Three of the nine active partners came from a single afternoon at the Assam Tea Planters Association meeting in March 2024.</p>
+
+        <blockquote>
+          NEATeHUB's mistake-budget is what got us out of the lab and into nine actual gardens. Most accelerators don't fund honest failure.
+          <cite>Dr. Rohan Hazarika · Founder & CEO</cite>
+        </blockquote>
+
+        <h3>Where they're going</h3>
+        <p>The Series A raise in April 2026 - ₹3.2 Cr led by Ag-Innovate Partners with NEATeHUB-introduced angels - funds a single ambition: expansion from nine partner gardens to fifty, across Assam and Darjeeling, over the next two seasons. The capital does three things: doubles the production facility footprint at Jorhat, hires two field-ops engineers per district, and finances the working capital for a deferred-payment model that gardens can adopt without procurement-cycle friction.</p>
+
+        <p>The bottleneck Rohan flags repeatedly is not capital and not science. It's trained field-ops staff who can troubleshoot application in the field, in Assamese, with growers who have been burned by snake-oil bio-inputs before. That's the next two years of hiring, and it doesn't show up on a deck.</p>
+
+        <h2>Founders</h2>
+        <div class="founders">
+          <div class="founder">
+            <div class="photo">
+              <div class="photo-label">Founder portrait</div>
+            </div>
+            <div>
+              <h4>Dr. Rohan Hazarika</h4>
+              <div class="role">Founder & CEO</div>
+              <p>PhD in microbiology, Tezpur University. Eight years at the ICAR Tea Research Institute before founding Kaziranga Bio. Has published 14 peer-reviewed papers on rhizosphere microbiology specific to North Indian tea cultivars.</p>
+            </div>
+          </div>
+          <div class="founder">
+            <div class="photo photo-tea">
+              <div class="photo-label">Founder portrait</div>
+            </div>
+            <div>
+              <h4>Mridusmita Borah</h4>
+              <div class="role">Co-founder & Head of Field Ops</div>
+              <p>Agronomist, AAU Jorhat. Ten years running field trials for the Tea Board's Northeast division. Owns the partnership-and-deployment side of the business - every garden onboarded since 2022 came through her.</p>
+            </div>
+          </div>
+        </div>
+
+        <h2>Milestones</h2>
+        <div class="milestones">
+          <div class="milestone">
+            <div class="when">Feb 2021</div>
+            <div class="what">Incorporated as Kaziranga Bio Sciences Pvt Ltd<small>Two-founder team. AAU lab access via founder's faculty network.</small></div>
+          </div>
+          <div class="milestone">
+            <div class="when">Jul 2021</div>
+            <div class="what">First field trial<small>Single garden in Jorhat district. KB-01 prototype, applied across 8 bush rows.</small></div>
+          </div>
+          <div class="milestone milestone--funded">
+            <div class="when">Oct 2022</div>
+            <div class="what">Joined NEATeHUB · RKVY · Isanya Cohort 4<small>₹5L seed grant, 8-week residential at AAU campus. Formulation pivoted from KB-01 to KB-03.</small></div>
+          </div>
+          <div class="milestone">
+            <div class="when">Mar 2023</div>
+            <div class="what">First paying customer<small>Dhula Tea Estate signed for a 40-acre commercial trial.</small></div>
+          </div>
+          <div class="milestone milestone--funded">
+            <div class="when">Oct 2023</div>
+            <div class="what">Advanced to RKVY · Saranya Cohort 3<small>₹25L grant over 14 months. Field-ops mentor assigned. Production facility expanded to 1,200 sq ft.</small></div>
+          </div>
+          <div class="milestone">
+            <div class="when">Aug 2024</div>
+            <div class="what">First patent granted<small>KB-03 formulation stability in tropical humidity. IP filed in India and PCT.</small></div>
+          </div>
+          <div class="milestone">
+            <div class="when">Jan 2025</div>
+            <div class="what">Hit 9 active partner gardens<small>Two on long-term contracts, three in late-stage trial, four on commercial trial.</small></div>
+          </div>
+          <div class="milestone milestone--funded">
+            <div class="when">Apr 2026</div>
+            <div class="what">Series A close - ₹3.2 Cr<small>Led by Ag-Innovate Partners. Two NEATeHUB-introduced angels participated.</small></div>
+          </div>
+        </div>
+
+        <h2>Funding history</h2>
+        <table class="funding">
+          <thead>
+            <tr>
+              <th>Round</th>
+              <th>Amount</th>
+              <th>Lead / source</th>
+              <th>NEATeHUB role</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Series A</td>
+              <td class="amt">₹3.2 Cr</td>
+              <td>Ag-Innovate Partners</td>
+              <td class="role">Introduced 2 angels</td>
+              <td>Apr 2026</td>
+            </tr>
+            <tr>
+              <td>Saranya tranche</td>
+              <td class="amt">₹10 L</td>
+              <td>RKVY · MoA&FW</td>
+              <td class="role">Direct grant</td>
+              <td>Apr 2024</td>
+            </tr>
+            <tr>
+              <td>Saranya tranche</td>
+              <td class="amt">₹10 L</td>
+              <td>RKVY · MoA&FW</td>
+              <td class="role">Direct grant</td>
+              <td>Oct 2023</td>
+            </tr>
+            <tr>
+              <td>Saranya tranche</td>
+              <td class="amt">₹5 L</td>
+              <td>RKVY · MoA&FW</td>
+              <td class="role">Direct grant</td>
+              <td>Oct 2023</td>
+            </tr>
+            <tr>
+              <td>Isanya</td>
+              <td class="amt">₹5 L</td>
+              <td>RKVY · MoA&FW</td>
+              <td class="role">Direct grant</td>
+              <td>Oct 2022</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>NEATeHUB engagement</h2>
+        <div class="engagement">
+          <div class="av">AD</div>
+          <div>
+            <blockquote>"Rohan and Mridu came in with the lab work already done. What they needed was a network and the patience to deploy slowly. RKVY's tranche structure gave them both. Watching the formulation go from one garden to nine - and watching the team learn to trust their own commercial instincts - is the reason we run this programme."</blockquote>
+            <div class="attr">
+              <strong>Anirban Das</strong> · RKVY Program Manager, NEATeHUB · Engaged Oct 2022 - ongoing
+            </div>
+          </div>
+        </div>
+
+        <h2>Press & coverage</h2>
+        <ul class="press">
+          <li>
+            <a href="#">
+              <div class="outlet">The Hindu BusinessLine · National</div>
+              <div class="headline">Northeast agri-tech: the quiet rise of bio-input startups</div>
+            </a>
+            <span class="when">11 Mar 2026</span>
+          </li>
+          <li>
+            <a href="#">
+              <div class="outlet">Outlook Agriculture · Feature</div>
+              <div class="headline">Inside Kaziranga Bio's nine-garden experiment</div>
+            </a>
+            <span class="when">22 Jan 2026</span>
+          </li>
+          <li>
+            <a href="#">
+              <div class="outlet">YourStory · Profile</div>
+              <div class="headline">Two scientists, one tea estate, and a bet against chemical fertilisers</div>
+            </a>
+            <span class="when">08 Nov 2025</span>
+          </li>
+          <li>
+            <a href="#">
+              <div class="outlet">Assam Tribune · Regional</div>
+              <div class="headline">AAU-incubated venture wins national agri-innovation award</div>
+            </a>
+            <span class="when">14 Sep 2025</span>
+          </li>
+        </ul>
+
+      </article>
+
+      <!-- Sidebar -->
+      <aside class="vp-side">
+        <div class="vp-side__block">
+          <h4>Programs</h4>
+          <span class="program-pill">RKVY · Isanya '22</span>
+          <span class="program-pill is-current">RKVY · Saranya '23-'24</span>
+        </div>
+
+        <div class="vp-side__block">
+          <h4>At a glance</h4>
+          <ul>
+            <li><span>Founded</span><strong>Feb 2021</strong></li>
+            <li><span>HQ</span><strong>Jorhat, AS</strong></li>
+            <li><span>Team</span><strong>14</strong></li>
+            <li><span>Sector</span><strong>Bio-inputs</strong></li>
+            <li><span>Stage</span><strong>Series A</strong></li>
+            <li><span>Status</span><strong style="color: var(--tea-700);">Active</strong></li>
+            <li><span>Reach</span><strong>9 estates</strong></li>
+          </ul>
+        </div>
+
+        <div class="vp-side__block">
+          <h4>Sustainable Development Goals</h4>
+          <ul>
+            <li><span>SDG 2</span><strong>Zero Hunger</strong></li>
+            <li><span>SDG 12</span><strong>Responsible Consumption</strong></li>
+            <li><span>SDG 15</span><strong>Life on Land</strong></li>
+          </ul>
+        </div>
+
+        <div class="vp-side__block">
+          <h4>Get in touch</h4>
+          <ul>
+            <li><span>Website</span><strong><a href="#" class="link">kazirangabio.com</a></strong></li>
+            <li><span>Hiring</span><strong><a href="#" class="link">2 open roles</a></strong></li>
+            <li><span>Investor inquiries</span><strong><a href="#" class="link">rohan@</a></strong></li>
+          </ul>
+        </div>
+
+        <div class="vp-side__block" style="padding-bottom: 0;">
+          <h4>Want to support?</h4>
+          <p style="font-size: 13px; color: var(--ink-700); line-height: 1.5; margin: 0 0 14px;">If you're an LP, mentor, or strategic partner interested in NEATeHUB's portfolio, get in touch with our team.</p>
+          <a href="about.html#contact" class="btn btn-ghost btn-sm" style="width: 100%;">Talk to NEATeHUB <span class="arrow">→</span></a>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</section>
+
+<!-- Related ventures -->
+<section class="bg-cream-100">
+  <div class="container">
+    <div class="row-between">
+      <div>
+        <div class="eyebrow">Related ventures</div>
+        <h2 class="display display-m mt-2">More from the portfolio.</h2>
+      </div>
+      <a href="portfolio.html" class="btn btn-ghost">All 250+ ventures <span class="arrow">→</span></a>
+    </div>
+    <div class="related-vens mt-5">
+      <a class="rv" href="#">
+        <div class="photo">
+          <div class="photo-label">PHOTO: Mati Labs soil-test rig in field</div>
+        </div>
+        <div class="rv__body">
+          <div class="rv__name">Mati Labs</div>
+          <div class="rv__sector">Agri-Input · Isanya '25</div>
+          <p class="rv__desc">Mobile soil-testing rig for KVKs. ₹40 per test, 14-min turnaround. Same sector adjacency, different problem.</p>
+        </div>
+      </a>
+      <a class="rv" href="#">
+        <div class="photo photo-tea">
+          <div class="photo-label">PHOTO: Eri Threads founder, silk by-product</div>
+        </div>
+        <div class="rv__body">
+          <div class="rv__name">Eri Threads</div>
+          <div class="rv__sector">Food · ASRLM '23</div>
+          <p class="rv__desc">Eri silk by-product proteins for nutraceutical use. Producer-owned, also Assam-rooted, also part of the FY24 cohort.</p>
+        </div>
+      </a>
+      <a class="rv" href="#">
+        <div class="photo photo-copper">
+          <div class="photo-label">PHOTO: Thalo Cold cold-chain unit</div>
+        </div>
+        <div class="rv__body">
+          <div class="rv__name">Thalo Cold</div>
+          <div class="rv__sector">Post-Harvest · RKVY · Saranya '23</div>
+          <p class="rv__desc">Solar cold-chain micro-units for FPO-led aggregation. Same Saranya cohort year, complementary problem space.</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<div data-chrome-bottom></div>
+
+<script src="chrome.js"></script>
+<script src="shared.js"></script>
+</body>
+</html>

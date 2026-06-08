@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resources - NEATeHUB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .rs-hero { padding: clamp(48px, 6vw, 80px) 0 clamp(32px, 4vw, 48px); }
+  .rs-hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(40px, 6vw, 88px); letter-spacing: -0.02em; line-height: 0.98; margin: 16px 0 0; max-width: 16ch; }
+  .rs-tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 32px; }
+  .rs-tile { padding: 24px; border: 1px solid var(--line); border-radius: var(--r-md); transition: background .2s, border-color .2s; }
+  .rs-tile:hover { background: var(--cream-100); border-color: var(--line-strong); }
+  .rs-tile .num { font-family: var(--mono); font-size: 10px; color: var(--copper-600); letter-spacing: 0.1em; }
+  .rs-tile h3 { font-family: var(--display); font-weight: 400; font-size: 22px; margin: 16px 0 8px; letter-spacing: -0.01em; }
+  .rs-tile .count { font-family: var(--mono); font-size: 11px; color: var(--ink-500); letter-spacing: 0.08em; text-transform: uppercase; }
+
+  .rs-list { display: grid; gap: 0; border-top: 1px solid var(--line); margin-top: 48px; }
+  .rs-row {
+    display: grid;
+    grid-template-columns: 64px 1.4fr 1fr 100px 80px;
+    gap: 24px;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--line-soft);
+    transition: background .15s;
+  }
+  .rs-row:hover { background: var(--cream-100); }
+  .rs-row .ext {
+    width: 48px; height: 60px;
+    background: var(--cream-100);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    display: grid; place-items: center;
+    font-family: var(--mono); font-size: 11px;
+    color: var(--copper-700);
+    font-weight: 500;
+    position: relative;
+  }
+  .rs-row .ext::after { content: ""; position: absolute; top: -1px; right: -1px; border-style: solid; border-width: 0 10px 10px 0; border-color: transparent var(--cream-50) transparent transparent; }
+  .rs-row .name { font-family: var(--display); font-size: 20px; letter-spacing: -0.01em; line-height: 1.2; }
+  .rs-row .desc { color: var(--ink-700); font-size: 13px; line-height: 1.5; }
+  .rs-row .meta { font-family: var(--mono); font-size: 11px; color: var(--ink-500); letter-spacing: 0.08em; text-transform: uppercase; }
+  .rs-row .dl { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; color: var(--ink-700); }
+  .rs-row:hover .dl { background: var(--ink-900); color: var(--cream-50); border-color: var(--ink-900); }
+
+  /* Mentor preview */
+  .mentor-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .mentor {
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    padding: 20px;
+  }
+  .mentor .av { width: 48px; height: 48px; border-radius: 50%; background: var(--cream-100); display: grid; place-items: center; font-family: var(--display); font-size: 18px; color: var(--tea-900); }
+  .mentor .name { font-family: var(--display); font-size: 18px; margin: 14px 0 4px; letter-spacing: -0.01em; }
+  .mentor .role { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-500); }
+  .mentor .cred { color: var(--ink-700); font-size: 13px; line-height: 1.5; margin-top: 12px; }
+
+  @media (max-width: 900px) {
+    .rs-tiles { grid-template-columns: 1fr 1fr; }
+    .rs-row { grid-template-columns: 48px 1fr 60px; }
+    .rs-row .desc, .rs-row .meta { display: none; }
+    .mentor-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 600px) {
+    .rs-tiles { grid-template-columns: 1fr; }
+    .mentor-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body data-page="resources" data-screen-label="10 Resources">
+
+<div data-chrome-top></div>
+
+<section class="rs-hero">
+  <div class="container">
+    <div class="eyebrow">Resources</div>
+    <h1>Downloads, archives, and the mentor directory.</h1>
+    <div class="rs-tiles">
+      <a href="#downloads" class="rs-tile"><div class="num">01</div><h3>Downloads</h3><div class="count">28 documents</div></a>
+      <a href="#newsletters" class="rs-tile"><div class="num">02</div><h3>Newsletter archive</h3><div class="count">22 issues</div></a>
+      <a href="#impact" class="rs-tile"><div class="num">03</div><h3>Impact Reports</h3><div class="count">6 reports</div></a>
+      <a href="#mentors" class="rs-tile"><div class="num">04</div><h3>Mentor directory</h3><div class="count">200+ mentors</div></a>
+    </div>
+  </div>
+</section>
+
+<!-- Downloads -->
+<section style="padding-top: 0;" id="downloads">
+  <div class="container">
+    <h2 class="h-section">Downloads</h2>
+    <div class="rs-list">
+      <a class="rs-row" href="#">
+        <div class="ext">PDF</div>
+        <div class="name">RKVY RAFTAAR - Program Brief FY26</div>
+        <div class="desc">Eligibility, evaluation criteria, milestones, capital tranching.</div>
+        <div class="meta">1.2 MB · Updated Apr 2026</div>
+        <span class="dl"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 1v10M3 7l4 4 4-4M1 13h12" stroke="currentColor" stroke-width="1.4" fill="none"/></svg></span>
+      </a>
+      <a class="rs-row" href="#">
+        <div class="ext">PDF</div>
+        <div class="name">Saranya Cohort 4 - Application Pack</div>
+        <div class="desc">Pitch template, FAQ, evaluation rubric, FY26 timeline.</div>
+        <div class="meta">2.4 MB · Mar 2026</div>
+        <span class="dl"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 1v10M3 7l4 4 4-4M1 13h12" stroke="currentColor" stroke-width="1.4" fill="none"/></svg></span>
+      </a>
+      <a class="rs-row" href="#">
+        <div class="ext">PDF</div>
+        <div class="name">Isanya scorecard - Self-assessment</div>
+        <div class="desc">The exact rubric we use to evaluate idea-stage applications.</div>
+        <div class="meta">340 KB · Feb 2026</div>
+        <span class="dl"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 1v10M3 7l4 4 4-4M1 13h12" stroke="currentColor" stroke-width="1.4" fill="none"/></svg></span>
+      </a>
+      <a class="rs-row" href="#">
+        <div class="ext">XLS</div>
+        <div class="name">Capital tranching template</div>
+        <div class="desc">Milestone-linked capital release sheet for Saranya / RKVY ventures.</div>
+        <div class="meta">88 KB · 2025</div>
+        <span class="dl"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 1v10M3 7l4 4 4-4M1 13h12" stroke="currentColor" stroke-width="1.4" fill="none"/></svg></span>
+      </a>
+      <a class="rs-row" href="#">
+        <div class="ext">PDF</div>
+        <div class="name">Annual Report · FY25</div>
+        <div class="desc">Full programmatic and financial accounting.</div>
+        <div class="meta">8.2 MB · Sep 2025</div>
+        <span class="dl"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 1v10M3 7l4 4 4-4M1 13h12" stroke="currentColor" stroke-width="1.4" fill="none"/></svg></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Impact reports -->
+<section class="bg-cream-100" id="impact">
+  <div class="container">
+    <div class="row-between">
+      <div>
+        <div class="eyebrow">Impact reports</div>
+        <h2 class="display display-m mt-2">What the numbers bought.</h2>
+      </div>
+    </div>
+    <div class="grid-3 mt-4">
+      <a href="#" class="card" style="padding: 28px;">
+        <div class="kicker">FY25 · September 2025</div>
+        <h3 class="display display-s mt-2" style="margin-bottom: 8px;">₹7.2 Cr deployed</h3>
+        <p style="color: var(--ink-700); margin: 0;">70 funded ventures, 9 sectors, 6 NE states. Full accounting and methodology.</p>
+        <div class="kicker mt-3" style="color: var(--copper-700);">Read the report →</div>
+      </a>
+      <a href="#" class="card" style="padding: 28px;">
+        <div class="kicker">FY24 · September 2024</div>
+        <h3 class="display display-s mt-2" style="margin-bottom: 8px;">52 funded</h3>
+        <p style="color: var(--ink-700); margin: 0;">First post-CoE year. Saranya formalised, two cohorts of Isanya completed.</p>
+        <div class="kicker mt-3" style="color: var(--copper-700);">Read the report →</div>
+      </a>
+      <a href="#" class="card" style="padding: 28px;">
+        <div class="kicker">FY23 · September 2023</div>
+        <h3 class="display display-s mt-2" style="margin-bottom: 8px;">36 funded</h3>
+        <p style="color: var(--ink-700); margin: 0;">RKVY scale-up year. First international portfolio exit.</p>
+        <div class="kicker mt-3" style="color: var(--copper-700);">Read the report →</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Mentor directory -->
+<section id="mentors">
+  <div class="container">
+    <div class="row-between">
+      <div>
+        <div class="eyebrow">Mentor directory · Public view</div>
+        <h2 class="display display-m mt-2">200+ domain mentors.</h2>
+        <p class="lede mt-2">Names, expertise, one-line credentials. Full profiles and "request connect" are gated for active portfolio founders.</p>
+      </div>
+      <a href="#" class="btn btn-ghost">View all 200+ <span class="arrow">→</span></a>
+    </div>
+
+    <div class="mentor-grid mt-5">
+      <div class="mentor"><div class="av">DR</div><div class="name">Dr. Rituparna Das</div><div class="role">Agronomy · Soil Science</div><p class="cred">Principal Scientist, ICAR-RC NEH. 25 years field experience across NE.</p></div>
+      <div class="mentor"><div class="av">KI</div><div class="name">Dr. K. Iyer</div><div class="role">Fisheries · Aqua-feed</div><p class="cred">Former Head of Research, CIFA. Published on indigenous feed formulation.</p></div>
+      <div class="mentor"><div class="av">SM</div><div class="name">Sandip Mukherjee</div><div class="role">Post-harvest · Cold-chain</div><p class="cred">Built India's first PPP cold-chain network. Operator, not consultant.</p></div>
+      <div class="mentor"><div class="av">PB</div><div class="name">Priyanka Bordoloi</div><div class="role">Brand · Food</div><p class="cred">Founder, Naga-origin specialty foods brand. Operator-mentor for FMCG ventures.</p></div>
+      <div class="mentor"><div class="av">AS</div><div class="name">Arnab Saharia</div><div class="role">Finance · Rural credit</div><p class="cred">Ex-NABARD. Designs grant-to-equity transitions for FPO-led startups.</p></div>
+      <div class="mentor"><div class="av">VM</div><div class="name">Dr. Vinod Menon</div><div class="role">Livestock · Dairy</div><p class="cred">25+ years dairy science. Advisor to two state milk federations.</p></div>
+      <div class="mentor"><div class="av">NT</div><div class="name">Niharika Tamuly</div><div class="role">GTM · Agri-input</div><p class="cred">Ex-Bayer, ex-Insecticides India. Built rural sales for 18 years.</p></div>
+      <div class="mentor"><div class="av">RB</div><div class="name">Rajiv Bharali</div><div class="role">Policy · Compliance</div><p class="cred">Advises portfolio on FSSAI, APEDA, state-level approvals.</p></div>
+    </div>
+  </div>
+</section>
+
+<div data-chrome-bottom></div>
+<script src="chrome.js"></script>
+<script src="shared.js"></script>
+</body>
+</html>

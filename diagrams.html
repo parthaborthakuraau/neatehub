@@ -1,0 +1,740 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diagram language - NEATeHUB design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  /* ============ Diagram page layout ============ */
+  .dg-hero { padding: clamp(40px, 5vw, 64px) 0 clamp(24px, 3vw, 40px); }
+  .dg-hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(40px, 6vw, 88px); letter-spacing: -0.02em; line-height: 0.98; margin: 16px 0 0; max-width: 18ch; }
+  .dg-hero h1 em { font-style: italic; color: var(--copper-600); }
+  .dg-hero .lede { margin-top: 22px; max-width: 60ch; }
+
+  /* Principles strip */
+  .dg-principles { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin-top: 40px; }
+  .dg-principles > div { padding: 24px 24px 24px 0; border-right: 1px solid var(--line-soft); }
+  .dg-principles > div:last-child { border-right: 0; }
+  .dg-principles .k { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--copper-600); }
+  .dg-principles .v { font-family: var(--display); font-size: 22px; letter-spacing: -0.01em; margin: 8px 0 8px; line-height: 1.15; }
+  .dg-principles p { font-size: 13px; color: var(--ink-700); margin: 0; line-height: 1.55; }
+
+  /* Diagram block */
+  .dg-block { padding: clamp(56px, 7vw, 96px) 0; border-top: 1px solid var(--line-soft); }
+  .dg-block:first-of-type { border-top: 0; }
+  .dg-block__head {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(28px, 4vw, 56px);
+    align-items: end;
+    margin-bottom: 40px;
+  }
+  .dg-block__head .num { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--copper-600); }
+  .dg-block__head h2 { font-family: var(--display); font-weight: 400; font-size: clamp(28px, 3.5vw, 48px); letter-spacing: -0.01em; line-height: 1.05; margin: 12px 0 0; max-width: 18ch; }
+  .dg-block__head .meta { color: var(--ink-700); font-size: 15px; line-height: 1.6; max-width: 50ch; }
+  .dg-block__head .meta p { margin: 0 0 12px; }
+
+  /* Canvas */
+  .dg-canvas {
+    background: var(--tea-900);
+    border-radius: var(--r-lg);
+    padding: clamp(28px, 4vw, 56px);
+    position: relative;
+    overflow: hidden;
+  }
+  .dg-canvas--light { background: var(--cream-50); border: 1px solid var(--line); }
+
+  .dg-canvas::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      /* warp + weft grid */
+      linear-gradient(rgba(216,205,181,0.06) 1px, transparent 1px) 0 0 / 36px 36px,
+      linear-gradient(90deg, rgba(216,205,181,0.06) 1px, transparent 1px) 0 0 / 36px 36px,
+      /* muga diagonal - soft */
+      repeating-linear-gradient(45deg, transparent 0 17px, rgba(216,205,181,0.025) 17px 18px);
+    pointer-events: none;
+  }
+  .dg-canvas--light::before {
+    background:
+      linear-gradient(rgba(58, 52, 45, 0.05) 1px, transparent 1px) 0 0 / 36px 36px,
+      linear-gradient(90deg, rgba(58, 52, 45, 0.05) 1px, transparent 1px) 0 0 / 36px 36px,
+      repeating-linear-gradient(45deg, transparent 0 17px, rgba(58, 52, 45, 0.02) 17px 18px);
+  }
+
+  .dg-canvas svg { position: relative; width: 100%; height: auto; display: block; }
+  .dg-canvas .corner-tag {
+    position: absolute;
+    top: 18px; right: 22px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(216,205,181,0.55);
+    z-index: 2;
+  }
+  .dg-canvas--light .corner-tag { color: var(--ink-500); }
+
+  .dg-canvas .replay {
+    position: absolute;
+    bottom: 18px; right: 22px;
+    background: transparent;
+    border: 1px solid rgba(216,205,181,0.25);
+    color: var(--cream-100);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    z-index: 2;
+  }
+  .dg-canvas .replay:hover { background: rgba(250,246,238,0.06); color: var(--cream-50); }
+  .dg-canvas--light .replay { color: var(--ink-700); border-color: var(--line-strong); }
+  .dg-canvas--light .replay:hover { background: var(--cream-100); color: var(--ink-900); }
+
+  /* ========= Shared SVG conventions ========= */
+  .dgrm text.lbl { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; fill: rgba(216,205,181,0.55); }
+  .dgrm text.lbl-strong { fill: var(--cream-50); }
+  .dgrm text.nm { font-family: var(--display); font-size: 18px; fill: var(--cream-50); letter-spacing: -0.01em; }
+  .dgrm text.nm-sm { font-family: var(--display); font-size: 14px; fill: var(--cream-50); letter-spacing: -0.005em; }
+  .dgrm text.meta { font-family: var(--mono); font-size: 10px; fill: rgba(216,205,181,0.55); letter-spacing: 0.06em; }
+  .dgrm .grid-line { stroke: rgba(216,205,181,0.08); stroke-width: 0.5; }
+  .dgrm .axis { stroke: rgba(216,205,181,0.22); stroke-width: 1; }
+
+  /* Light versions for cream canvas */
+  .dgrm-light text.lbl { fill: var(--ink-500); }
+  .dgrm-light text.lbl-strong { fill: var(--ink-900); }
+  .dgrm-light text.nm { fill: var(--ink-900); }
+  .dgrm-light text.nm-sm { fill: var(--ink-900); }
+  .dgrm-light text.meta { fill: var(--ink-500); }
+  .dgrm-light .grid-line { stroke: var(--line-soft); }
+  .dgrm-light .axis { stroke: var(--line-strong); }
+
+  /* draw-in animation primitives */
+  .draw {
+    stroke-dasharray: var(--dl, 1000);
+    stroke-dashoffset: var(--dl, 1000);
+    transition: stroke-dashoffset 1.4s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  .draw.is-in { stroke-dashoffset: 0; }
+  .node {
+    opacity: 0;
+    transform-origin: center;
+    transition: opacity .3s ease, transform .4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .node.is-in { opacity: 1; }
+  .fade {
+    opacity: 0;
+    transition: opacity .5s ease;
+  }
+  .fade.is-in { opacity: 1; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .draw, .node, .fade { transition: none; }
+    .draw { stroke-dashoffset: 0; }
+    .node, .fade { opacity: 1; }
+  }
+
+  /* Legend */
+  .legend {
+    display: flex; gap: 18px; flex-wrap: wrap;
+    margin-top: 24px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-500);
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .legend .sw { width: 14px; height: 14px; border-radius: 50%; }
+  .legend .sw-copper { background: var(--copper-500); }
+  .legend .sw-tea { background: var(--tea-500); }
+  .legend .sw-line { width: 18px; height: 1px; background: var(--copper-500); }
+  .legend .sw-line.dashed { background: none; border-top: 1.5px dashed var(--copper-500); }
+  .legend .sw-line.soft { background: var(--ink-500); opacity: 0.5; }
+
+  /* Diagram caption */
+  .dg-caption {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line-soft);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--ink-500);
+    line-height: 1.7;
+  }
+
+  @media (max-width: 900px) {
+    .dg-principles { grid-template-columns: 1fr 1fr; }
+    .dg-block__head { grid-template-columns: 1fr; gap: 16px; }
+  }
+  @media (max-width: 600px) {
+    .dg-principles { grid-template-columns: 1fr; }
+    .dg-canvas { padding: 24px 18px 56px; }
+  }
+</style>
+</head>
+<body data-page="" data-screen-label="02 Diagram language">
+
+<div data-chrome-top></div>
+
+<section class="dg-hero">
+  <div class="container">
+    <div class="eyebrow">Design system · Session 02</div>
+    <h1>The diagram language. <em>Photos prove. Diagrams explain.</em></h1>
+    <p class="lede">A small set of line-animated SVG diagrams carries everything explanatory on this site - incubation journey, eligibility branching, the capital ladder, the ecosystem map. They share a vocabulary so a founder reading the third diagram doesn't have to relearn the first.</p>
+
+    <div class="dg-principles">
+      <div>
+        <div class="k">Rule 01</div>
+        <div class="v">Line-only, no fill.</div>
+        <p>Paths and outlines do the work. Fills are reserved for active states - usually copper, occasionally tea.</p>
+      </div>
+      <div>
+        <div class="k">Rule 02</div>
+        <div class="v">Textile grid as substrate.</div>
+        <p>Warp + weft + a soft 45° diagonal - the abstracted muga/eri geometry sits at 6% opacity, never decorative.</p>
+      </div>
+      <div>
+        <div class="k">Rule 03</div>
+        <div class="v">Draw in, don't fly in.</div>
+        <p>Strokes draw from origin to terminus, 1.4s ease-out, with 200ms staggers. Reduced-motion shows the final state.</p>
+      </div>
+      <div>
+        <div class="k">Rule 04</div>
+        <div class="v">Type does the heavy lifting.</div>
+        <p>Mono labels (10px, 0.1em tracking) for state, Display for node names. No icons inside diagrams.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+
+  <!-- DIAGRAM 01 - Incubation Journey -->
+  <section class="dg-block">
+    <div class="dg-block__head">
+      <div>
+        <div class="num">Diagram 01 · Process</div>
+        <h2>The incubation journey, stage by stage.</h2>
+      </div>
+      <div class="meta">
+        <p>A four-stage path from idea to scale, with explicit off-ramps. Used on the homepage and the For Founders page. Founders enter at any stage - most enter at 02 or 03.</p>
+        <p>The dashed copper line is the founder's actual path (variable); the soft line is the conceptual full journey.</p>
+      </div>
+    </div>
+
+    <div class="dg-canvas" data-anim="journey">
+      <span class="corner-tag">Fig. 01 / Process</span>
+      <svg class="dgrm" viewBox="0 0 1200 360" preserveAspectRatio="xMidYMid meet" aria-label="Incubation journey diagram">
+        <!-- horizontal axis -->
+        <line class="axis" x1="60" y1="280" x2="1140" y2="280"/>
+        <!-- stage markers (verticals) -->
+        <line class="grid-line" x1="120" y1="60" x2="120" y2="290"/>
+        <line class="grid-line" x1="360" y1="60" x2="360" y2="290"/>
+        <line class="grid-line" x1="600" y1="60" x2="600" y2="290"/>
+        <line class="grid-line" x1="840" y1="60" x2="840" y2="290"/>
+        <line class="grid-line" x1="1080" y1="60" x2="1080" y2="290"/>
+
+        <!-- background full-journey arc (soft) -->
+        <path class="draw" d="M 120 280 C 240 280, 280 220, 360 200 C 480 180, 520 140, 600 130 C 720 120, 760 90, 840 80 L 1080 70"
+              fill="none" stroke="rgba(216,205,181,0.25)" stroke-width="1" style="--dl: 1300;"/>
+
+        <!-- founder's actual path (copper, dashed) -->
+        <path class="draw" data-delay="200" d="M 120 280 L 360 200 L 600 130 L 840 80 L 1080 70"
+              fill="none" stroke="#c97849" stroke-width="2" stroke-dasharray="6 5" style="--dl: 1300;"/>
+
+        <!-- off-ramp -->
+        <path class="draw" data-delay="800" d="M 600 130 L 700 240" fill="none" stroke="rgba(216,205,181,0.35)" stroke-width="1" stroke-dasharray="3 4" style="--dl: 220;"/>
+        <text class="meta" x="710" y="246">off-ramp · referral</text>
+
+        <!-- nodes -->
+        <g class="node" data-delay="900" transform="translate(120, 280)">
+          <circle r="9" fill="#c97849" stroke="#faf6ee" stroke-width="2"/>
+          <text class="lbl" x="0" y="34" text-anchor="middle">STAGE 01</text>
+          <text class="nm" x="0" y="58" text-anchor="middle">Idea</text>
+          <text class="meta" x="0" y="78" text-anchor="middle">Isanya · ₹5L · 8 wk</text>
+        </g>
+        <g class="node" data-delay="1100" transform="translate(360, 200)">
+          <circle r="9" fill="#c97849" stroke="#faf6ee" stroke-width="2"/>
+          <text class="lbl" x="0" y="-22" text-anchor="middle">STAGE 02</text>
+          <text class="nm" x="0" y="-44" text-anchor="middle">Validate</text>
+          <text class="meta" x="0" y="-62" text-anchor="middle">Pilot · Lab access</text>
+        </g>
+        <g class="node" data-delay="1300" transform="translate(600, 130)">
+          <circle r="9" fill="#c97849" stroke="#faf6ee" stroke-width="2"/>
+          <text class="lbl" x="0" y="34" text-anchor="middle">STAGE 03</text>
+          <text class="nm" x="0" y="58" text-anchor="middle">Build</text>
+          <text class="meta" x="0" y="78" text-anchor="middle">RKVY · ₹25L · 24 mo</text>
+        </g>
+        <g class="node" data-delay="1500" transform="translate(840, 80)">
+          <circle r="9" fill="#c97849" stroke="#faf6ee" stroke-width="2"/>
+          <text class="lbl" x="0" y="-22" text-anchor="middle">STAGE 04</text>
+          <text class="nm" x="0" y="-44" text-anchor="middle">Scale</text>
+          <text class="meta" x="0" y="-62" text-anchor="middle">Saranya · GTM</text>
+        </g>
+        <g class="node" data-delay="1700" transform="translate(1080, 70)">
+          <circle r="14" fill="none" stroke="#c97849" stroke-width="1.5"/>
+          <circle r="7" fill="#c97849"/>
+          <text class="lbl-strong lbl" x="0" y="-26" text-anchor="middle">EXIT</text>
+          <text class="meta" x="0" y="36" text-anchor="middle">Follow-on / Acquisition</text>
+        </g>
+      </svg>
+      <button class="replay" data-replay="journey">↻ Replay</button>
+    </div>
+
+    <div class="legend">
+      <span><span class="sw sw-copper"></span> Stage milestone</span>
+      <span><span class="sw-line dashed" style="border-color: #c97849;"></span> Founder's path</span>
+      <span><span class="sw-line soft"></span> Conceptual full journey</span>
+      <span><span class="sw-line" style="background: var(--ink-500); border-top: 1.5px dashed var(--ink-500);"></span> Off-ramp / referral</span>
+    </div>
+    <div class="dg-caption">USED ON · Homepage · For Founders · Programs hub · TOKEN · process-path-1</div>
+  </section>
+
+  <!-- DIAGRAM 02 - Eligibility flow -->
+  <section class="dg-block">
+    <div class="dg-block__head">
+      <div>
+        <div class="num">Diagram 02 · Decision tree</div>
+        <h2>Eligibility, as a branching tree.</h2>
+      </div>
+      <div class="meta">
+        <p>Two decision points narrow seven programs down to two-or-three recommendations. The wizard runs this internally - the diagram makes the logic legible.</p>
+        <p>Diamond = decision. Pill = outcome program. Solid copper = strong-fit branch from your answers.</p>
+      </div>
+    </div>
+
+    <div class="dg-canvas dg-canvas--light" data-anim="elig">
+      <span class="corner-tag">Fig. 02 / Decision</span>
+      <svg class="dgrm dgrm-light" viewBox="0 0 1200 480" preserveAspectRatio="xMidYMid meet" aria-label="Eligibility decision tree">
+        <!-- Root question -->
+        <g class="node" data-delay="0" transform="translate(600, 50)">
+          <polygon points="0,-26 90,0 0,26 -90,0" fill="#faf6ee" stroke="#1a1612" stroke-width="1.5"/>
+          <text class="nm-sm" x="0" y="-6" text-anchor="middle">Stage?</text>
+          <text class="meta" x="0" y="12" text-anchor="middle">Question 01</text>
+        </g>
+
+        <!-- Branches from root -->
+        <path class="draw" data-delay="300" d="M 510 50 L 220 160" stroke="#1a1612" stroke-width="1" fill="none" style="--dl: 320;"/>
+        <path class="draw" data-delay="350" d="M 600 76 L 600 160" stroke="#1a1612" stroke-width="1" fill="none" style="--dl: 90;"/>
+        <path class="draw" data-delay="400" d="M 690 50 L 980 160" stroke="#1a1612" stroke-width="1" fill="none" style="--dl: 320;"/>
+
+        <text class="meta" x="345" y="100">idea</text>
+        <text class="meta" x="618" y="120">prototype/pilot</text>
+        <text class="meta" x="845" y="100">revenue</text>
+
+        <!-- L1 branches: 3 decisions -->
+        <g class="node" data-delay="500" transform="translate(220, 180)">
+          <polygon points="0,-22 76,0 0,22 -76,0" fill="#faf6ee" stroke="#1a1612" stroke-width="1.5"/>
+          <text class="nm-sm" x="0" y="5" text-anchor="middle">Student?</text>
+        </g>
+        <g class="node" data-delay="550" transform="translate(600, 180)">
+          <polygon points="0,-22 76,0 0,22 -76,0" fill="#faf6ee" stroke="#1a1612" stroke-width="1.5"/>
+          <text class="nm-sm" x="0" y="5" text-anchor="middle">Capital?</text>
+        </g>
+        <g class="node" data-delay="600" transform="translate(980, 180)">
+          <polygon points="0,-22 76,0 0,22 -76,0" fill="#faf6ee" stroke="#1a1612" stroke-width="1.5"/>
+          <text class="nm-sm" x="0" y="5" text-anchor="middle">FPO/SHG?</text>
+        </g>
+
+        <!-- L2 branches to outcomes -->
+        <!-- left subtree -->
+        <path class="draw" data-delay="700" d="M 144 180 L 80 300" stroke="#1a1612" stroke-width="1" fill="none" style="--dl: 140;"/>
+        <path class="draw" data-delay="750" d="M 296 180 L 360 300" stroke="#1a1612" stroke-width="1" fill="none" style="--dl: 140;"/>
+        <text class="meta" x="92" y="240">yes</text>
+        <text class="meta" x="320" y="240">no</text>
+
+        <!-- middle subtree (highlighted - user's path) -->
+        <path class="draw" data-delay="800" d="M 524 180 L 480 300" stroke="#c97849" stroke-width="2" fill="none" style="--dl: 130;"/>
+        <path class="draw" data-delay="850" d="M 676 180 L 720 300" stroke="#1a1612" stroke-width="1" fill="none" style="--dl: 130;"/>
+        <text class="meta" x="490" y="240" style="fill: #c97849;">≤ ₹10L</text>
+        <text class="meta" x="690" y="240">≥ ₹10L</text>
+
+        <!-- right subtree -->
+        <path class="draw" data-delay="900" d="M 904 180 L 840 300" stroke="#1a1612" stroke-width="1" fill="none" style="--dl: 140;"/>
+        <path class="draw" data-delay="950" d="M 1056 180 L 1120 300" stroke="#1a1612" stroke-width="1" fill="none" style="--dl: 140;"/>
+        <text class="meta" x="855" y="240">yes</text>
+        <text class="meta" x="1075" y="240">no</text>
+
+        <!-- Outcome pills -->
+        <g class="node" data-delay="1100" transform="translate(80, 320)">
+          <rect x="-70" y="-18" width="140" height="36" rx="18" fill="none" stroke="#1a1612" stroke-width="1"/>
+          <text class="nm-sm" x="0" y="5" text-anchor="middle">Student First</text>
+        </g>
+        <g class="node" data-delay="1150" transform="translate(360, 320)">
+          <rect x="-60" y="-18" width="120" height="36" rx="18" fill="none" stroke="#1a1612" stroke-width="1"/>
+          <text class="nm-sm" x="0" y="5" text-anchor="middle">Isanya</text>
+        </g>
+        <g class="node" data-delay="1200" transform="translate(480, 320)">
+          <rect x="-60" y="-18" width="120" height="36" rx="18" fill="#c97849" stroke="#c97849" stroke-width="1"/>
+          <text class="nm-sm" x="0" y="5" text-anchor="middle" style="fill: #faf6ee;">Isanya / AIM</text>
+        </g>
+        <g class="node" data-delay="1250" transform="translate(720, 320)">
+          <rect x="-60" y="-18" width="120" height="36" rx="18" fill="none" stroke="#1a1612" stroke-width="1"/>
+          <text class="nm-sm" x="0" y="5" text-anchor="middle">RKVY</text>
+        </g>
+        <g class="node" data-delay="1300" transform="translate(840, 320)">
+          <rect x="-60" y="-18" width="120" height="36" rx="18" fill="none" stroke="#1a1612" stroke-width="1"/>
+          <text class="nm-sm" x="0" y="5" text-anchor="middle">ASRLM</text>
+        </g>
+        <g class="node" data-delay="1350" transform="translate(1120, 320)">
+          <rect x="-60" y="-18" width="120" height="36" rx="18" fill="none" stroke="#1a1612" stroke-width="1"/>
+          <text class="nm-sm" x="0" y="5" text-anchor="middle">Saranya</text>
+        </g>
+
+        <!-- Highlight ring on selected outcome -->
+        <g class="fade" data-delay="1500" transform="translate(480, 320)">
+          <rect x="-72" y="-30" width="144" height="60" rx="30" fill="none" stroke="#c97849" stroke-width="1" stroke-dasharray="3 4" opacity="0.7"/>
+          <text class="meta" x="0" y="58" text-anchor="middle" style="fill: #c97849;">YOUR STRONGEST MATCH</text>
+        </g>
+
+        <!-- Footer labels -->
+        <text class="lbl" x="60" y="430">DECISION POINTS</text>
+        <text class="lbl" x="60" y="448">02</text>
+        <text class="lbl" x="400" y="430">PROGRAMS REACHED</text>
+        <text class="lbl" x="400" y="448">06</text>
+        <text class="lbl" x="800" y="430">STRONG MATCHES</text>
+        <text class="lbl-strong lbl" x="800" y="448" style="fill: #c97849;">01</text>
+      </svg>
+      <button class="replay" data-replay="elig">↻ Replay</button>
+    </div>
+
+    <div class="legend">
+      <span>◆ Decision point</span>
+      <span>◯ Outcome program</span>
+      <span><span class="sw sw-copper"></span> Your branch</span>
+    </div>
+    <div class="dg-caption">USED ON · For Founders wizard · AI assistant explainer · TOKEN · decision-tree-1</div>
+  </section>
+
+  <!-- DIAGRAM 03 - Capital ladder -->
+  <section class="dg-block">
+    <div class="dg-block__head">
+      <div>
+        <div class="num">Diagram 03 · Comparison</div>
+        <h2>The capital ladder across programs.</h2>
+      </div>
+      <div class="meta">
+        <p>Grant ceilings, plotted. Reads left-to-right as venture-stage ascends. The y-axis is capital; the x-axis is loose chronology of when founders typically engage.</p>
+        <p>Solid bar height = grant ceiling. Width = typical duration. Hollow ring above each bar = optional follow-on capacity.</p>
+      </div>
+    </div>
+
+    <div class="dg-canvas" data-anim="ladder">
+      <span class="corner-tag">Fig. 03 / Comparison</span>
+      <svg class="dgrm" viewBox="0 0 1200 460" preserveAspectRatio="xMidYMid meet" aria-label="Capital ladder">
+        <!-- y-axis ticks -->
+        <line class="axis" x1="80" y1="60" x2="80" y2="380"/>
+        <line class="axis" x1="80" y1="380" x2="1140" y2="380"/>
+
+        <!-- y-axis labels -->
+        <text class="meta" x="68" y="384" text-anchor="end">₹0</text>
+        <line class="grid-line" x1="80" y1="320" x2="1140" y2="320"/>
+        <text class="meta" x="68" y="324" text-anchor="end">₹5L</text>
+        <line class="grid-line" x1="80" y1="260" x2="1140" y2="260"/>
+        <text class="meta" x="68" y="264" text-anchor="end">₹10L</text>
+        <line class="grid-line" x1="80" y1="200" x2="1140" y2="200"/>
+        <text class="meta" x="68" y="204" text-anchor="end">₹15L</text>
+        <line class="grid-line" x1="80" y1="140" x2="1140" y2="140"/>
+        <text class="meta" x="68" y="144" text-anchor="end">₹20L</text>
+        <line class="grid-line" x1="80" y1="80" x2="1140" y2="80"/>
+        <text class="meta" x="68" y="84" text-anchor="end">₹25L</text>
+
+        <!-- y-axis title -->
+        <text class="lbl" x="80" y="44">CAPITAL CEILING (₹)</text>
+        <text class="lbl" x="1140" y="406" text-anchor="end">→ VENTURE STAGE</text>
+
+        <!-- Bars - drawn as growing rectangles via stroke -->
+        <!-- Student First: 2L, narrow -->
+        <g class="node" data-delay="100" transform="translate(140, 0)">
+          <rect x="0" y="356" width="60" height="24" fill="none" stroke="#c97849" stroke-width="1.5"/>
+          <line class="draw" data-delay="100" x1="0" y1="356" x2="60" y2="356" stroke="#c97849" stroke-width="2.5" style="--dl: 60;"/>
+          <circle class="node" data-delay="700" cx="30" cy="336" r="7" fill="none" stroke="#c97849" stroke-width="1"/>
+          <text class="nm-sm" x="30" y="408" text-anchor="middle">Student First</text>
+          <text class="meta" x="30" y="424" text-anchor="middle">₹2L</text>
+        </g>
+
+        <!-- Isanya: 5L, residential 8wk -->
+        <g class="node" data-delay="250" transform="translate(280, 0)">
+          <rect x="0" y="320" width="90" height="60" fill="none" stroke="#c97849" stroke-width="1.5"/>
+          <line class="draw" data-delay="250" x1="0" y1="320" x2="90" y2="320" stroke="#c97849" stroke-width="2.5" style="--dl: 90;"/>
+          <circle class="node" data-delay="850" cx="45" cy="300" r="7" fill="none" stroke="#c97849" stroke-width="1"/>
+          <text class="nm-sm" x="45" y="408" text-anchor="middle">Isanya</text>
+          <text class="meta" x="45" y="424" text-anchor="middle">₹5L · 8 wk</text>
+        </g>
+
+        <!-- ASRLM: 8L -->
+        <g class="node" data-delay="400" transform="translate(420, 0)">
+          <rect x="0" y="284" width="100" height="96" fill="none" stroke="#c97849" stroke-width="1.5"/>
+          <line class="draw" data-delay="400" x1="0" y1="284" x2="100" y2="284" stroke="#c97849" stroke-width="2.5" style="--dl: 100;"/>
+          <text class="nm-sm" x="50" y="408" text-anchor="middle">ASRLM</text>
+          <text class="meta" x="50" y="424" text-anchor="middle">₹8L · continuous</text>
+        </g>
+
+        <!-- AIM: 10L -->
+        <g class="node" data-delay="550" transform="translate(580, 0)">
+          <rect x="0" y="260" width="120" height="120" fill="none" stroke="#c97849" stroke-width="1.5"/>
+          <line class="draw" data-delay="550" x1="0" y1="260" x2="120" y2="260" stroke="#c97849" stroke-width="2.5" style="--dl: 120;"/>
+          <circle class="node" data-delay="1150" cx="60" cy="240" r="7" fill="none" stroke="#c97849" stroke-width="1"/>
+          <text class="nm-sm" x="60" y="408" text-anchor="middle">AIM</text>
+          <text class="meta" x="60" y="424" text-anchor="middle">₹10L · 18 mo</text>
+        </g>
+
+        <!-- RKVY: 25L, 24mo -->
+        <g class="node" data-delay="700" transform="translate(760, 0)">
+          <rect x="0" y="80" width="160" height="300" fill="rgba(201,120,73,0.07)" stroke="#c97849" stroke-width="1.5"/>
+          <line class="draw" data-delay="700" x1="0" y1="80" x2="160" y2="80" stroke="#c97849" stroke-width="3" style="--dl: 160;"/>
+          <circle class="node" data-delay="1300" cx="80" cy="60" r="8" fill="#c97849"/>
+          <text class="nm-sm" x="80" y="408" text-anchor="middle" style="fill: #c97849;">RKVY RAFTAAR</text>
+          <text class="meta" x="80" y="424" text-anchor="middle">₹25L · 24 mo · flagship</text>
+        </g>
+
+        <!-- Saranya: 25L, 12-18mo -->
+        <g class="node" data-delay="850" transform="translate(980, 0)">
+          <rect x="0" y="80" width="130" height="300" fill="none" stroke="#c97849" stroke-width="1.5"/>
+          <line class="draw" data-delay="850" x1="0" y1="80" x2="130" y2="80" stroke="#c97849" stroke-width="2.5" style="--dl: 130;"/>
+          <circle class="node" data-delay="1450" cx="65" cy="60" r="7" fill="none" stroke="#c97849" stroke-width="1"/>
+          <text class="nm-sm" x="65" y="408" text-anchor="middle">Saranya</text>
+          <text class="meta" x="65" y="424" text-anchor="middle">₹25L · 12-18 mo</text>
+        </g>
+      </svg>
+      <button class="replay" data-replay="ladder">↻ Replay</button>
+    </div>
+
+    <div class="legend">
+      <span><span class="sw-line" style="background:#c97849;"></span> Grant ceiling</span>
+      <span><span class="sw" style="background: none; border: 1px solid var(--copper-500);"></span> Optional follow-on (SAFE)</span>
+      <span>Bar width = duration</span>
+    </div>
+    <div class="dg-caption">USED ON · Programs hub · For Founders · Impact reports · TOKEN · capital-ladder-1</div>
+  </section>
+
+  <!-- DIAGRAM 04 - Ecosystem map -->
+  <section class="dg-block">
+    <div class="dg-block__head">
+      <div>
+        <div class="num">Diagram 04 · Ecosystem</div>
+        <h2>NEATeHUB sits inside an ecosystem.</h2>
+      </div>
+      <div class="meta">
+        <p>The institutions, funders, partners, and producer networks that NEATeHUB plugs into. We are not the centre of the universe - we are a node that connects research, capital, and producers.</p>
+        <p>Concentric rings: NEATeHUB at the centre, then funders + AAU (institutional layer), then mentors + KVKs + portfolio (operational layer), then producers (outer reach).</p>
+      </div>
+    </div>
+
+    <div class="dg-canvas" data-anim="eco">
+      <span class="corner-tag">Fig. 04 / Network</span>
+      <svg class="dgrm" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid meet" aria-label="Ecosystem map">
+        <!-- concentric rings -->
+        <circle cx="600" cy="350" r="100" fill="none" stroke="rgba(216,205,181,0.18)" stroke-width="0.75" stroke-dasharray="2 4"/>
+        <circle cx="600" cy="350" r="200" fill="none" stroke="rgba(216,205,181,0.15)" stroke-width="0.75" stroke-dasharray="2 4"/>
+        <circle cx="600" cy="350" r="300" fill="none" stroke="rgba(216,205,181,0.12)" stroke-width="0.75" stroke-dasharray="2 4"/>
+
+        <!-- Connection lines (drawn first behind nodes) -->
+        <g stroke="rgba(216,205,181,0.35)" stroke-width="1" fill="none">
+          <path class="draw" data-delay="800" d="M 600 350 L 470 230" style="--dl: 180;"/>
+          <path class="draw" data-delay="800" d="M 600 350 L 600 150" style="--dl: 200;"/>
+          <path class="draw" data-delay="850" d="M 600 350 L 730 230" style="--dl: 180;"/>
+          <path class="draw" data-delay="850" d="M 600 350 L 800 350" style="--dl: 200;"/>
+          <path class="draw" data-delay="900" d="M 600 350 L 730 470" style="--dl: 180;"/>
+          <path class="draw" data-delay="900" d="M 600 350 L 600 550" style="--dl: 200;"/>
+          <path class="draw" data-delay="950" d="M 600 350 L 470 470" style="--dl: 180;"/>
+          <path class="draw" data-delay="950" d="M 600 350 L 400 350" style="--dl: 200;"/>
+        </g>
+
+        <!-- Outer ring connections (subtle) -->
+        <g stroke="rgba(216,205,181,0.18)" stroke-width="0.75" fill="none">
+          <path class="draw" data-delay="1100" d="M 470 230 L 320 130" style="--dl: 180;"/>
+          <path class="draw" data-delay="1100" d="M 730 230 L 880 130" style="--dl: 180;"/>
+          <path class="draw" data-delay="1100" d="M 800 350 L 950 350" style="--dl: 150;"/>
+          <path class="draw" data-delay="1100" d="M 730 470 L 880 570" style="--dl: 180;"/>
+          <path class="draw" data-delay="1100" d="M 470 470 L 320 570" style="--dl: 180;"/>
+          <path class="draw" data-delay="1100" d="M 400 350 L 250 350" style="--dl: 150;"/>
+        </g>
+
+        <!-- CENTRE: NEATeHUB -->
+        <g class="node" data-delay="100" transform="translate(600, 350)">
+          <circle r="48" fill="#1a2e1f" stroke="#c97849" stroke-width="1.5"/>
+          <circle r="36" fill="none" stroke="rgba(201,120,73,0.35)" stroke-width="0.75"/>
+          <text class="nm-sm" x="0" y="-2" text-anchor="middle" style="fill: #faf6ee; font-size: 16px;">NEATeHUB</text>
+          <text class="meta" x="0" y="14" text-anchor="middle">Jorhat · 2018</text>
+        </g>
+
+        <!-- RING 1: Institutional partners (4 nodes) -->
+        <g class="node" data-delay="400" transform="translate(470, 230)">
+          <circle r="22" fill="#243d2c" stroke="rgba(216,205,181,0.5)" stroke-width="1"/>
+          <text class="lbl-strong lbl" x="0" y="3" text-anchor="middle">RKVY</text>
+          <text class="meta" x="0" y="-36" text-anchor="middle">CENTRAL FUNDER</text>
+        </g>
+        <g class="node" data-delay="450" transform="translate(600, 150)">
+          <circle r="22" fill="#243d2c" stroke="rgba(216,205,181,0.5)" stroke-width="1"/>
+          <text class="lbl-strong lbl" x="0" y="3" text-anchor="middle">AIM</text>
+          <text class="meta" x="0" y="-36" text-anchor="middle">NITI AAYOG</text>
+        </g>
+        <g class="node" data-delay="500" transform="translate(730, 230)">
+          <circle r="22" fill="#243d2c" stroke="rgba(216,205,181,0.5)" stroke-width="1"/>
+          <text class="lbl-strong lbl" x="0" y="3" text-anchor="middle">ASRLM</text>
+          <text class="meta" x="0" y="-36" text-anchor="middle">STATE</text>
+        </g>
+        <g class="node" data-delay="550" transform="translate(800, 350)">
+          <circle r="22" fill="#243d2c" stroke="rgba(216,205,181,0.5)" stroke-width="1"/>
+          <text class="lbl-strong lbl" x="0" y="3" text-anchor="middle">AAU</text>
+          <text class="meta" x="40" y="3" text-anchor="start">HOST INSTITUTION</text>
+        </g>
+
+        <!-- RING 2: Operational layer (4 nodes) -->
+        <g class="node" data-delay="600" transform="translate(730, 470)">
+          <circle r="22" fill="#243d2c" stroke="rgba(216,205,181,0.5)" stroke-width="1"/>
+          <text class="lbl-strong lbl" x="0" y="3" text-anchor="middle">200+</text>
+          <text class="meta" x="0" y="40" text-anchor="middle">MENTOR NETWORK</text>
+        </g>
+        <g class="node" data-delay="650" transform="translate(600, 550)">
+          <circle r="22" fill="#243d2c" stroke="rgba(216,205,181,0.5)" stroke-width="1"/>
+          <text class="lbl-strong lbl" x="0" y="3" text-anchor="middle">KVKs</text>
+          <text class="meta" x="0" y="40" text-anchor="middle">FIELD STATIONS · 6 STATES</text>
+        </g>
+        <g class="node" data-delay="700" transform="translate(470, 470)">
+          <circle r="22" fill="#243d2c" stroke="rgba(216,205,181,0.5)" stroke-width="1"/>
+          <text class="lbl-strong lbl" x="0" y="3" text-anchor="middle">250+</text>
+          <text class="meta" x="0" y="40" text-anchor="middle">PORTFOLIO</text>
+        </g>
+        <g class="node" data-delay="750" transform="translate(400, 350)">
+          <circle r="22" fill="#243d2c" stroke="rgba(216,205,181,0.5)" stroke-width="1"/>
+          <text class="lbl-strong lbl" x="0" y="3" text-anchor="middle">LABS</text>
+          <text class="meta" x="-40" y="3" text-anchor="end">SHARED INFRA</text>
+        </g>
+
+        <!-- RING 3: Outer reach (6 nodes - producers, markets) -->
+        <g class="node" data-delay="1200" transform="translate(320, 130)">
+          <circle r="14" fill="none" stroke="rgba(216,205,181,0.4)" stroke-width="1"/>
+          <text class="meta" x="0" y="-22" text-anchor="middle">FPOs · 80+</text>
+        </g>
+        <g class="node" data-delay="1250" transform="translate(880, 130)">
+          <circle r="14" fill="none" stroke="rgba(216,205,181,0.4)" stroke-width="1"/>
+          <text class="meta" x="0" y="-22" text-anchor="middle">DA&FW</text>
+        </g>
+        <g class="node" data-delay="1300" transform="translate(950, 350)">
+          <circle r="14" fill="none" stroke="rgba(216,205,181,0.4)" stroke-width="1"/>
+          <text class="meta" x="0" y="-22" text-anchor="middle">IIT-G</text>
+        </g>
+        <g class="node" data-delay="1350" transform="translate(880, 570)">
+          <circle r="14" fill="none" stroke="rgba(216,205,181,0.4)" stroke-width="1"/>
+          <text class="meta" x="0" y="34" text-anchor="middle">INVESTORS</text>
+        </g>
+        <g class="node" data-delay="1400" transform="translate(320, 570)">
+          <circle r="14" fill="none" stroke="rgba(216,205,181,0.4)" stroke-width="1"/>
+          <text class="meta" x="0" y="34" text-anchor="middle">SHGs · 200+</text>
+        </g>
+        <g class="node" data-delay="1450" transform="translate(250, 350)">
+          <circle r="14" fill="none" stroke="rgba(216,205,181,0.4)" stroke-width="1"/>
+          <text class="meta" x="0" y="-22" text-anchor="middle">PRODUCERS</text>
+        </g>
+
+        <!-- Ring labels -->
+        <text class="lbl" x="600" y="450" text-anchor="middle" style="fill: rgba(216,205,181,0.3);">RING 01 · INSTITUTIONAL</text>
+        <text class="lbl" x="600" y="650" text-anchor="middle" style="fill: rgba(216,205,181,0.2);">RING 02 · OPERATIONAL · RING 03 · REACH</text>
+      </svg>
+      <button class="replay" data-replay="eco">↻ Replay</button>
+    </div>
+
+    <div class="legend">
+      <span><span class="sw" style="background: var(--tea-900); border: 1px solid var(--copper-500);"></span> NEATeHUB (centre)</span>
+      <span><span class="sw" style="background: var(--tea-800);"></span> Ring 01 · Institutional</span>
+      <span><span class="sw" style="background: var(--tea-800);"></span> Ring 02 · Operational</span>
+      <span><span class="sw" style="background: none; border: 1px solid var(--ink-500);"></span> Ring 03 · Reach</span>
+    </div>
+    <div class="dg-caption">USED ON · About page · Funder presentations · Impact reports · TOKEN · ecosystem-map-1</div>
+  </section>
+
+  <!-- Notes for the system -->
+  <section class="dg-block">
+    <div class="dg-block__head">
+      <div>
+        <div class="num">Notes</div>
+        <h2>For the Claude Code handoff.</h2>
+      </div>
+      <div class="meta">
+        <p>These diagrams are SVG with vanilla CSS animations. In Next.js they should become React components keyed by name (e.g. <code style="font-family: var(--mono); font-size: 13px; background: var(--cream-100); padding: 1px 4px; border-radius: 3px;">&lt;JourneyDiagram /&gt;</code>) with the same draw-in behaviour, triggered via IntersectionObserver. Animation tokens live in the design system as <code style="font-family: var(--mono); font-size: 13px; background: var(--cream-100); padding: 1px 4px; border-radius: 3px;">--ease-draw</code> and <code style="font-family: var(--mono); font-size: 13px; background: var(--cream-100); padding: 1px 4px; border-radius: 3px;">--dur-draw</code>.</p>
+      </div>
+    </div>
+    <div class="row" style="gap: 10px;">
+      <a href="index.html" class="btn btn-ghost">← Back to homepage</a>
+      <a href="for-founders.html" class="btn btn-primary">See diagrams in context <span class="arrow">→</span></a>
+    </div>
+  </section>
+
+</div>
+
+<div data-chrome-bottom></div>
+
+<script src="chrome.js"></script>
+<script src="shared.js"></script>
+<script>
+// Compute correct dash-length for each .draw path, then trigger animation.
+function prepareAnim(scope) {
+  scope.querySelectorAll('.draw').forEach(el => {
+    // Use the natural length unless a --dl override was set
+    let len;
+    if (typeof el.getTotalLength === 'function') {
+      try { len = el.getTotalLength(); } catch(e) { len = null; }
+    }
+    if (len && !isNaN(len)) {
+      el.style.setProperty('--dl', Math.ceil(len));
+      el.style.strokeDasharray = Math.ceil(len);
+      el.style.strokeDashoffset = Math.ceil(len);
+    }
+  });
+}
+function runAnim(scope) {
+  scope.querySelectorAll('.draw, .node, .fade').forEach(el => {
+    el.classList.remove('is-in');
+    const delay = parseInt(el.dataset.delay || '0', 10);
+    setTimeout(() => el.classList.add('is-in'), delay + 50);
+  });
+}
+function resetAnim(scope) {
+  prepareAnim(scope);
+  scope.querySelectorAll('.draw, .node, .fade').forEach(el => el.classList.remove('is-in'));
+  // Force reflow for restart
+  void scope.offsetWidth;
+  runAnim(scope);
+}
+
+// Set up IntersectionObserver to trigger when each canvas comes into view
+const canvases = document.querySelectorAll('.dg-canvas');
+canvases.forEach(c => prepareAnim(c));
+
+if ('IntersectionObserver' in window) {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        runAnim(e.target);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.25 });
+  canvases.forEach(c => io.observe(c));
+} else {
+  canvases.forEach(c => runAnim(c));
+}
+
+// Replay buttons
+document.querySelectorAll('[data-replay]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const id = btn.dataset.replay;
+    const scope = document.querySelector(`[data-anim="${id}"]`);
+    if (scope) resetAnim(scope);
+  });
+});
+</script>
+</body>
+</html>

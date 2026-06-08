@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Global patterns - NEATeHUB design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .pt-hero { padding: clamp(40px, 5vw, 64px) 0 clamp(24px, 3vw, 40px); }
+  .pt-hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(40px, 6vw, 88px); letter-spacing: -0.02em; line-height: 0.98; margin: 16px 0 0; max-width: 16ch; }
+
+  .pt-toc {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    margin-top: 40px;
+  }
+  .pt-toc a {
+    padding: 20px 24px 20px 0;
+    border-right: 1px solid var(--line-soft);
+    display: block;
+    transition: background .15s;
+  }
+  .pt-toc a:hover { background: var(--cream-100); padding-left: 12px; padding-right: 12px; }
+  .pt-toc a:last-child { border-right: 0; }
+  .pt-toc .num { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; color: var(--copper-600); }
+  .pt-toc .nm { font-family: var(--display); font-size: 20px; letter-spacing: -0.01em; margin-top: 8px; }
+  .pt-toc .ct { font-family: var(--mono); font-size: 11px; color: var(--ink-500); margin-top: 4px; }
+
+  .pt-block { padding: clamp(48px, 6vw, 80px) 0; border-top: 1px solid var(--line-soft); }
+  .pt-block__head {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(28px, 4vw, 56px);
+    align-items: end;
+    margin-bottom: 36px;
+  }
+  .pt-block__head h2 { font-family: var(--display); font-weight: 400; font-size: clamp(28px, 3.5vw, 48px); letter-spacing: -0.01em; line-height: 1.05; margin: 12px 0 0; max-width: 18ch; }
+  .pt-block__head .meta { color: var(--ink-700); font-size: 15px; line-height: 1.6; max-width: 50ch; }
+  .pt-block__head .meta p { margin: 0 0 12px; }
+
+  /* Variant grid */
+  .variant {
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    overflow: hidden;
+    margin-bottom: 20px;
+    background: var(--cream-50);
+  }
+  .variant__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px;
+    background: var(--cream-100);
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .variant__name {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-700);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .variant__name .ix { color: var(--copper-700); }
+  .variant__when { font-family: var(--mono); font-size: 11px; color: var(--ink-500); letter-spacing: 0.04em; }
+  .variant__demo { padding: 0; background: var(--cream-50); }
+  .variant__demo--device {
+    padding: 24px;
+    background: var(--cream-100);
+  }
+
+  /* Banner demo - wraps a real top-banner so it doesn't affect site chrome */
+  .demo-banner {
+    font-family: var(--sans);
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 20px;
+  }
+  .demo-banner .badge { flex: 0 0 auto; }
+  .demo-banner .close {
+    margin-left: auto;
+    background: none; border: 0;
+    opacity: .7;
+    padding: 4px;
+    cursor: pointer;
+  }
+  .demo-banner a { border-bottom: 1px solid currentColor; padding-bottom: 1px; }
+
+  .banner-announce { background: var(--tea-900); color: var(--cream-50); }
+  .banner-announce .badge { background: var(--copper-600); color: var(--cream-50); border-color: var(--copper-600); }
+
+  .banner-deadline { background: var(--copper-700); color: var(--cream-50); }
+  .banner-deadline .badge { background: var(--cream-50); color: var(--copper-700); border-color: var(--cream-50); }
+
+  .banner-info { background: var(--cream-100); color: var(--ink-900); border-bottom: 1px solid var(--line); }
+  .banner-info .badge { background: var(--tea-900); color: var(--cream-50); border-color: var(--tea-900); }
+
+  .banner-system { background: #5c3d28; color: var(--cream-50); }
+  .banner-system .badge { background: rgba(250,246,238,0.18); color: var(--cream-50); border-color: rgba(250,246,238,0.3); }
+
+  /* Popup variants - mock device frame */
+  .device {
+    background: var(--ink-900);
+    border-radius: 14px;
+    padding: 14px;
+    box-shadow: 0 8px 30px rgba(26,22,18,0.06);
+  }
+  .device__bar {
+    display: flex; gap: 6px; padding: 4px 4px 14px;
+  }
+  .device__bar span {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: rgba(250,246,238,0.2);
+  }
+  .device__bar span:nth-child(1) { background: #e95850; }
+  .device__bar span:nth-child(2) { background: #e9b350; }
+  .device__bar span:nth-child(3) { background: #4a9f54; }
+  .device__bar .addr { margin-left: 16px; font-family: var(--mono); font-size: 11px; color: rgba(250,246,238,0.5); align-self: center; }
+  .device__viewport {
+    background: var(--cream-50);
+    border-radius: 6px;
+    height: 360px;
+    overflow: hidden;
+    position: relative;
+  }
+  .device__viewport::before {
+    content: "";
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(rgba(58, 52, 45, 0.04) 1px, transparent 1px) 0 0 / 36px 36px,
+      linear-gradient(90deg, rgba(58, 52, 45, 0.04) 1px, transparent 1px) 0 0 / 36px 36px;
+  }
+  .device__viewport::after {
+    content: "PAGE CONTENT";
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--line-strong);
+  }
+
+  /* Modal - centered, blocking */
+  .modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(26,22,18,0.55);
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    backdrop-filter: blur(2px);
+  }
+  .modal {
+    background: var(--cream-50);
+    border-radius: var(--r-md);
+    width: 100%;
+    max-width: 380px;
+    padding: 24px;
+    box-shadow: 0 20px 60px rgba(26,22,18,0.25);
+    position: relative;
+    z-index: 2;
+  }
+  .modal .close-x {
+    position: absolute; top: 12px; right: 12px;
+    background: none; border: 0;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    color: var(--ink-500);
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .modal .close-x:hover { background: var(--cream-100); color: var(--ink-900); }
+  .modal h4 { font-family: var(--display); font-weight: 400; font-size: 22px; letter-spacing: -0.01em; margin: 0 0 10px; line-height: 1.15; }
+  .modal p { color: var(--ink-700); font-size: 13.5px; line-height: 1.55; margin: 0 0 18px; }
+  .modal .actions { display: flex; gap: 8px; }
+  .modal .actions .btn { flex: 1; }
+
+  /* Cookie variant - bottom-pinned */
+  .cookie-bar {
+    position: absolute;
+    left: 16px; right: 16px; bottom: 16px;
+    background: var(--ink-900);
+    color: var(--cream-50);
+    padding: 14px 16px;
+    border-radius: var(--r-md);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12.5px;
+    z-index: 2;
+  }
+  .cookie-bar p { margin: 0; flex: 1; line-height: 1.5; }
+  .cookie-bar a { color: var(--copper-500); border-bottom: 1px solid; padding-bottom: 1px; }
+  .cookie-bar button {
+    background: var(--copper-500);
+    color: var(--cream-50);
+    border: 0;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .cookie-bar button.ghost { background: transparent; border: 1px solid rgba(250,246,238,0.3); color: var(--cream-100); }
+
+  /* Slide-in toast (success) */
+  .toast {
+    position: absolute;
+    right: 16px; bottom: 16px;
+    background: var(--tea-900);
+    color: var(--cream-50);
+    padding: 14px 18px 14px 14px;
+    border-radius: var(--r-md);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    max-width: 320px;
+    box-shadow: 0 8px 30px rgba(26,22,18,0.2);
+    z-index: 2;
+  }
+  .toast .check {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--copper-500);
+    color: var(--cream-50);
+    display: grid; place-items: center;
+    font-size: 12px;
+    flex: 0 0 24px;
+  }
+  .toast .ttl { font-family: var(--display); font-size: 15px; letter-spacing: -0.01em; }
+  .toast .sub { font-size: 12px; color: var(--cream-300); margin-top: 1px; }
+
+  /* Side sheet (deadline reminder) */
+  .sheet {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: var(--cream-50);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    width: 280px;
+    padding: 18px;
+    box-shadow: 0 8px 30px rgba(26,22,18,0.08);
+    z-index: 2;
+  }
+  .sheet .eyebrow { margin: 0; }
+  .sheet h4 { font-family: var(--display); font-weight: 400; font-size: 18px; letter-spacing: -0.01em; margin: 8px 0; line-height: 1.2; }
+  .sheet p { font-size: 12px; color: var(--ink-700); line-height: 1.5; margin: 0 0 12px; }
+  .sheet .close-x { position: absolute; top: 8px; right: 8px; background: none; border: 0; color: var(--ink-500); cursor: pointer; font-size: 12px; }
+  .sheet .countdown { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; color: var(--copper-700); }
+
+  /* Variant rules / decision list */
+  .pt-rules {
+    margin-top: 28px;
+    padding: 24px;
+    background: var(--cream-100);
+    border-radius: var(--r-md);
+  }
+  .pt-rules h3 { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); margin: 0 0 14px; font-weight: 500; }
+  .pt-rules ul { list-style: none; padding: 0; margin: 0; }
+  .pt-rules li {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 24px;
+    padding: 10px 0;
+    border-top: 1px solid var(--line-soft);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .pt-rules li:first-child { border-top: 0; }
+  .pt-rules .when {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--copper-700);
+    padding-top: 2px;
+  }
+
+  /* Mobile nav screenshot */
+  .mnav-demo {
+    background: var(--cream-50);
+    padding: 24px;
+    height: 460px;
+    overflow: hidden;
+  }
+  .mnav-demo h4 { font-family: var(--display); font-weight: 400; font-size: 24px; letter-spacing: -0.01em; margin: 0 0 8px; }
+  .mnav-demo .item { padding: 14px 0; border-top: 1px solid var(--line-soft); font-family: var(--display); font-size: 22px; letter-spacing: -0.01em; }
+  .mnav-demo .item:last-of-type { border-bottom: 1px solid var(--line-soft); }
+
+  /* Language toggle states */
+  .lang-states {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .lang-states__cell {
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    text-align: center;
+    background: var(--cream-50);
+  }
+  .lang-states__cell .lang-toggle { margin: 12px auto 16px; }
+  .lang-states__cell .ctx { font-family: var(--mono); font-size: 11px; color: var(--ink-500); letter-spacing: 0.04em; }
+  .lang-states__cell .ctx strong { color: var(--ink-900); font-weight: 500; }
+
+  @media (max-width: 900px) {
+    .pt-toc { grid-template-columns: 1fr 1fr; }
+    .pt-toc a { border-right: none; border-bottom: 1px solid var(--line-soft); }
+    .pt-block__head { grid-template-columns: 1fr; gap: 16px; }
+    .lang-states { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .pt-toc { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body data-page="" data-screen-label="11c · Global patterns">
+
+<div data-chrome-top></div>
+
+<section class="pt-hero">
+  <div class="container">
+    <div class="eyebrow">Design system · Session 11</div>
+    <h1>Global patterns - banners, popups, system states.</h1>
+    <p class="lede mt-3">The patterns that appear on every page (banner, language toggle, mobile nav) plus the interruption patterns (popup, toast, side sheet) that the brief asks us to design carefully and use sparingly.</p>
+
+    <nav class="pt-toc">
+      <a href="#banners"><div class="num">01</div><div class="nm">Top banners</div><div class="ct">4 variants</div></a>
+      <a href="#popups"><div class="num">02</div><div class="nm">Popups & toasts</div><div class="ct">4 variants</div></a>
+      <a href="#language"><div class="num">03</div><div class="nm">Language toggle</div><div class="ct">3 states</div></a>
+      <a href="#mobile"><div class="num">04</div><div class="nm">Mobile nav</div><div class="ct">Open state</div></a>
+    </nav>
+  </div>
+</section>
+
+<div class="container">
+
+  <!-- ============ BANNERS ============ -->
+  <section class="pt-block" id="banners">
+    <div class="pt-block__head">
+      <div>
+        <div class="eyebrow">Pattern 01</div>
+        <h2>Top banner variants.</h2>
+      </div>
+      <div class="meta">
+        <p>Sits above the main header, dismissible, dismissal persists in localStorage. Used for time-sensitive announcements - never for marketing.</p>
+        <p>Four variants, ordered from most-used to escalating-urgency. Only one banner is ever live at a time.</p>
+      </div>
+    </div>
+
+    <!-- Variant A - Announcement -->
+    <div class="variant">
+      <div class="variant__head">
+        <div class="variant__name"><span class="ix">A ·</span> Announcement</div>
+        <div class="variant__when">Use 90% of the time · open applications, new content, soft updates</div>
+      </div>
+      <div class="variant__demo">
+        <div class="demo-banner banner-announce">
+          <span class="badge badge-tea" style="background: var(--copper-600); border-color: var(--copper-600);"><span class="dot"></span> APPLICATIONS OPEN</span>
+          <span><strong>Saranya Cohort 4</strong> - early & growth-stage agri-tech ventures. Apply by 30 June 2026. <a href="#">Check eligibility →</a></span>
+          <button class="close" aria-label="Dismiss">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Variant B - Deadline -->
+    <div class="variant">
+      <div class="variant__head">
+        <div class="variant__name"><span class="ix">B ·</span> Deadline warning</div>
+        <div class="variant__when">Use in the final 7 days before a deadline · stronger contrast</div>
+      </div>
+      <div class="variant__demo">
+        <div class="demo-banner banner-deadline">
+          <span class="badge"><span class="dot"></span> CLOSING IN 4 DAYS</span>
+          <span><strong>Saranya Cohort 4 applications close 30 June.</strong> Late applications roll into the next cycle (Aug review). <a href="#">Apply now →</a></span>
+          <button class="close" aria-label="Dismiss">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Variant C - Info -->
+    <div class="variant">
+      <div class="variant__head">
+        <div class="variant__name"><span class="ix">C ·</span> Informational</div>
+        <div class="variant__when">Use for context that doesn't drive action · new resource, policy update</div>
+      </div>
+      <div class="variant__demo">
+        <div class="demo-banner banner-info">
+          <span class="badge badge-tea">FY25 REPORT</span>
+          <span>Our FY25 Impact Report is out - ₹7.2Cr deployed, 70 ventures funded. <a href="resources.html">Read the report →</a></span>
+          <button class="close" aria-label="Dismiss">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Variant D - System -->
+    <div class="variant">
+      <div class="variant__head">
+        <div class="variant__name"><span class="ix">D ·</span> System notice</div>
+        <div class="variant__when">Use only for operational issues · maintenance, outage, application portal status</div>
+      </div>
+      <div class="variant__demo">
+        <div class="demo-banner banner-system">
+          <span class="badge">SCHEDULED · 22 JUN</span>
+          <span>The application portal will be offline for maintenance 22 June, 02:00-05:00 IST. <a href="#">More info →</a></span>
+          <button class="close" aria-label="Dismiss">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pt-rules">
+      <h3>Decision rules</h3>
+      <ul>
+        <li><span class="when">Choose A</span><span>Default. For any open-call or soft announcement. Tea-green background; copper accent for the action verb.</span></li>
+        <li><span class="when">Choose B</span><span>Only in the final 7 days before a hard deadline. Copper background - full attention.</span></li>
+        <li><span class="when">Choose C</span><span>When the goal is awareness, not action. Cream-100 background; low-contrast on purpose.</span></li>
+        <li><span class="when">Choose D</span><span>Only for operational notices. Soil-brown background - distinct so users learn to read it as system, not marketing.</span></li>
+        <li><span class="when">Never</span><span>Two banners at once. Marketing copy. Banners that re-appear after dismissal within 7 days.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ POPUPS ============ -->
+  <section class="pt-block" id="popups">
+    <div class="pt-block__head">
+      <div>
+        <div class="eyebrow">Pattern 02</div>
+        <h2>Popups, toasts, and side sheets.</h2>
+      </div>
+      <div class="meta">
+        <p>The brief reserves popups for "genuinely blocking announcements only." We provide four interruption levels - pick the lightest one that does the job.</p>
+        <p>Demos shown inside a mock browser frame so you can see what the page looks like beneath each.</p>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+
+      <!-- Modal -->
+      <div class="variant">
+        <div class="variant__head">
+          <div class="variant__name"><span class="ix">A ·</span> Blocking modal</div>
+          <div class="variant__when">Heaviest interruption · genuinely blocking only</div>
+        </div>
+        <div class="variant__demo variant__demo--device">
+          <div class="device">
+            <div class="device__bar"><span></span><span></span><span></span><span class="addr">neatehub.org/programs</span></div>
+            <div class="device__viewport">
+              <div class="modal-overlay">
+                <div class="modal">
+                  <button class="close-x">✕</button>
+                  <span class="badge badge-copper" style="margin-bottom: 4px;"><span class="dot"></span> SARANYA · 4 DAYS LEFT</span>
+                  <h4>Applications close 30 June.</h4>
+                  <p>You've been browsing programs - Saranya Cohort 4 closes in 4 days. Most applicants need 6 hours to assemble the application pack.</p>
+                  <div class="actions">
+                    <button class="btn btn-ghost btn-sm">Maybe later</button>
+                    <button class="btn btn-primary btn-sm">Start application</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Side sheet -->
+      <div class="variant">
+        <div class="variant__head">
+          <div class="variant__name"><span class="ix">B ·</span> Side sheet</div>
+          <div class="variant__when">Contextual reminder · doesn't block content</div>
+        </div>
+        <div class="variant__demo variant__demo--device">
+          <div class="device">
+            <div class="device__bar"><span></span><span></span><span></span><span class="addr">neatehub.org/programs/rkvy-raftaar</span></div>
+            <div class="device__viewport">
+              <div class="sheet">
+                <div class="eyebrow" style="font-size: 9px;">Reminder</div>
+                <button class="close-x">✕</button>
+                <h4>Next RKVY review closes 15 June.</h4>
+                <p>You're reading the RKVY program detail. Want a calendar reminder before the next deadline?</p>
+                <div class="countdown">▎ 26 DAYS · 14 HRS LEFT</div>
+                <button class="btn btn-primary btn-sm" style="width: 100%; margin-top: 12px;">Remind me</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cookie -->
+      <div class="variant">
+        <div class="variant__head">
+          <div class="variant__name"><span class="ix">C ·</span> Cookie / consent bar</div>
+          <div class="variant__when">Required by policy · lightest disruption</div>
+        </div>
+        <div class="variant__demo variant__demo--device">
+          <div class="device">
+            <div class="device__bar"><span></span><span></span><span></span><span class="addr">neatehub.org/</span></div>
+            <div class="device__viewport">
+              <div class="cookie-bar">
+                <p>We use minimal cookies for site analytics. No tracking pixels, no third-party ads. <a href="#">Privacy policy</a></p>
+                <button class="ghost">Reject all</button>
+                <button>Accept</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toast -->
+      <div class="variant">
+        <div class="variant__head">
+          <div class="variant__name"><span class="ix">D ·</span> Confirmation toast</div>
+          <div class="variant__when">For successful action feedback · auto-dismisses in 5s</div>
+        </div>
+        <div class="variant__demo variant__demo--device">
+          <div class="device">
+            <div class="device__bar"><span></span><span></span><span></span><span class="addr">neatehub.org/resources</span></div>
+            <div class="device__viewport">
+              <div class="toast">
+                <div class="check">✓</div>
+                <div>
+                  <div class="ttl">Subscribed</div>
+                  <div class="sub">You'll get the quarterly note. Unsubscribe any time.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pt-rules">
+      <h3>Decision rules</h3>
+      <ul>
+        <li><span class="when">Choose A</span><span>Only when an action genuinely cannot wait - e.g. a final 48-hour deadline. Frequency cap: at most once per user per quarter.</span></li>
+        <li><span class="when">Choose B</span><span>For context-appropriate reminders. The user is reading the relevant program detail; the sheet is on-topic, not random.</span></li>
+        <li><span class="when">Choose C</span><span>Cookie/privacy notice. Once per device, persisted indefinitely after acceptance.</span></li>
+        <li><span class="when">Choose D</span><span>Post-action confirmation only. Never for marketing, never for re-engagement.</span></li>
+      </ul>
+    </div>
+
+    <!-- Live demo button -->
+    <div style="margin-top: 24px; padding: 24px; border: 1px dashed var(--line-strong); border-radius: var(--r-md); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+      <div>
+        <h4 style="font-family: var(--display); font-weight: 400; font-size: 22px; letter-spacing: -0.01em; margin: 0 0 4px;">Try the modal live</h4>
+        <p style="margin: 0; color: var(--ink-700); font-size: 14px;">Click to see how variant A actually behaves - focus trap, ESC to close, backdrop click to dismiss.</p>
+      </div>
+      <button class="btn btn-primary" onclick="openLiveModal()">Open modal demo →</button>
+    </div>
+  </section>
+
+  <!-- ============ LANGUAGE ============ -->
+  <section class="pt-block" id="language">
+    <div class="pt-block__head">
+      <div>
+        <div class="eyebrow">Pattern 03</div>
+        <h2>Language toggle - three states.</h2>
+      </div>
+      <div class="meta">
+        <p>Trilingual support per the brief - English (primary), Hindi, Assamese. The toggle is permanent in the header; selection persists across sessions. For the v1 design phase, only the English content is built - toggling other languages routes to a "coming soon" page in production.</p>
+      </div>
+    </div>
+
+    <div class="lang-states">
+      <div class="lang-states__cell">
+        <div class="kicker">State 01</div>
+        <div class="lang-toggle" role="group">
+          <button aria-pressed="true">EN</button>
+          <button aria-pressed="false">हि</button>
+          <button aria-pressed="false">অ</button>
+        </div>
+        <div class="ctx"><strong>English active</strong> · default · 100% content coverage</div>
+      </div>
+      <div class="lang-states__cell">
+        <div class="kicker">State 02</div>
+        <div class="lang-toggle" role="group">
+          <button aria-pressed="false">EN</button>
+          <button aria-pressed="true">हि</button>
+          <button aria-pressed="false">অ</button>
+        </div>
+        <div class="ctx"><strong>Hindi active</strong> · CMS content + UI strings localised</div>
+      </div>
+      <div class="lang-states__cell">
+        <div class="kicker">State 03</div>
+        <div class="lang-toggle" role="group">
+          <button aria-pressed="false">EN</button>
+          <button aria-pressed="false">हि</button>
+          <button aria-pressed="true">অ</button>
+        </div>
+        <div class="ctx"><strong>Assamese active</strong> · localised; KVK + state content primary</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MOBILE NAV ============ -->
+  <section class="pt-block" id="mobile">
+    <div class="pt-block__head">
+      <div>
+        <div class="eyebrow">Pattern 04</div>
+        <h2>Mobile nav - open state.</h2>
+      </div>
+      <div class="meta">
+        <p>Full-screen drawer, slides down from top. Sub-items expand inline (no second-level navigation). Apply CTA pinned at the bottom; language toggle persists.</p>
+        <p>Try the live header on any page - the hamburger surfaces below 900px.</p>
+      </div>
+    </div>
+
+    <div style="max-width: 380px;">
+      <div class="device">
+        <div class="device__bar"><span></span><span></span><span></span><span class="addr">m.neatehub.org</span></div>
+        <div class="device__viewport" style="height: 540px;">
+          <div class="mnav-demo">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 24px; align-items: center;">
+              <span style="font-family: var(--sans); font-weight: 600;">NEATe<span style="color: var(--copper-600);">HUB</span></span>
+              <span style="font-family: var(--mono); font-size: 12px; color: var(--ink-500);">✕</span>
+            </div>
+            <div class="item">Home</div>
+            <div class="item">About</div>
+            <div class="item">Programs</div>
+            <div class="item">For Founders</div>
+            <div class="item">Portfolio</div>
+            <div class="item">Insights</div>
+            <div style="margin-top: 18px;"><button class="btn btn-primary" style="width: 100%;">Apply to a program →</button></div>
+            <div style="display: flex; justify-content: center; margin-top: 14px;">
+              <div class="lang-toggle">
+                <button aria-pressed="true">EN</button>
+                <button aria-pressed="false">हि</button>
+                <button aria-pressed="false">অ</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Notes -->
+  <section class="pt-block">
+    <div class="pt-block__head">
+      <div>
+        <div class="eyebrow">Notes</div>
+        <h2>For the Claude Code handoff.</h2>
+      </div>
+      <div class="meta">
+        <p>Banner dismissal persists in <code style="font-family: var(--mono); font-size: 13px; background: var(--cream-100); padding: 1px 4px;">localStorage</code> with a per-campaign key (so a new banner re-appears even after a previous dismissal). Modal frequency-cap belongs in CMS - not hardcoded.</p>
+        <p>In Next.js, each pattern becomes a portable React component (<code style="font-family: var(--mono); font-size: 13px; background: var(--cream-100); padding: 1px 4px;">&lt;TopBanner variant /&gt;</code>, <code style="font-family: var(--mono); font-size: 13px; background: var(--cream-100); padding: 1px 4px;">&lt;Modal /&gt;</code>, <code style="font-family: var(--mono); font-size: 13px; background: var(--cream-100); padding: 1px 4px;">&lt;Toast /&gt;</code>) with the variants enumerated as props.</p>
+      </div>
+    </div>
+    <div class="row" style="gap: 10px;">
+      <a href="404.html" class="btn btn-ghost">See the 404 page →</a>
+      <a href="search.html?q=RKVY%20eligibility" class="btn btn-ghost">See search results →</a>
+      <a href="diagrams.html" class="btn btn-ghost">See diagram language →</a>
+    </div>
+  </section>
+
+</div>
+
+<!-- Live modal (hidden) -->
+<div id="live-modal" style="position: fixed; inset: 0; background: rgba(26,22,18,0.55); display: none; place-items: center; padding: 24px; z-index: 9999; backdrop-filter: blur(2px);">
+  <div style="background: var(--cream-50); border-radius: var(--r-md); max-width: 440px; width: 100%; padding: 28px; position: relative; box-shadow: 0 20px 60px rgba(26,22,18,0.3);">
+    <button onclick="closeLiveModal()" style="position: absolute; top: 14px; right: 14px; background: none; border: 0; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 16px; color: var(--ink-500);" aria-label="Close">✕</button>
+    <span class="badge badge-copper" style="margin-bottom: 12px;"><span class="dot"></span> SARANYA · 4 DAYS LEFT</span>
+    <h3 style="font-family: var(--display); font-weight: 400; font-size: 28px; letter-spacing: -0.01em; margin: 0 0 12px; line-height: 1.15;">Applications close 30 June.</h3>
+    <p style="color: var(--ink-700); margin: 0 0 22px; line-height: 1.55;">You've been browsing programs - Saranya Cohort 4 closes in 4 days. Most applicants need 6 hours to assemble the application pack.</p>
+    <div style="display: flex; gap: 8px;">
+      <button class="btn btn-ghost" style="flex: 1;" onclick="closeLiveModal()">Maybe later</button>
+      <a href="for-founders.html#apply" class="btn btn-primary" style="flex: 1;">Start application</a>
+    </div>
+  </div>
+</div>
+
+<div data-chrome-bottom></div>
+
+<script src="chrome.js"></script>
+<script src="shared.js"></script>
+<script>
+// Live modal
+function openLiveModal() {
+  const m = document.getElementById('live-modal');
+  m.style.display = 'grid';
+  document.body.style.overflow = 'hidden';
+}
+function closeLiveModal() {
+  document.getElementById('live-modal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+document.getElementById('live-modal').addEventListener('click', (e) => {
+  if (e.target.id === 'live-modal') closeLiveModal();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeLiveModal();
+});
+window.openLiveModal = openLiveModal;
+window.closeLiveModal = closeLiveModal;
+
+// Demo banner dismiss (visual only, no persistence)
+document.querySelectorAll('.demo-banner .close').forEach(b => {
+  b.addEventListener('click', () => {
+    b.closest('.demo-banner').style.opacity = '0.4';
+    b.closest('.demo-banner').style.pointerEvents = 'none';
+    setTimeout(() => {
+      b.closest('.demo-banner').style.opacity = '1';
+      b.closest('.demo-banner').style.pointerEvents = '';
+    }, 1200);
+  });
+});
+
+// Lang toggle states - visual cycling between variants
+document.querySelectorAll('.lang-states .lang-toggle').forEach(group => {
+  group.querySelectorAll('button').forEach(b => {
+    b.addEventListener('click', () => {
+      group.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', 'false'));
+      b.setAttribute('aria-pressed', 'true');
+    });
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Infrastructure - NEATeHUB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .if-hero { padding: clamp(48px, 6vw, 80px) 0 clamp(40px, 5vw, 64px); }
+  .if-hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(40px, 6vw, 88px); letter-spacing: -0.02em; line-height: 0.98; margin: 16px 0 0; max-width: 16ch; }
+  .lab { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 4vw, 56px); align-items: center; padding: clamp(48px, 6vw, 80px) 0; border-top: 1px solid var(--line); }
+  .lab:nth-child(even) > .lab__media { order: 2; }
+  .lab__media .photo { aspect-ratio: 4/3; border-radius: var(--r-md); }
+  .lab .num { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; color: var(--copper-600); }
+  .lab h2 { font-family: var(--display); font-weight: 400; font-size: clamp(28px, 3.5vw, 48px); letter-spacing: -0.01em; line-height: 1.05; margin: 12px 0 0; }
+  .lab p { color: var(--ink-700); margin: 20px 0 0; max-width: 50ch; }
+  .lab__specs { display: grid; grid-template-columns: 1fr 1fr 1fr; margin-top: 28px; border-top: 1px solid var(--line-soft); border-bottom: 1px solid var(--line-soft); }
+  .lab__specs > div { padding: 14px 14px 14px 0; border-right: 1px solid var(--line-soft); }
+  .lab__specs > div:last-child { border-right: 0; }
+  .lab__specs .k { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-500); }
+  .lab__specs .v { font-family: var(--display); font-size: 20px; margin-top: 4px; letter-spacing: -0.01em; }
+  @media (max-width: 800px) { .lab, .lab:nth-child(even) { grid-template-columns: 1fr; } .lab:nth-child(even) > .lab__media { order: 0; } .lab__specs { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body data-page="infra" data-screen-label="09 Infrastructure">
+
+<div data-chrome-top></div>
+
+<section class="if-hero">
+  <div class="container">
+    <div class="eyebrow">Infrastructure</div>
+    <h1>Shared physical infrastructure for portfolio founders.</h1>
+    <p class="lede mt-3">Four facilities, all at the AAU Jorhat campus, available to founders in active programs. Equipment, training, and bench time are included - not metered.</p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="lab">
+    <div class="lab__media"><a href="infrastructure-robotics-lab.html"><div class="photo photo-tea"><div class="photo-label">PHOTO: Robotics Lab - wide shot showing CNC, robotic arms, workbenches</div></div></a></div>
+    <div>
+      <div class="num">01 / Lab</div>
+      <h2><a href="infrastructure-robotics-lab.html">Robotics Lab</a></h2>
+      <p>For deep-tech agri founders building hardware. Robotic arms, CNC and laser-cut prototyping, vision systems, electronics bench, and full PCB assembly capability.</p>
+      <div class="lab__specs">
+        <div><div class="k">Floor</div><div class="v">1,400 sq ft</div></div>
+        <div><div class="k">Access</div><div class="v">24/7</div></div>
+        <div><div class="k">Engineer</div><div class="v">Resident</div></div>
+      </div>
+      <div style="margin-top: 20px;"><a href="infrastructure-robotics-lab.html" class="btn btn-ghost btn-sm">Deep-dive <span class="arrow">→</span></a></div>
+    </div>
+  </div>
+
+  <div class="lab">
+    <div class="lab__media"><div class="photo"><div class="photo-label">PHOTO: Co-working floor with founders at desks, daylight</div></div></div>
+    <div>
+      <div class="num">02 / Co-working</div>
+      <h2>Founder co-working space</h2>
+      <p>Hot-desks for 30, four dedicated 4-seat pods for residential cohorts. Reservable rooms, secure storage, full A/V. Current occupants are visible on this page in production.</p>
+      <div class="lab__specs">
+        <div><div class="k">Desks</div><div class="v">30 + 16</div></div>
+        <div><div class="k">Pods</div><div class="v">4</div></div>
+        <div><div class="k">Hours</div><div class="v">07-23</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lab">
+    <div class="lab__media"><div class="photo photo-copper"><div class="photo-label">PHOTO: AI First room - GPU rack and workstations</div></div></div>
+    <div>
+      <div class="num">03 / Lab</div>
+      <h2>AI First</h2>
+      <p>GPU compute for portfolio ML teams. On-prem H100 cluster, dataset storage, supervised access to AAU's historical agronomy data.</p>
+      <div class="lab__specs">
+        <div><div class="k">Compute</div><div class="v">8× H100</div></div>
+        <div><div class="k">Storage</div><div class="v">320 TB</div></div>
+        <div><div class="k">Access</div><div class="v">SLURM</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lab">
+    <div class="lab__media"><div class="photo"><div class="photo-label">PHOTO: Build Lab - woodworking, metal fabrication, agri-equipment prototyping</div></div></div>
+    <div>
+      <div class="num">04 / Lab</div>
+      <h2>Build Lab</h2>
+      <p>Light fabrication for agri-equipment prototypes. Metalworking, woodworking, welding, surface finishing. Run by an engineer who's spent 20 years building for farm conditions.</p>
+      <div class="lab__specs">
+        <div><div class="k">Floor</div><div class="v">2,100 sq ft</div></div>
+        <div><div class="k">Tools</div><div class="v">40+</div></div>
+        <div><div class="k">Engineer</div><div class="v">Resident</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="bg-cream-100" style="margin-top: 56px;">
+  <div class="container">
+    <div class="row-between">
+      <div>
+        <div class="eyebrow">In a future session</div>
+        <h2 class="display display-m mt-2">Full photo essays, current-occupant view, and booking flow.</h2>
+        <p class="lede mt-2">This page is the v1 scaffold. Session 9 will treat each facility photo-heavily and surface live occupancy for the co-working space.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div data-chrome-bottom></div>
+<script src="chrome.js"></script>
+<script src="shared.js"></script>
+</body>
+</html>

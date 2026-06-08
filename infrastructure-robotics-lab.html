@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Robotics Lab - Infrastructure · NEATeHUB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  /* Breadcrumb */
+  .crumb {
+    padding: 16px var(--gutter) 0;
+    max-width: var(--max);
+    margin: 0 auto;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-500);
+  }
+  .crumb a:hover { color: var(--ink-900); }
+  .crumb .sep { margin: 0 8px; opacity: 0.5; }
+  .crumb .cur { color: var(--ink-900); }
+
+  /* Hero */
+  .lab-hero { padding: clamp(28px, 4vw, 48px) 0 0; }
+  .lab-hero__head {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: clamp(28px, 5vw, 64px);
+    align-items: end;
+    margin-bottom: clamp(32px, 4vw, 56px);
+  }
+  .lab-hero h1 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(56px, 8vw, 124px);
+    letter-spacing: -0.025em;
+    line-height: 0.94;
+    margin: 14px 0 0;
+  }
+  .lab-hero h1 small {
+    display: block;
+    font-family: var(--mono);
+    font-size: clamp(12px, 1vw, 14px);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-500);
+    font-weight: 400;
+    margin-top: 18px;
+  }
+  .lab-hero__pitch {
+    border-top: 1px solid var(--line);
+    padding-top: 20px;
+  }
+  .lab-hero__pitch p {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(18px, 1.5vw, 22px);
+    line-height: 1.45;
+    color: var(--ink-900);
+    margin: 0 0 22px;
+    max-width: 40ch;
+  }
+
+  /* Hero photo grid (multi-photo essay) */
+  .lab-photos {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 12px;
+    margin: 0 calc(-1 * var(--gutter)) clamp(40px, 5vw, 64px);
+    height: clamp(360px, 50vw, 600px);
+  }
+  .lab-photos .ph-1 { grid-row: 1 / 3; }
+  .lab-photos .ph-2 { grid-column: 2; grid-row: 1; }
+  .lab-photos .ph-3 { grid-column: 3; grid-row: 1; }
+  .lab-photos .ph-4 { grid-column: 2 / 4; grid-row: 2; }
+  .lab-photos .photo { height: 100%; }
+
+  /* Stats strip */
+  .lab-stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    margin: clamp(40px, 5vw, 64px) 0;
+  }
+  .lab-stats > div {
+    padding: 24px 24px 24px 0;
+    border-right: 1px solid var(--line-soft);
+  }
+  .lab-stats > div:last-child { border-right: 0; }
+  .lab-stats .k { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-500); }
+  .lab-stats .v {
+    font-family: var(--display);
+    font-size: clamp(24px, 2.6vw, 36px);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    margin-top: 8px;
+  }
+  .lab-stats .v small { font-family: var(--sans); font-size: 12px; font-weight: 400; color: var(--ink-500); letter-spacing: 0; display: block; margin-top: 4px; }
+
+  /* Sticky sub-nav */
+  .lab-subnav {
+    position: sticky;
+    top: 67px;
+    z-index: 20;
+    background: rgba(250,246,238,0.92);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .lab-subnav__inner {
+    display: flex; gap: 24px;
+    padding: 0 var(--gutter);
+    max-width: var(--max);
+    margin: 0 auto;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .lab-subnav__inner::-webkit-scrollbar { display: none; }
+  .lab-subnav a {
+    padding: 14px 0;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-500);
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+  }
+  .lab-subnav a.is-active { color: var(--ink-900); border-bottom-color: var(--copper-600); }
+  .lab-subnav a:hover { color: var(--ink-900); }
+
+  /* Sections */
+  .lab-section { padding: clamp(56px, 7vw, 96px) 0; border-top: 1px solid var(--line-soft); }
+  .lab-section:first-of-type { border-top: 0; }
+  .lab-section__head { margin-bottom: 40px; max-width: 720px; }
+  .lab-section__head h2 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(28px, 3.5vw, 48px);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    margin: 12px 0 0;
+  }
+  .lab-section__head .lede { margin-top: 16px; max-width: 60ch; }
+
+  /* Equipment grid */
+  .equip { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .equip-card {
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    overflow: hidden;
+    background: var(--cream-50);
+  }
+  .equip-card .photo { aspect-ratio: 4/3; }
+  .equip-card__body { padding: 20px 22px 24px; }
+  .equip-card .ix { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--copper-700); }
+  .equip-card h3 { font-family: var(--display); font-weight: 400; font-size: 22px; letter-spacing: -0.01em; line-height: 1.15; margin: 8px 0 10px; }
+  .equip-card p { color: var(--ink-700); font-size: 13.5px; line-height: 1.55; margin: 0 0 14px; }
+  .equip-card__spec {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 1px solid var(--line-soft);
+    padding-top: 14px;
+  }
+  .equip-card__spec > div { padding-right: 12px; border-right: 1px solid var(--line-soft); }
+  .equip-card__spec > div:last-child { border-right: 0; padding-right: 0; padding-left: 12px; }
+  .equip-card__spec .k { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-500); }
+  .equip-card__spec .v { font-family: var(--display); font-size: 16px; letter-spacing: -0.01em; margin-top: 2px; }
+
+  /* Engineer block */
+  .engineer {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: clamp(28px, 4vw, 64px);
+    align-items: center;
+  }
+  .engineer .photo { aspect-ratio: 4/5; border-radius: var(--r-md); }
+  .engineer h3 { font-family: var(--display); font-weight: 400; font-size: clamp(28px, 3vw, 40px); letter-spacing: -0.02em; line-height: 1.05; margin: 0 0 6px; }
+  .engineer .role { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--copper-700); margin-bottom: 18px; }
+  .engineer blockquote {
+    font-family: var(--display);
+    font-size: clamp(20px, 1.8vw, 26px);
+    line-height: 1.4;
+    color: var(--ink-900);
+    margin: 0 0 18px;
+    padding-left: 18px;
+    border-left: 2px solid var(--copper-600);
+    text-wrap: pretty;
+  }
+  .engineer p { color: var(--ink-700); margin: 0 0 14px; font-size: 15px; line-height: 1.6; max-width: 50ch; }
+  .engineer ul { list-style: none; padding: 0; margin: 18px 0 0; }
+  .engineer li { padding: 6px 0; font-family: var(--mono); font-size: 12px; letter-spacing: 0.05em; color: var(--ink-700); }
+  .engineer li strong { color: var(--copper-700); margin-right: 8px; }
+
+  /* Access ladder */
+  .access-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .access-card {
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    padding: 24px;
+    background: var(--cream-50);
+    display: flex; flex-direction: column;
+  }
+  .access-card.is-current { background: var(--tea-900); color: var(--cream-50); border-color: var(--tea-900); }
+  .access-card .ix { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--copper-700); }
+  .access-card.is-current .ix { color: var(--copper-500); }
+  .access-card h3 { font-family: var(--display); font-weight: 400; font-size: 24px; letter-spacing: -0.01em; margin: 12px 0 8px; }
+  .access-card p { font-size: 14px; line-height: 1.55; color: var(--ink-700); margin: 0 0 16px; flex: 1; }
+  .access-card.is-current p { color: var(--cream-100); }
+  .access-card .price {
+    font-family: var(--display);
+    font-size: 24px;
+    letter-spacing: -0.01em;
+    color: var(--ink-900);
+    padding-top: 14px;
+    border-top: 1px solid var(--line-soft);
+  }
+  .access-card.is-current .price { color: var(--copper-500); border-top-color: rgba(216,205,181,0.2); }
+  .access-card .price small {
+    font-family: var(--sans); font-size: 12px; font-weight: 400;
+    color: var(--ink-500); display: block; margin-top: 4px;
+  }
+  .access-card.is-current .price small { color: var(--cream-300); }
+
+  /* Current occupants */
+  .occupants {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .occupant {
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    padding: 18px 20px;
+    background: var(--cream-50);
+  }
+  .occupant .name { font-family: var(--display); font-size: 18px; letter-spacing: -0.01em; margin-bottom: 4px; }
+  .occupant .what { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--copper-700); }
+  .occupant .ctx { font-size: 13px; color: var(--ink-700); margin-top: 8px; line-height: 1.5; }
+
+  /* Booking */
+  .booking {
+    background: var(--cream-100);
+    border-radius: var(--r-lg);
+    padding: clamp(28px, 4vw, 48px);
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: clamp(28px, 4vw, 56px);
+    align-items: start;
+  }
+  .booking h3 { font-family: var(--display); font-weight: 400; font-size: clamp(24px, 2.4vw, 32px); letter-spacing: -0.01em; margin: 12px 0 12px; }
+  .booking p { color: var(--ink-700); font-size: 15px; line-height: 1.6; margin: 0 0 18px; max-width: 50ch; }
+  .booking__steps { list-style: none; padding: 0; margin: 0; counter-reset: bk-step; }
+  .booking__steps li {
+    counter-increment: bk-step;
+    padding: 14px 0 14px 44px;
+    border-top: 1px solid var(--line);
+    position: relative;
+    font-family: var(--display);
+    font-size: 18px;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+  .booking__steps li:first-child { border-top: 0; padding-top: 14px; }
+  .booking__steps li::before {
+    content: counter(bk-step, decimal-leading-zero);
+    position: absolute;
+    left: 0; top: 14px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--copper-700);
+  }
+  .booking__steps li small {
+    display: block;
+    font-family: var(--sans);
+    font-size: 13.5px;
+    color: var(--ink-700);
+    margin-top: 4px;
+    font-weight: 400;
+    line-height: 1.55;
+  }
+
+  /* Other labs */
+  .other-labs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .other-lab {
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    overflow: hidden;
+  }
+  .other-lab:hover { border-color: var(--ink-900); }
+  .other-lab .photo { aspect-ratio: 16/10; }
+  .other-lab .body { padding: 18px 20px 20px; }
+  .other-lab .ix { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--copper-700); }
+  .other-lab h3 { font-family: var(--display); font-weight: 400; font-size: 22px; letter-spacing: -0.01em; margin: 8px 0 8px; }
+  .other-lab p { color: var(--ink-700); font-size: 13.5px; line-height: 1.5; margin: 0; }
+
+  @media (max-width: 900px) {
+    .lab-hero__head { grid-template-columns: 1fr; }
+    .lab-photos {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto auto;
+      height: auto;
+    }
+    .lab-photos .ph-1 { grid-row: 1; grid-column: 1 / 3; aspect-ratio: 16/10; }
+    .lab-photos .ph-2 { grid-column: 1; grid-row: 2; aspect-ratio: 4/3; }
+    .lab-photos .ph-3 { grid-column: 2; grid-row: 2; aspect-ratio: 4/3; }
+    .lab-photos .ph-4 { grid-column: 1 / 3; grid-row: 3; aspect-ratio: 16/9; }
+    .lab-stats { grid-template-columns: 1fr 1fr; }
+    .equip { grid-template-columns: 1fr; }
+    .engineer { grid-template-columns: 1fr; }
+    .access-grid { grid-template-columns: 1fr; }
+    .occupants { grid-template-columns: 1fr 1fr; }
+    .booking { grid-template-columns: 1fr; }
+    .other-labs { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .lab-stats { grid-template-columns: 1fr; }
+    .occupants { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body data-page="infra" data-screen-label="09 Infrastructure · Robotics Lab">
+
+<div data-chrome-top></div>
+
+<nav class="crumb" aria-label="Breadcrumb">
+  <a href="index.html">Home</a><span class="sep">/</span><a href="infrastructure.html">Infrastructure</a><span class="sep">/</span><span class="cur">Robotics Lab</span>
+</nav>
+
+<!-- Hero -->
+<section class="lab-hero">
+  <div class="container">
+    <div class="lab-hero__head">
+      <div>
+        <div class="eyebrow">Lab 01 of 04 · Inaugurated April 2024</div>
+        <h1>Robotics Lab<small>For deep-tech agri founders building hardware</small></h1>
+      </div>
+      <div class="lab-hero__pitch">
+        <p>1,400 square feet of shared prototyping space - CNC, robotic arms, vision systems, PCB assembly. Open 24/7 to founders in active NEATeHUB programmes. One resident engineer who's spent two decades building for farm conditions.</p>
+        <div class="row" style="gap: 10px;">
+          <a href="#booking" class="btn btn-primary">Request access <span class="arrow">→</span></a>
+          <a href="#equipment" class="btn btn-ghost">See equipment</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Multi-photo essay -->
+    <div class="lab-photos">
+      <div class="photo photo-tea ph-1">
+        <div class="photo-label">PHOTO: Wide hero shot - Robotics Lab interior, mid-morning natural light from south-facing windows, founder mid-work at workbench in foreground, CNC machine and robotic arms in soft background</div>
+      </div>
+      <div class="photo ph-2">
+        <div class="photo-label">PHOTO: Close-up - robotic arm during a precision pick-and-place demonstration, focus tight on end-effector</div>
+      </div>
+      <div class="photo photo-copper ph-3">
+        <div class="photo-label">PHOTO: Hands at the PCB assembly bench, soldering iron mid-action, components organised, shallow depth-of-field</div>
+      </div>
+      <div class="photo ph-4">
+        <div class="photo-label">PHOTO: Wide shot of resident engineer Pranab Borgohain demonstrating the CNC mill to two cohort founders, late afternoon light</div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="lab-stats">
+      <div><div class="k">Floor area</div><div class="v">1,400 <small>sq ft</small></div></div>
+      <div><div class="k">Access</div><div class="v">24/7 <small>active cohorts</small></div></div>
+      <div><div class="k">Equipment items</div><div class="v">22 <small>major</small></div></div>
+      <div><div class="k">Resident engineer</div><div class="v">1.0 <small>full-time</small></div></div>
+      <div><div class="k">Current occupants</div><div class="v">7 <small>ventures</small></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Sub-nav -->
+<nav class="lab-subnav" aria-label="Section navigation">
+  <div class="lab-subnav__inner">
+    <a href="#story" class="is-active">Overview</a>
+    <a href="#equipment">Equipment</a>
+    <a href="#engineer">Resident engineer</a>
+    <a href="#access">Access ladder</a>
+    <a href="#occupants">Current occupants</a>
+    <a href="#booking">Book</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- Story -->
+  <section class="lab-section" id="story">
+    <div class="lab-section__head">
+      <div class="eyebrow">Overview</div>
+      <h2>Built for founders who need a CNC at 11pm.</h2>
+      <p class="lede">The Robotics Lab was inaugurated in April 2024 to answer a specific problem we'd watched repeat for years - deep-tech founders in our cohort were renting hourly bench time at college labs in Guwahati and losing two days per week to commute. We built shared infrastructure so that doesn't happen anymore. Founders in active programmes get 24/7 swipe access. There's no metering. There's no booking system for the equipment itself - only for the engineer's time, when you need supervised training.</p>
+    </div>
+  </section>
+
+  <!-- Equipment -->
+  <section class="lab-section" id="equipment">
+    <div class="lab-section__head">
+      <div class="eyebrow">Equipment</div>
+      <h2>What's on the floor.</h2>
+      <p class="lede">A representative selection. The full inventory list is in the orientation pack, including the dozen smaller hand-tools and benchtop instruments we don't photograph well.</p>
+    </div>
+
+    <div class="equip">
+      <article class="equip-card">
+        <div class="photo photo-tea"><div class="photo-label">PHOTO: 6-axis robotic arm with workpiece, isolated on workbench</div></div>
+        <div class="equip-card__body">
+          <div class="ix">01 / Robotics</div>
+          <h3>UR5e 6-axis robotic arm</h3>
+          <p>Programmable collaborative robot for pick-and-place, agri-task prototyping, and end-effector testing. Two units available.</p>
+          <div class="equip-card__spec">
+            <div><div class="k">Reach</div><div class="v">850 mm</div></div>
+            <div><div class="k">Payload</div><div class="v">5 kg</div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="equip-card">
+        <div class="photo"><div class="photo-label">PHOTO: CNC mill in operation, swarf visible</div></div>
+        <div class="equip-card__body">
+          <div class="ix">02 / Machining</div>
+          <h3>Tormach 1100MX CNC mill</h3>
+          <p>3-axis CNC milling for aluminium and mild steel parts. ATC-equipped. Suitable for production-quality prototype runs.</p>
+          <div class="equip-card__spec">
+            <div><div class="k">Work envelope</div><div class="v">762×304 mm</div></div>
+            <div><div class="k">Spindle</div><div class="v">10,000 rpm</div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="equip-card">
+        <div class="photo photo-copper"><div class="photo-label">PHOTO: Laser cutter in action, sheet of plywood being cut</div></div>
+        <div class="equip-card__body">
+          <div class="ix">03 / Fabrication</div>
+          <h3>Trotec Speedy 400 laser cutter</h3>
+          <p>120W CO₂ laser. Wood, acrylic, fabric, leather. The most-used machine in the lab by hours-of-operation.</p>
+          <div class="equip-card__spec">
+            <div><div class="k">Bed</div><div class="v">1000×610 mm</div></div>
+            <div><div class="k">Power</div><div class="v">120 W</div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="equip-card">
+        <div class="photo"><div class="photo-label">PHOTO: PCB assembly station with reflow oven</div></div>
+        <div class="equip-card__body">
+          <div class="ix">04 / Electronics</div>
+          <h3>PCB assembly bench</h3>
+          <p>Pick-and-place, reflow oven, hot-air rework, full SMD assembly capability. Includes stereo microscope.</p>
+          <div class="equip-card__spec">
+            <div><div class="k">Min component</div><div class="v">0402</div></div>
+            <div><div class="k">Throughput</div><div class="v">~50/hr</div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="equip-card">
+        <div class="photo photo-tea"><div class="photo-label">PHOTO: Vision system with calibration target</div></div>
+        <div class="equip-card__body">
+          <div class="ix">05 / Sensing</div>
+          <h3>Vision & sensing test rig</h3>
+          <p>Calibrated lighting, motorised stages, multiple camera mounts. For founders developing agri-vision systems.</p>
+          <div class="equip-card__spec">
+            <div><div class="k">Cameras</div><div class="v">4 channel</div></div>
+            <div><div class="k">Stage</div><div class="v">XYZ + tilt</div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="equip-card">
+        <div class="photo"><div class="photo-label">PHOTO: 3D printer farm with parts in progress</div></div>
+        <div class="equip-card__body">
+          <div class="ix">06 / Prototyping</div>
+          <h3>3D printer farm</h3>
+          <p>Four FDM printers + one SLA. PLA, PETG, TPU, ABS, and high-resolution resin. Materials charged at cost.</p>
+          <div class="equip-card__spec">
+            <div><div class="k">Build vol.</div><div class="v">250×250×300</div></div>
+            <div><div class="k">Min layer</div><div class="v">50 µm</div></div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Resident engineer -->
+  <section class="lab-section" id="engineer">
+    <div class="lab-section__head">
+      <div class="eyebrow">Resident engineer</div>
+      <h2>The most important asset on the floor.</h2>
+    </div>
+
+    <div class="engineer">
+      <div class="photo">
+        <div class="photo-label">PHOTO: Pranab Borgohain - environmental portrait in lab, at a CNC mill, eye-level, available light, workmanlike</div>
+      </div>
+      <div>
+        <h3>Pranab Borgohain</h3>
+        <div class="role">Resident engineer · NEATeHUB Robotics Lab</div>
+
+        <blockquote>Founders come in thinking the machine is the bottleneck. The machine is never the bottleneck. The bottleneck is knowing what to build first.</blockquote>
+
+        <p>Pranab joined NEATeHUB in March 2024 after twenty years of building for farm conditions across India - from sugar-cane harvesters to fish-feed dispensers to pond-aeration sensor packs. He runs the lab six days a week. Founders book his time for supervised training, design reviews, and the inevitable "this should work but it doesn't" sessions.</p>
+
+        <p>He's also the safety officer, the inventory keeper, and the person who teaches you not to put metal in the laser cutter.</p>
+
+        <ul>
+          <li><strong>Office hours</strong> Mon-Sat · 09:30-18:00</li>
+          <li><strong>Training slots</strong> Tue & Thu afternoons</li>
+          <li><strong>Booking</strong> via the cohort Slack or in person</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Access ladder -->
+  <section class="lab-section" id="access">
+    <div class="lab-section__head">
+      <div class="eyebrow">Access</div>
+      <h2>Three tiers, by program status.</h2>
+      <p class="lede">If you're in an active NEATeHUB programme, access is free and unmetered. Other access tiers exist for alumni, partner-university students, and external researchers.</p>
+    </div>
+
+    <div class="access-grid">
+      <div class="access-card is-current">
+        <div class="ix">Tier 01 · Default</div>
+        <h3>Active programme founder</h3>
+        <p>Any founder currently in RKVY (Navyam · Isanya · Saranya), AIC, ASRLM, Student First, or TIC-AISF. 24/7 swipe access. Unmetered. Materials at cost.</p>
+        <div class="price">Free<small>Included in programme</small></div>
+      </div>
+      <div class="access-card">
+        <div class="ix">Tier 02</div>
+        <h3>NEATeHUB alumni</h3>
+        <p>Founders from any past cohort. 09:00-21:00 access. Day-passes available. Materials at cost + 10%.</p>
+        <div class="price">₹500<small>/ day pass</small></div>
+      </div>
+      <div class="access-card">
+        <div class="ix">Tier 03</div>
+        <h3>External researcher</h3>
+        <p>Partner-university students, external researchers, sector partners. Supervised access only. Project-based application.</p>
+        <div class="price">₹1,500<small>/ day pass · supervised</small></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Current occupants -->
+  <section class="lab-section" id="occupants">
+    <div class="lab-section__head">
+      <div class="eyebrow">Currently in the lab</div>
+      <h2>Seven ventures, this month.</h2>
+      <p class="lede">Updated weekly. If you're considering applying to NEATeHUB, this is a useful proxy for whether the lab makes sense for your venture.</p>
+    </div>
+
+    <div class="occupants">
+      <div class="occupant">
+        <div class="what">Robotics · TIC-AISF</div>
+        <div class="name">Pukhuri Fish</div>
+        <div class="ctx">Pond-sensor enclosure prototyping. Using the laser cutter + 3D printers heavily.</div>
+      </div>
+      <div class="occupant">
+        <div class="what">Sensing · Saranya '24</div>
+        <div class="name">Mati Labs</div>
+        <div class="ctx">Mobile soil-test rig - vision-system calibration, PCB iteration.</div>
+      </div>
+      <div class="occupant">
+        <div class="what">Hardware · Saranya '24</div>
+        <div class="name">Thalo Cold</div>
+        <div class="ctx">Cold-chain micro-unit sensor pack revision. Bench-testing reliability.</div>
+      </div>
+      <div class="occupant">
+        <div class="what">Mech · Saranya '23</div>
+        <div class="name">Bambusa Build</div>
+        <div class="ctx">Engineered-bamboo joinery jig prototypes. CNC + Build Lab cross-use.</div>
+      </div>
+      <div class="occupant">
+        <div class="what">Robotics · Isanya '25</div>
+        <div class="name">AgriPick</div>
+        <div class="ctx">Robotic harvester end-effector design for tea leaf. Early-stage.</div>
+      </div>
+      <div class="occupant">
+        <div class="what">Sensing · TIC-AISF</div>
+        <div class="name">PondML</div>
+        <div class="ctx">Water-quality vision system. Lighting calibration ongoing.</div>
+      </div>
+      <div class="occupant">
+        <div class="what">Hardware · AIC</div>
+        <div class="name">Brahma Aqua</div>
+        <div class="ctx">Fish-feed dispenser hardware revision. CNC + electronics.</div>
+      </div>
+      <div class="occupant" style="background: var(--cream-100); border-style: dashed;">
+        <div class="what" style="color: var(--ink-500);">Vacant</div>
+        <div class="name" style="color: var(--ink-500);">1 slot</div>
+        <div class="ctx">Reserved for the incoming Isanya Cohort 7 (Sep 2026).</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Booking -->
+  <section class="lab-section" id="booking">
+    <div class="booking">
+      <div>
+        <div class="eyebrow">How to book</div>
+        <h3>From walking in the door to swipe-card access.</h3>
+        <p>If you're in an active cohort, this is a one-week process. If you're an alumnus or external researcher, allow two to three weeks for project review.</p>
+        <a href="for-founders.html#wizard" class="btn btn-primary">Apply to a programme first <span class="arrow">→</span></a>
+      </div>
+      <ol class="booking__steps">
+        <li>Submit an access request<small>Through the cohort Slack channel, or via the form below if you're not in a programme yet.</small></li>
+        <li>Orientation with Pranab<small>90-minute walk-through. Safety briefing. Inventory tour. Equipment-specific training scheduled.</small></li>
+        <li>Equipment-specific training<small>Tue/Thu afternoon slots. You only get trained on equipment you're going to use. Sign-off per machine.</small></li>
+        <li>Swipe card issued<small>24/7 access for active cohorts. Time-limited swipe for alumni/external.</small></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Other labs -->
+  <section class="lab-section">
+    <div class="lab-section__head">
+      <div class="eyebrow">Three other facilities</div>
+      <h2>Need something else? Try one of these.</h2>
+    </div>
+
+    <div class="other-labs">
+      <a href="infrastructure.html" class="other-lab">
+        <div class="photo"><div class="photo-label">PHOTO: Build Lab - woodworking and metal fabrication</div></div>
+        <div class="body">
+          <div class="ix">Lab 02</div>
+          <h3>Build Lab</h3>
+          <p>Light fabrication for agri-equipment prototypes. Metalworking, woodworking, welding, surface finishing.</p>
+        </div>
+      </a>
+      <a href="infrastructure.html" class="other-lab">
+        <div class="photo photo-copper"><div class="photo-label">PHOTO: AI First - GPU rack and workstations</div></div>
+        <div class="body">
+          <div class="ix">Lab 03</div>
+          <h3>AI First</h3>
+          <p>GPU compute for portfolio ML teams. 8× H100, dataset storage, supervised access to AAU's historical agronomy data.</p>
+        </div>
+      </a>
+      <a href="infrastructure.html" class="other-lab">
+        <div class="photo"><div class="photo-label">PHOTO: Co-working space</div></div>
+        <div class="body">
+          <div class="ix">Lab 04</div>
+          <h3>Co-working</h3>
+          <p>30 hot-desks plus four 4-seat pods for residential cohorts. Reservable rooms, secure storage, full A/V.</p>
+        </div>
+      </a>
+    </div>
+  </section>
+
+</div>
+
+<div data-chrome-bottom></div>
+
+<script src="chrome.js"></script>
+<script src="shared.js"></script>
+<script>
+// Sticky sub-nav active state on scroll
+const subnavLinks = document.querySelectorAll('.lab-subnav a');
+const sections = [...subnavLinks].map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+function syncSubnav() {
+  const top = window.scrollY + 180;
+  let active = sections[0];
+  for (const s of sections) { if (s.offsetTop <= top) active = s; }
+  subnavLinks.forEach(a => a.classList.toggle('is-active', a.getAttribute('href') === '#' + active.id));
+}
+window.addEventListener('scroll', syncSubnav, { passive: true });
+syncSubnav();
+subnavLinks.forEach(a => {
+  a.addEventListener('click', (e) => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    const y = target.getBoundingClientRect().top + window.scrollY - 110;
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  });
+});
+</script>
+</body>
+</html>

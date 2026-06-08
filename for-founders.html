@@ -1,0 +1,636 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>For Founders - NEATeHUB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .ff-hero { padding: clamp(48px, 6vw, 80px) 0 clamp(40px, 4vw, 56px); }
+  .ff-hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(44px, 6vw, 96px); letter-spacing: -0.02em; line-height: 0.98; margin: 16px 0 0; }
+  .ff-hero h1 em { font-style: italic; color: var(--copper-600); }
+
+  /* Support pillars */
+  .pillars { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .pillar { padding: 32px 28px 32px 0; border-right: 1px solid var(--line-soft); }
+  .pillar:last-child { border-right: 0; }
+  .pillar .idx { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; color: var(--copper-600); }
+  .pillar h3 { font-family: var(--display); font-weight: 400; font-size: 28px; letter-spacing: -0.01em; line-height: 1.1; margin: 14px 0 12px; }
+  .pillar p { font-size: 14px; line-height: 1.55; color: var(--ink-700); margin: 0; }
+
+  /* Sectors */
+  .sectors { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+  .sector-tag {
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    padding: 20px 16px;
+    transition: background .2s, color .2s, border-color .2s;
+  }
+  .sector-tag:hover { background: var(--tea-900); color: var(--cream-50); border-color: var(--tea-900); }
+  .sector-tag .icon {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--cream-100);
+    color: var(--tea-800);
+    display: grid; place-items: center;
+    margin-bottom: 14px;
+    font-family: var(--display); font-size: 18px;
+    border: 1px solid var(--line-soft);
+  }
+  .sector-tag:hover .icon { background: var(--copper-600); color: var(--cream-50); border-color: var(--copper-600); }
+  .sector-tag .name { font-family: var(--display); font-size: 18px; letter-spacing: -0.01em; }
+  .sector-tag .count { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; color: var(--ink-500); margin-top: 4px; }
+  .sector-tag:hover .count { color: var(--cream-300); }
+
+  /* Wizard */
+  .wizard-wrap {
+    background: var(--tea-900);
+    color: var(--cream-50);
+    border-radius: var(--r-lg);
+    padding: clamp(28px, 4vw, 48px);
+    margin-top: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .wizard-wrap::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(rgba(216,205,181,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(216,205,181,0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+  .wizard {
+    position: relative;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 40px;
+  }
+  .wizard__nav { border-right: 1px solid rgba(216,205,181,0.15); padding-right: 24px; }
+  .wizard__nav-step {
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    gap: 12px;
+    padding: 14px 0;
+    border-top: 1px solid rgba(216,205,181,0.1);
+    opacity: 0.5;
+    transition: opacity .2s;
+  }
+  .wizard__nav-step:first-of-type { border-top: 0; }
+  .wizard__nav-step.is-active { opacity: 1; }
+  .wizard__nav-step.is-done { opacity: 0.8; }
+  .wizard__nav-step .num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 1px solid rgba(216,205,181,0.3);
+    display: grid; place-items: center;
+    font-family: var(--mono); font-size: 11px;
+    color: var(--cream-300);
+  }
+  .wizard__nav-step.is-active .num { background: var(--copper-600); border-color: var(--copper-600); color: var(--cream-50); }
+  .wizard__nav-step.is-done .num { background: var(--tea-600); border-color: var(--tea-600); color: var(--cream-50); }
+  .wizard__nav-step .label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cream-300);
+  }
+  .wizard__nav-step .title {
+    font-family: var(--display);
+    font-size: 17px;
+    letter-spacing: -0.01em;
+    color: var(--cream-50);
+    margin-top: 2px;
+  }
+
+  .wizard__panel { min-height: 440px; display: flex; flex-direction: column; justify-content: space-between; }
+  .wizard__step { display: none; flex-direction: column; gap: 24px; }
+  .wizard__step.is-active { display: flex; }
+  .wizard__q {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--copper-500);
+  }
+  .wizard__h {
+    font-family: var(--display);
+    font-size: clamp(28px, 3vw, 44px);
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    margin: 0;
+    color: var(--cream-50);
+    max-width: 18ch;
+  }
+  .wizard__hint {
+    color: var(--cream-300);
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0;
+    max-width: 50ch;
+  }
+  .opts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .opts.opts-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .opt {
+    display: flex; flex-direction: column; gap: 6px;
+    padding: 18px 18px;
+    background: rgba(250,246,238,0.04);
+    border: 1px solid rgba(216,205,181,0.15);
+    border-radius: var(--r-md);
+    cursor: pointer;
+    text-align: left;
+    color: var(--cream-50);
+    font: inherit;
+    transition: background .15s, border-color .15s;
+  }
+  .opt:hover { background: rgba(250,246,238,0.07); border-color: rgba(216,205,181,0.3); }
+  .opt.is-sel { background: var(--copper-600); border-color: var(--copper-600); }
+  .opt .opt__title { font-family: var(--display); font-size: 20px; letter-spacing: -0.01em; }
+  .opt .opt__sub { font-family: var(--mono); font-size: 11px; color: var(--cream-300); letter-spacing: 0.06em; text-transform: uppercase; }
+  .opt.is-sel .opt__sub { color: var(--cream-100); }
+
+  .wizard__footer {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(216,205,181,0.15);
+  }
+  .wizard__progress { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream-300); }
+
+  .wizard .btn-primary { background: var(--copper-600); color: var(--cream-50); }
+  .wizard .btn-primary:hover { background: var(--copper-700); }
+  .wizard .btn-ghost { color: var(--cream-50); border-color: rgba(216,205,181,0.3); }
+  .wizard .btn-ghost:hover { background: rgba(250,246,238,0.06); color: var(--cream-50); }
+
+  /* Result panel */
+  .wizard__result { display: none; }
+  .wizard__result.is-active { display: flex; flex-direction: column; gap: 24px; }
+  .result-heading { font-family: var(--display); font-size: clamp(32px, 4vw, 56px); letter-spacing: -0.02em; line-height: 1.05; margin: 0; color: var(--cream-50); }
+  .result-matches { display: grid; gap: 12px; margin-top: 8px; }
+  .result-match {
+    display: grid;
+    grid-template-columns: 60px 1fr auto;
+    gap: 16px;
+    align-items: center;
+    padding: 16px 20px;
+    background: rgba(250,246,238,0.05);
+    border: 1px solid rgba(216,205,181,0.15);
+    border-radius: var(--r-md);
+  }
+  .result-match .fit { font-family: var(--display); font-size: 32px; letter-spacing: -0.02em; color: var(--copper-500); }
+  .result-match .fit small { font-family: var(--mono); font-size: 10px; color: var(--cream-300); display: block; }
+  .result-match .name { font-family: var(--display); font-size: 22px; letter-spacing: -0.01em; }
+  .result-match .why { font-size: 13px; color: var(--cream-300); margin-top: 4px; }
+  .result-match.partial .fit { color: var(--cream-100); opacity: .7; }
+
+  @media (max-width: 900px) {
+    .pillars { grid-template-columns: 1fr 1fr; }
+    .pillar { border-bottom: 1px solid var(--line-soft); }
+    .sectors { grid-template-columns: 1fr 1fr 1fr; }
+    .wizard { grid-template-columns: 1fr; gap: 24px; }
+    .wizard__nav { border-right: 0; border-bottom: 1px solid rgba(216,205,181,0.15); padding-right: 0; padding-bottom: 16px; display: flex; overflow-x: auto; gap: 0; }
+    .wizard__nav-step { flex: 0 0 auto; border-top: 0; padding: 8px 14px; grid-template-columns: auto auto; }
+    .wizard__nav-step .label { display: none; }
+    .opts { grid-template-columns: 1fr; }
+    .opts.opts-3 { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .sectors { grid-template-columns: 1fr 1fr; }
+    .pillars { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body data-page="founders" data-screen-label="06 For Founders + Wizard">
+
+<div data-chrome-top></div>
+
+<section class="ff-hero">
+  <div class="container">
+    <div class="eyebrow">For Founders</div>
+    <h1>If you're building<br>in agri - <em>this is where you start.</em></h1>
+    <p class="lede mt-4">You get capital, lab and field-station access, market connections, mentor time from agronomists who've published in your sector, and a Northeast operating base that funders take seriously. We won't waste your time with founder-fatigue rituals - no demo-day theatre, no incubation kabuki.</p>
+  </div>
+</section>
+
+<!-- Support pillars -->
+<section class="tight">
+  <div class="container">
+    <h2 class="h-section">Types of support</h2>
+    <div class="pillars mt-3">
+      <div class="pillar">
+        <div class="idx">01</div>
+        <h3>Grant-in-aid capital</h3>
+        <p>Non-dilutive grants from ₹2L sandbox to ₹25L scale. Tied to milestones, not equity. Optional SAFE available for ventures needing longer runway.</p>
+      </div>
+      <div class="pillar">
+        <div class="idx">02</div>
+        <h3>Infrastructure access</h3>
+        <p>Robotics Lab, Build Lab, AI First, soil and dairy labs at AAU, KVK field stations. Co-working at the Jorhat campus for residential cohorts.</p>
+      </div>
+      <div class="pillar">
+        <div class="idx">03</div>
+        <h3>Domain mentorship</h3>
+        <p>200+ mentors across agronomy, post-harvest, fisheries, dairy science, food processing, and rural finance. Real domain experts, not generic startup advisors.</p>
+      </div>
+      <div class="pillar">
+        <div class="idx">04</div>
+        <h3>Market & funder access</h3>
+        <p>Investor pipeline, state-government procurement pathways, FPO partnerships, and an export-promotion channel for finished agri-products.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Sectors -->
+<section class="tight">
+  <div class="container">
+    <div class="row-between mb-3">
+      <div>
+        <div class="eyebrow">Sectors we back</div>
+        <h2 class="display display-m mt-2">From soil to shelf.</h2>
+      </div>
+      <a href="portfolio.html" class="btn btn-ghost">See ventures by sector <span class="arrow">→</span></a>
+    </div>
+    <div class="sectors mt-4">
+      <a href="#" class="sector-tag"><div class="icon">⊕</div><div class="name">Agri-Input</div><div class="count">68 ventures</div></a>
+      <a href="#" class="sector-tag"><div class="icon">≋</div><div class="name">Post-Harvest</div><div class="count">42 ventures</div></a>
+      <a href="#" class="sector-tag"><div class="icon">○</div><div class="name">Livestock</div><div class="count">31 ventures</div></a>
+      <a href="#" class="sector-tag"><div class="icon">~</div><div class="name">Aquaculture</div><div class="count">22 ventures</div></a>
+      <a href="#" class="sector-tag"><div class="icon">▲</div><div class="name">Food Proc.</div><div class="count">54 ventures</div></a>
+      <a href="#" class="sector-tag"><div class="icon">⌗</div><div class="name">Rural Fintech</div><div class="count">18 ventures</div></a>
+    </div>
+  </div>
+</section>
+
+<!-- Eligibility wizard -->
+<section id="wizard">
+  <div class="container">
+    <div class="row-between">
+      <div>
+        <div class="eyebrow">Eligibility wizard</div>
+        <h2 class="display display-m mt-2">Find your program in 6 questions.</h2>
+        <p class="lede mt-2">Two minutes. No email needed to see the result. We'll only ask for contact details if you want us to follow up.</p>
+      </div>
+      <a href="ai-assistant.html" class="btn btn-ghost">Or just ask our AI →</a>
+    </div>
+
+    <div class="wizard-wrap">
+      <div class="wizard">
+        <nav class="wizard__nav" aria-label="Wizard progress">
+          <div class="wizard__nav-step is-active" data-stepnav="1">
+            <div class="num">1</div>
+            <div>
+              <div class="label">Question 01</div>
+              <div class="title">Stage</div>
+            </div>
+          </div>
+          <div class="wizard__nav-step" data-stepnav="2">
+            <div class="num">2</div>
+            <div><div class="label">Question 02</div><div class="title">Sector</div></div>
+          </div>
+          <div class="wizard__nav-step" data-stepnav="3">
+            <div class="num">3</div>
+            <div><div class="label">Question 03</div><div class="title">Founder profile</div></div>
+          </div>
+          <div class="wizard__nav-step" data-stepnav="4">
+            <div class="num">4</div>
+            <div><div class="label">Question 04</div><div class="title">Capital need</div></div>
+          </div>
+          <div class="wizard__nav-step" data-stepnav="5">
+            <div class="num">5</div>
+            <div><div class="label">Question 05</div><div class="title">Location</div></div>
+          </div>
+          <div class="wizard__nav-step" data-stepnav="6">
+            <div class="num">6</div>
+            <div><div class="label">Question 06</div><div class="title">Commitment</div></div>
+          </div>
+          <div class="wizard__nav-step" data-stepnav="r">
+            <div class="num">✓</div>
+            <div><div class="label">Result</div><div class="title">Your matches</div></div>
+          </div>
+        </nav>
+
+        <div class="wizard__panel">
+          <!-- Step 1 -->
+          <div class="wizard__step is-active" data-step="1">
+            <div>
+              <div class="wizard__q">Question 01 of 06</div>
+              <h3 class="wizard__h mt-2">Where is your venture right now?</h3>
+              <p class="wizard__hint mt-2">Pick the closest fit. If you're between stages, choose the earlier one - we'd rather you under-claim than over-claim.</p>
+            </div>
+            <div class="opts opts-3">
+              <button class="opt" data-q="stage" data-v="idea"><span class="opt__sub">Stage 01</span><span class="opt__title">Just an idea</span></button>
+              <button class="opt" data-q="stage" data-v="prototype"><span class="opt__sub">Stage 02</span><span class="opt__title">Working prototype</span></button>
+              <button class="opt" data-q="stage" data-v="pilot"><span class="opt__sub">Stage 03</span><span class="opt__title">Live pilot, no revenue</span></button>
+              <button class="opt" data-q="stage" data-v="revenue"><span class="opt__sub">Stage 04</span><span class="opt__title">Revenue, &lt; ₹10L ARR</span></button>
+              <button class="opt" data-q="stage" data-v="growth"><span class="opt__sub">Stage 05</span><span class="opt__title">Revenue, ₹10L+ ARR</span></button>
+              <button class="opt" data-q="stage" data-v="scale"><span class="opt__sub">Stage 06</span><span class="opt__title">Scaling, raising follow-on</span></button>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="wizard__step" data-step="2">
+            <div>
+              <div class="wizard__q">Question 02 of 06</div>
+              <h3 class="wizard__h mt-2">What sector are you in?</h3>
+            </div>
+            <div class="opts opts-3">
+              <button class="opt" data-q="sector" data-v="agri-input"><span class="opt__title">Agri-Input</span><span class="opt__sub">Seeds, bio-stim, inputs</span></button>
+              <button class="opt" data-q="sector" data-v="post-harvest"><span class="opt__title">Post-Harvest</span><span class="opt__sub">Cold-chain, storage, sorting</span></button>
+              <button class="opt" data-q="sector" data-v="livestock"><span class="opt__title">Livestock</span><span class="opt__sub">Dairy, poultry, small rumin.</span></button>
+              <button class="opt" data-q="sector" data-v="aqua"><span class="opt__title">Aquaculture</span><span class="opt__sub">Fish, prawn, ornamentals</span></button>
+              <button class="opt" data-q="sector" data-v="food"><span class="opt__title">Food Proc.</span><span class="opt__sub">Processing, packaging, brand</span></button>
+              <button class="opt" data-q="sector" data-v="other"><span class="opt__title">Other agri-allied</span><span class="opt__sub">Fintech, services, robotics</span></button>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="wizard__step" data-step="3">
+            <div>
+              <div class="wizard__q">Question 03 of 06</div>
+              <h3 class="wizard__h mt-2">Who's leading the venture?</h3>
+              <p class="wizard__hint mt-2">This affects which specialised programs you may have access to.</p>
+            </div>
+            <div class="opts">
+              <button class="opt" data-q="who" data-v="solo"><span class="opt__title">Solo founder</span><span class="opt__sub">Working independently</span></button>
+              <button class="opt" data-q="who" data-v="team"><span class="opt__title">Co-founding team</span><span class="opt__sub">2 or more founders</span></button>
+              <button class="opt" data-q="who" data-v="student"><span class="opt__title">Currently a student</span><span class="opt__sub">At AAU or NE university</span></button>
+              <button class="opt" data-q="who" data-v="fpo"><span class="opt__title">Producer-led / FPO</span><span class="opt__sub">SHG or farmer-producer org.</span></button>
+            </div>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="wizard__step" data-step="4">
+            <div>
+              <div class="wizard__q">Question 04 of 06</div>
+              <h3 class="wizard__h mt-2">How much capital do you need over the next 18 months?</h3>
+            </div>
+            <div class="opts opts-3">
+              <button class="opt" data-q="capital" data-v="lt5"><span class="opt__title">Under ₹5L</span><span class="opt__sub">Sandbox / idea capital</span></button>
+              <button class="opt" data-q="capital" data-v="5to10"><span class="opt__title">₹5-10L</span><span class="opt__sub">Pilot + early product</span></button>
+              <button class="opt" data-q="capital" data-v="10to25"><span class="opt__title">₹10-25L</span><span class="opt__sub">Build + GTM</span></button>
+              <button class="opt" data-q="capital" data-v="gt25"><span class="opt__title">₹25L+</span><span class="opt__sub">Scale capital (referral)</span></button>
+            </div>
+          </div>
+
+          <!-- Step 5 -->
+          <div class="wizard__step" data-step="5">
+            <div>
+              <div class="wizard__q">Question 05 of 06</div>
+              <h3 class="wizard__h mt-2">Where will your venture operate?</h3>
+            </div>
+            <div class="opts opts-3">
+              <button class="opt" data-q="loc" data-v="assam"><span class="opt__title">Assam</span><span class="opt__sub">Primary operations</span></button>
+              <button class="opt" data-q="loc" data-v="ne"><span class="opt__title">Other NE state</span><span class="opt__sub">8 NE states</span></button>
+              <button class="opt" data-q="loc" data-v="india"><span class="opt__title">Rest of India</span><span class="opt__sub">Some NE linkage required</span></button>
+            </div>
+          </div>
+
+          <!-- Step 6 -->
+          <div class="wizard__step" data-step="6">
+            <div>
+              <div class="wizard__q">Question 06 of 06</div>
+              <h3 class="wizard__h mt-2">Can you commit to an 8-week in-residence cohort at Jorhat?</h3>
+              <p class="wizard__hint mt-2">Only relevant if you're idea-stage. Otherwise, this is "no" without consequence.</p>
+            </div>
+            <div class="opts">
+              <button class="opt" data-q="residential" data-v="yes"><span class="opt__title">Yes, I can</span><span class="opt__sub">Full-time, in-residence</span></button>
+              <button class="opt" data-q="residential" data-v="no"><span class="opt__title">No, I need to stay remote</span><span class="opt__sub">Non-residential only</span></button>
+            </div>
+          </div>
+
+          <!-- Result -->
+          <div class="wizard__result" data-step="r">
+            <div>
+              <div class="wizard__q">Your match</div>
+              <h3 class="result-heading mt-2" id="result-h">You're a strong fit for 2 programs.</h3>
+              <p class="wizard__hint mt-3" id="result-sub">Based on your answers, here's where we'd route you. Top match has the strongest fit on stage, sector, and capital need.</p>
+            </div>
+            <div class="result-matches" id="result-matches"></div>
+            <div class="wizard__footer" style="border-top: 0; padding-top: 8px; margin-top: 8px;">
+              <button class="btn btn-ghost" onclick="resetWizard()">← Start over</button>
+              <div style="display:flex; gap: 10px;">
+                <a href="#apply" class="btn btn-primary">Start application <span class="arrow">→</span></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer (steps 1-6) -->
+          <div class="wizard__footer" id="wizard-foot">
+            <button class="btn btn-ghost btn-sm" id="w-prev" disabled>← Previous</button>
+            <span class="wizard__progress" id="w-prog">Question 1 of 6</span>
+            <button class="btn btn-primary btn-sm" id="w-next" disabled>Next <span class="arrow">→</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p style="margin-top: 18px; font-family: var(--mono); font-size: 12px; color: var(--ink-500); letter-spacing: 0.04em;">
+      ⓘ Edge-case results (no clear match) route to an "email-capture + we'll get back" fallback, not a dead-end.
+    </p>
+  </div>
+</section>
+
+<!-- Apply CTA section -->
+<section id="apply" class="bg-cream-100">
+  <div class="container">
+    <div class="row-between">
+      <div>
+        <div class="eyebrow">Applications</div>
+        <h2 class="display display-m mt-2">Ready when you are.</h2>
+        <p class="lede mt-2">Applications stay open even when individual cohorts close - you'll be queued for the next round and we'll write back within 5 working days.</p>
+      </div>
+    </div>
+    <div class="grid-3 mt-5">
+      <a href="programs-rkvy.html#saranya" class="card" style="padding: 28px;">
+        <span class="badge badge-tea"><span class="dot"></span> OPEN NOW</span>
+        <h3 class="display display-s mt-3" style="margin-bottom: 4px;">RKVY · Saranya</h3>
+        <p style="color: var(--ink-700); margin: 12px 0;">Growth-stage sub-program of RKVY. Apply by 30 June 2026.</p>
+        <div style="display:flex; justify-content: space-between; align-items: center; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--line);">
+          <span class="kicker">12-18 mo · up to ₹25L</span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+      <a href="programs-rkvy.html#isanya" class="card" style="padding: 28px;">
+        <span class="badge badge-tea"><span class="dot"></span> COHORT 7</span>
+        <h3 class="display display-s mt-3" style="margin-bottom: 4px;">RKVY · Isanya</h3>
+        <p style="color: var(--ink-700); margin: 12px 0;">Idea-stage residential. Applications open August 2026.</p>
+        <div style="display:flex; justify-content: space-between; align-items: center; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--line);">
+          <span class="kicker">8 weeks · ₹5L</span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+      <a href="programs-aic.html" class="card" style="padding: 28px; background: var(--tea-900); color: var(--cream-50); border-color: var(--tea-900);">
+        <span class="badge badge-copper">ROLLING</span>
+        <h3 class="display display-s mt-3" style="margin-bottom: 4px; color: var(--cream-50);">AIC · NITI Aayog</h3>
+        <p style="color: var(--cream-100); margin: 12px 0;">Outside RKVY. Quarterly intake, national mentor network.</p>
+        <div style="display:flex; justify-content: space-between; align-items: center; margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(216,205,181,0.15);">
+          <span class="kicker" style="color: var(--cream-300);">18 mo · up to ₹10L</span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<div data-chrome-bottom></div>
+
+<script src="chrome.js"></script>
+<script src="shared.js"></script>
+<script>
+// Wizard
+const state = { step: 1, ans: {} };
+const REQUIRED_PER_STEP = ['stage','sector','who','capital','loc','residential'];
+const TOTAL = 6;
+
+function go(step) {
+  state.step = step;
+  document.querySelectorAll('.wizard__step, .wizard__result').forEach(el => el.classList.remove('is-active'));
+  if (step === 'r') {
+    document.querySelector('[data-step="r"]').classList.add('is-active');
+    document.getElementById('wizard-foot').style.display = 'none';
+  } else {
+    document.querySelector(`[data-step="${step}"]`).classList.add('is-active');
+    document.getElementById('wizard-foot').style.display = 'flex';
+  }
+  // nav
+  document.querySelectorAll('.wizard__nav-step').forEach(s => {
+    const i = s.dataset.stepnav;
+    s.classList.remove('is-active','is-done');
+    if (i == step) s.classList.add('is-active');
+    else if (step === 'r' || (i !== 'r' && Number(i) < Number(step))) s.classList.add('is-done');
+  });
+  // footer
+  const stepNum = step === 'r' ? TOTAL : step;
+  document.getElementById('w-prog').textContent = `Question ${stepNum} of ${TOTAL}`;
+  document.getElementById('w-prev').disabled = step === 1;
+  const key = REQUIRED_PER_STEP[step - 1];
+  document.getElementById('w-next').disabled = !state.ans[key];
+  document.getElementById('w-next').textContent = step === TOTAL ? 'See my matches' : 'Next';
+  if (step === TOTAL) document.getElementById('w-next').innerHTML = 'See my matches <span class="arrow">→</span>';
+  else document.getElementById('w-next').innerHTML = 'Next <span class="arrow">→</span>';
+}
+
+document.querySelectorAll('.opt').forEach(b => {
+  b.addEventListener('click', () => {
+    const q = b.dataset.q, v = b.dataset.v;
+    state.ans[q] = v;
+    document.querySelectorAll(`.opt[data-q="${q}"]`).forEach(x => x.classList.remove('is-sel'));
+    b.classList.add('is-sel');
+    document.getElementById('w-next').disabled = false;
+  });
+});
+document.getElementById('w-prev').addEventListener('click', () => go(state.step - 1));
+document.getElementById('w-next').addEventListener('click', () => {
+  if (state.step < TOTAL) go(state.step + 1);
+  else computeResult();
+});
+
+function computeResult() {
+  const a = state.ans;
+  const matches = [];
+
+  // Match rules - illustrative
+  const fits = {
+    'RKVY · Isanya': 0, 'RKVY · Saranya': 0, 'RKVY · Navyam': 0,
+    'AIC': 0, 'ASRLM': 0, 'Student First': 0, 'TIC (IITG) - AISF': 0
+  };
+
+  // Stage
+  if (a.stage === 'idea' || a.stage === 'prototype') { fits['RKVY · Isanya'] += 50; fits['RKVY · Navyam'] += 25; fits['Student First'] += 30; }
+  if (a.stage === 'pilot') { fits['RKVY · Isanya'] += 30; fits['AIC'] += 25; fits['ASRLM'] += 20; }
+  if (a.stage === 'revenue' || a.stage === 'growth') { fits['RKVY · Saranya'] += 45; fits['AIC'] += 25; }
+  if (a.stage === 'scale') { fits['RKVY · Saranya'] += 30; fits['TIC (IITG) - AISF'] += 20; }
+
+  // Capital
+  if (a.capital === 'lt5') { fits['RKVY · Isanya'] += 30; fits['RKVY · Navyam'] += 30; fits['Student First'] += 35; }
+  if (a.capital === '5to10') { fits['ASRLM'] += 20; fits['AIC'] += 15; fits['RKVY · Isanya'] += 10; }
+  if (a.capital === '10to25') { fits['RKVY · Saranya'] += 30; fits['AIC'] += 15; }
+  if (a.capital === 'gt25') { fits['RKVY · Saranya'] += 20; fits['TIC (IITG) - AISF'] += 30; }
+
+  // Who
+  if (a.who === 'student') { fits['Student First'] += 40; fits['RKVY · Navyam'] += 35; }
+  if (a.who === 'fpo') fits['ASRLM'] += 40;
+
+  // Loc
+  if (a.loc === 'assam') { fits['ASRLM'] += 15; fits['RKVY · Isanya'] += 10; fits['Student First'] += 10; }
+  if (a.loc === 'ne') { fits['RKVY · Saranya'] += 5; fits['RKVY · Isanya'] += 5; }
+  if (a.loc === 'india') { fits['AIC'] += 15; fits['ASRLM'] = 0; }
+
+  // Residential
+  if (a.residential === 'no') fits['RKVY · Isanya'] = Math.max(0, fits['RKVY · Isanya'] - 50);
+
+  // Top 3
+  const sorted = Object.entries(fits).sort((a,b) => b[1]-a[1]).slice(0,3);
+  const top = sorted[0];
+  const reasons = {
+    'RKVY · Isanya': 'Idea-stage sub-program of RKVY. 8-week residential at AAU.',
+    'RKVY · Saranya': 'Growth-stage sub-program of RKVY. Match on revenue stage.',
+    'RKVY · Navyam': 'Student sub-program of RKVY. For currently-enrolled student founders.',
+    'AIC': 'National program under NITI Aayog\u2019s Atal Innovation Mission. Pan-India network.',
+    'ASRLM': 'Assam State Rural Livelihoods Mission. Producer/FPO-led ventures.',
+    'Student First': 'Campus entrepreneurship at NE universities. Pre-incubation, semester-long.',
+    'TIC (IITG) - AISF': 'Deep-tech joint program with IIT Guwahati. Engineering-heavy founders.'
+  };
+  const links = {
+    'RKVY · Isanya': 'programs-rkvy.html#isanya',
+    'RKVY · Saranya': 'programs-rkvy.html#saranya',
+    'RKVY · Navyam': 'programs-rkvy.html#navyam',
+    'AIC': 'programs-aic.html',
+    'ASRLM': 'programs-asrlm.html',
+    'Student First': 'programs-student-first.html',
+    'TIC (IITG) - AISF': 'programs-ticiitg.html'
+  };
+
+  let html = '';
+  let countStrong = 0;
+  sorted.forEach(([name, score], i) => {
+    if (score < 20) return;
+    const pct = Math.min(99, Math.round(score * 1.1));
+    const cls = i === 0 ? '' : 'partial';
+    html += `
+      <div class="result-match ${cls}">
+        <div class="fit">${pct}<small>% fit</small></div>
+        <div>
+          <div class="name">${name}</div>
+          <div class="why">${reasons[name] || ''}</div>
+        </div>
+        <a href="${links[name] || 'programs.html'}" class="btn btn-ghost btn-sm">View program <span class="arrow">→</span></a>
+      </div>`;
+    if (score >= 50) countStrong++;
+  });
+
+  if (!html) {
+    // Edge case - no strong match
+    document.getElementById('result-h').textContent = "We need to talk to you directly.";
+    document.getElementById('result-sub').textContent = "Your profile doesn't fit a single program cleanly - that usually means there's a better-shaped opportunity. Leave your email and one of our program leads will reach out within 3 working days.";
+    html = `
+      <form style="display:flex; gap: 8px; flex-wrap: wrap;" onsubmit="event.preventDefault(); this.innerHTML='<p style=\\'color: var(--cream-100);\\'>Thanks - we will be in touch.</p>';">
+        <input class="input" type="email" placeholder="your@email.com" required style="flex: 1; min-width: 220px; background: rgba(250,246,238,0.06); border-color: rgba(216,205,181,0.3); color: var(--cream-50);">
+        <button class="btn btn-primary" type="submit">Request a callback</button>
+      </form>`;
+  } else {
+    const phrase = countStrong === 1 ? "You're a strong fit for 1 program." : countStrong >= 2 ? `You're a strong fit for ${countStrong} programs.` : "Here are your closest matches.";
+    document.getElementById('result-h').textContent = phrase;
+  }
+  document.getElementById('result-matches').innerHTML = html;
+  go('r');
+}
+
+function resetWizard() {
+  state.step = 1; state.ans = {};
+  document.querySelectorAll('.opt.is-sel').forEach(x => x.classList.remove('is-sel'));
+  go(1);
+}
+window.resetWizard = resetWizard;
+</script>
+</body>
+</html>

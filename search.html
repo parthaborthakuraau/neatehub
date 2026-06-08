@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Search - NEATeHUB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .sr-hero { padding: clamp(40px, 5vw, 64px) 0 clamp(24px, 3vw, 40px); }
+  .sr-input {
+    position: relative;
+    margin-top: 16px;
+    max-width: 720px;
+  }
+  .sr-input input {
+    width: 100%;
+    height: 56px;
+    padding: 0 18px 0 48px;
+    background: var(--cream-50);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    font: inherit;
+    font-size: 17px;
+    color: var(--ink-900);
+  }
+  .sr-input input:focus { outline: 2px solid var(--copper-500); outline-offset: 1px; border-color: var(--copper-500); }
+  .sr-input > svg { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--ink-500); }
+  .sr-input .clear { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: 0; color: var(--ink-500); font-size: 18px; padding: 4px 8px; cursor: pointer; }
+  .sr-input .clear:hover { color: var(--ink-900); }
+
+  .sr-meta {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-500);
+    margin: 24px 0 8px;
+  }
+  .sr-meta strong { color: var(--ink-900); font-weight: 500; }
+
+  /* Filter tabs */
+  .sr-tabs {
+    display: flex;
+    gap: 4px;
+    margin-top: 20px;
+    border-bottom: 1px solid var(--line);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .sr-tabs::-webkit-scrollbar { display: none; }
+  .sr-tab {
+    background: none; border: 0;
+    padding: 14px 18px;
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--ink-500);
+    cursor: pointer;
+    white-space: nowrap;
+    position: relative;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .sr-tab .ct { font-family: var(--mono); font-size: 11px; color: var(--ink-400); }
+  .sr-tab.is-active { color: var(--ink-900); }
+  .sr-tab.is-active::after { content: ""; position: absolute; left: 14px; right: 14px; bottom: -1px; height: 2px; background: var(--copper-600); }
+
+  /* Layout: results + sidebar */
+  .sr-layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: clamp(28px, 4vw, 64px);
+    padding-top: 32px;
+  }
+
+  .sr-result {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 24px;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--line-soft);
+    transition: padding .15s, background .15s;
+  }
+  .sr-result:first-child { border-top: 1px solid var(--line); }
+  .sr-result:hover { background: var(--cream-100); padding-left: 16px; padding-right: 16px; }
+  .sr-result__type {
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--copper-700);
+    padding-top: 4px;
+  }
+  .sr-result__type .ic {
+    display: inline-block;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: rgba(168,93,46,0.1);
+    color: var(--copper-700);
+    text-align: center;
+    line-height: 28px;
+    font-family: var(--display);
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  .sr-result h3 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(22px, 2vw, 28px);
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    margin: 0 0 8px;
+  }
+  .sr-result h3 mark {
+    background: rgba(201,120,73,0.18);
+    color: inherit;
+    padding: 1px 3px;
+    border-radius: 3px;
+  }
+  .sr-result__breadcrumb {
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink-500);
+    margin-bottom: 10px;
+  }
+  .sr-result__breadcrumb .sep { opacity: .5; margin: 0 6px; }
+  .sr-result__snippet {
+    color: var(--ink-700);
+    font-size: 15px;
+    line-height: 1.6;
+    margin: 0;
+    max-width: 60ch;
+  }
+  .sr-result__snippet mark { background: rgba(201,120,73,0.18); padding: 0 2px; }
+  .sr-result__meta {
+    margin-top: 12px;
+    display: flex; gap: 14px; align-items: center;
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink-500);
+  }
+
+  /* Sidebar */
+  .sr-side { position: sticky; top: 100px; align-self: start; }
+  .sr-side__card { padding: 24px; border: 1px solid var(--line); border-radius: var(--r-md); }
+  .sr-side__card + .sr-side__card { margin-top: 16px; }
+  .sr-side h4 {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-500);
+    margin: 0 0 14px;
+    font-weight: 500;
+  }
+  .sr-side ul { list-style: none; padding: 0; margin: 0; }
+  .sr-side li { padding: 6px 0; }
+  .sr-side li a { font-size: 14px; color: var(--ink-700); display: flex; justify-content: space-between; }
+  .sr-side li a:hover { color: var(--ink-900); }
+  .sr-side .ct { font-family: var(--mono); font-size: 11px; color: var(--ink-400); }
+
+  .sr-cta {
+    background: var(--tea-900);
+    color: var(--cream-50);
+    padding: 24px;
+    border-radius: var(--r-md);
+    margin-top: 16px;
+  }
+  .sr-cta h4 { color: var(--cream-300); }
+  .sr-cta p { color: var(--cream-100); font-size: 14px; line-height: 1.5; margin: 0 0 16px; }
+  .sr-cta .btn-copper { background: var(--copper-500); width: 100%; }
+  .sr-cta .btn-copper:hover { background: var(--copper-600); }
+
+  /* Empty state */
+  .sr-empty {
+    text-align: center;
+    padding: 80px 40px;
+    background: var(--cream-100);
+    border-radius: var(--r-lg);
+    margin-top: 32px;
+  }
+  .sr-empty h3 { font-family: var(--display); font-weight: 400; font-size: clamp(28px, 3vw, 40px); letter-spacing: -0.01em; margin: 0 0 12px; }
+  .sr-empty p { color: var(--ink-700); margin: 0 auto; max-width: 50ch; }
+
+  @media (max-width: 900px) {
+    .sr-layout { grid-template-columns: 1fr; }
+    .sr-side { position: static; }
+    .sr-result { grid-template-columns: 1fr; gap: 8px; }
+    .sr-result:hover { padding-left: 0; padding-right: 0; background: transparent; }
+  }
+</style>
+</head>
+<body data-page="" data-screen-label="11b · Search results">
+
+<div data-chrome-top></div>
+
+<section class="sr-hero">
+  <div class="container">
+    <div class="eyebrow">Search NEATeHUB</div>
+    <h1 class="display display-l" style="margin: 12px 0 0;">Search</h1>
+
+    <div class="sr-input">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.6"/><path d="M14 14l5 5" stroke="currentColor" stroke-width="1.6"/></svg>
+      <input type="search" id="q" value="RKVY eligibility" aria-label="Search query">
+      <button class="clear" id="clear" aria-label="Clear search">✕</button>
+    </div>
+
+    <div class="sr-meta"><strong id="count">14</strong> results for "<strong id="q-echo">RKVY eligibility</strong>" · 0.08s</div>
+
+    <div class="sr-tabs">
+      <button class="sr-tab is-active" data-cat="all">All <span class="ct">14</span></button>
+      <button class="sr-tab" data-cat="program">Programs <span class="ct">5</span></button>
+      <button class="sr-tab" data-cat="portfolio">Portfolio <span class="ct">3</span></button>
+      <button class="sr-tab" data-cat="insight">Insights <span class="ct">2</span></button>
+      <button class="sr-tab" data-cat="event">Events <span class="ct">1</span></button>
+      <button class="sr-tab" data-cat="resource">Resources <span class="ct">2</span></button>
+      <button class="sr-tab" data-cat="page">Pages <span class="ct">1</span></button>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top: 0;">
+  <div class="container">
+    <div class="sr-layout">
+      <div id="sr-results">
+        <article class="sr-result" data-cat="program">
+          <div class="sr-result__type">
+            <div class="ic">P</div>
+            Program
+          </div>
+          <div>
+            <div class="sr-result__breadcrumb">neatehub.org<span class="sep">/</span>programs<span class="sep">/</span>rkvy-raftaar</div>
+            <h3><a href="programs-rkvy.html"><mark>RKVY</mark> RAFTAAR - flagship agri-tech acceleration program</a></h3>
+            <p class="sr-result__snippet"><mark>RKVY</mark> RAFTAAR is our flagship program - a two-year acceleration for agri-tech startups with grants up to ₹25L across three sub-programs. <mark>Eligibility</mark> requires DPIIT recognition, incorporation under 7 years, and a working MVP with at least one documented pilot…</p>
+            <div class="sr-result__meta">
+              <span>↗ Top result</span>
+              <span>Updated Apr 2026</span>
+              <span>3 sub-sections</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="sr-result" data-cat="page">
+          <div class="sr-result__type">
+            <div class="ic">F</div>
+            Page
+          </div>
+          <div>
+            <div class="sr-result__breadcrumb">neatehub.org<span class="sep">/</span>for-founders<span class="sep">/</span>wizard</div>
+            <h3><a href="for-founders.html#wizard"><mark>Eligibility</mark> wizard - find your program in 6 questions</a></h3>
+            <p class="sr-result__snippet">A 6-question interactive tool that matches you to the right program. Routes prototype-stage ventures into Isanya, revenue-stage into <mark>RKVY</mark> or Saranya, and producer-led businesses into ASRLM. Two minutes, no email required.</p>
+            <div class="sr-result__meta">
+              <span>Interactive</span>
+              <span>2 min</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="sr-result" data-cat="program">
+          <div class="sr-result__type">
+            <div class="ic">P</div>
+            Program
+          </div>
+          <div>
+            <div class="sr-result__breadcrumb">neatehub.org<span class="sep">/</span>programs</div>
+            <h3><a href="programs.html">All programs - comparison & status</a></h3>
+            <p class="sr-result__snippet">Five programs spanning idea-stage to growth-stage. <mark>RKVY</mark> RAFTAAR is the flagship with three sub-programs. Side-by-side comparison of capital ceiling, duration, and <mark>eligibility</mark> criteria…</p>uration, and <mark>eligibility</mark> criteria…</p>
+            <div class="sr-result__meta">
+              <span>Compare programs</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="sr-result" data-cat="resource">
+          <div class="sr-result__type">
+            <div class="ic">⤓</div>
+            Download
+          </div>
+          <div>
+            <div class="sr-result__breadcrumb">neatehub.org<span class="sep">/</span>resources<span class="sep">/</span>downloads</div>
+            <h3><a href="resources.html#downloads"><mark>RKVY</mark> RAFTAAR - Program Brief FY26 (PDF)</a></h3>
+            <p class="sr-result__snippet">The full 24-page brief. <mark>Eligibility</mark> criteria, evaluation rubric, milestone framework, capital tranching, and reporting cadence. Required reading before the deep-dive interview.</p>
+            <div class="sr-result__meta">
+              <span>PDF · 1.2 MB</span>
+              <span>Updated Apr 2026</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="sr-result" data-cat="insight">
+          <div class="sr-result__type">
+            <div class="ic">¶</div>
+            Insight
+          </div>
+          <div>
+            <div class="sr-result__breadcrumb">neatehub.org<span class="sep">/</span>insights<span class="sep">/</span>2026-02-isanya-scorecard</div>
+            <h3><a href="insights.html">How we evaluate idea-stage applications. Inside the Isanya scorecard.</a></h3>
+            <p class="sr-result__snippet">We released the exact <mark>eligibility</mark> rubric so founders can self-assess before applying. Includes the weighted matrix for Isanya and how it differs from the <mark>RKVY</mark> evaluation framework…</p>
+            <div class="sr-result__meta">
+              <span>02 Feb 2026</span>
+              <span>6 min read</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="sr-result" data-cat="portfolio">
+          <div class="sr-result__type">
+            <div class="ic">◯</div>
+            Venture
+          </div>
+          <div>
+            <div class="sr-result__breadcrumb">neatehub.org<span class="sep">/</span>portfolio<span class="sep">/</span>kaziranga-bio</div>
+            <h3><a href="portfolio-kaziranga-bio.html">Kaziranga Bio - <mark>RKVY</mark> '22 alumni · Series A '26</a></h3>
+            <p class="sr-result__snippet">Microbial bio-stimulants for tea estates, replacing chemical inputs in 9 Assam gardens. Funded under <mark>RKVY</mark> RAFTAAR in 2022. Closed pre-Series A of ₹3.2 Cr in April 2026.</p>
+            <div class="sr-result__meta">
+              <span>Bio-inputs</span>
+              <span>Jorhat</span>
+              <span>Saranya · RKVY '22</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="sr-result" data-cat="event">
+          <div class="sr-result__type">
+            <div class="ic">◇</div>
+            Event
+          </div>
+          <div>
+            <div class="sr-result__breadcrumb">neatehub.org<span class="sep">/</span>insights<span class="sep">/</span>events</div>
+            <h3><a href="insights.html"><mark>RKVY</mark> Q2 review cycle closes - 15 June 2026</a></h3>
+            <p class="sr-result__snippet">Applications submitted by this date enter the June review cohort. Decisions communicated by end of August. The next cycle closes 15 September.</p>
+            <div class="sr-result__meta">
+              <span>Deadline</span>
+              <span>15 Jun 2026</span>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <aside class="sr-side">
+        <div class="sr-side__card">
+          <h4>Refine</h4>
+          <ul>
+            <li><a href="#"><span>By program</span> <span class="ct">5</span></a></li>
+            <li><a href="#"><span>By sector</span> <span class="ct">8</span></a></li>
+            <li><a href="#"><span>By year</span> <span class="ct">7</span></a></li>
+            <li><a href="#"><span>By type · PDF</span> <span class="ct">2</span></a></li>
+          </ul>
+        </div>
+
+        <div class="sr-side__card">
+          <h4>Related searches</h4>
+          <ul>
+            <li><a href="#">RKVY application timeline</a></li>
+            <li><a href="#">Saranya vs RKVY</a></li>
+            <li><a href="#">DPIIT recognition</a></li>
+            <li><a href="#">Grant tranching</a></li>
+            <li><a href="#">Non-NE founders</a></li>
+          </ul>
+        </div>
+
+        <div class="sr-cta">
+          <h4>Can't find it?</h4>
+          <p>Our AI assistant knows the answer to most program questions - try it before opening a support ticket.</p>
+          <a href="ai-assistant.html" class="btn btn-copper">Ask NEATeHUB AI <span class="arrow">→</span></a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<div data-chrome-bottom></div>
+
+<script src="chrome.js"></script>
+<script src="shared.js"></script>
+<script>
+// Parse query string
+const params = new URLSearchParams(location.search);
+const q = params.get('q');
+if (q) {
+  document.getElementById('q').value = q;
+  document.getElementById('q-echo').textContent = q;
+}
+
+// Tab filtering
+document.querySelectorAll('.sr-tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.sr-tab').forEach(x => x.classList.remove('is-active'));
+    t.classList.add('is-active');
+    const cat = t.dataset.cat;
+    let n = 0;
+    document.querySelectorAll('.sr-result').forEach(r => {
+      const show = cat === 'all' || r.dataset.cat === cat;
+      r.style.display = show ? '' : 'none';
+      if (show) n++;
+    });
+    document.getElementById('count').textContent = n;
+  });
+});
+
+// Clear
+document.getElementById('clear').addEventListener('click', () => {
+  document.getElementById('q').value = '';
+  document.getElementById('q').focus();
+});
+</script>
+</body>
+</html>

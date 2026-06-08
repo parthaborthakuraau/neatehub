@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ask NEATeHUB AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  body { background: var(--cream-50); }
+
+  .ai-hero { padding: clamp(40px, 5vw, 56px) 0 clamp(20px, 2vw, 32px); }
+  .ai-hero .badge { background: rgba(168,93,46,0.1); color: var(--copper-700); border-color: rgba(168,93,46,0.2); }
+  .ai-hero h1 {
+    font-family: var(--display); font-weight: 400;
+    font-size: clamp(40px, 5.5vw, 80px);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin: 16px 0 0;
+    max-width: 18ch;
+  }
+  .ai-hero .lede { margin-top: 18px; max-width: 56ch; }
+
+  /* Intent cards */
+  .intents { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 36px; }
+  .intent {
+    display: flex; flex-direction: column;
+    background: var(--cream-50);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    padding: 24px;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color .2s, background .2s, transform .2s;
+    font: inherit; color: inherit;
+  }
+  .intent:hover { border-color: var(--ink-900); transform: translateY(-1px); }
+  .intent.is-active { background: var(--ink-900); color: var(--cream-50); border-color: var(--ink-900); }
+  .intent .num { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; color: var(--copper-600); }
+  .intent.is-active .num { color: var(--copper-500); }
+  .intent h3 { font-family: var(--display); font-weight: 400; font-size: 22px; letter-spacing: -0.01em; margin: 12px 0 8px; }
+  .intent p { color: var(--ink-700); font-size: 13px; line-height: 1.55; margin: 0; }
+  .intent.is-active p { color: var(--cream-300); }
+  .intent .ex { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line-soft); font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-500); }
+  .intent.is-active .ex { border-top-color: rgba(216,205,181,0.15); color: var(--cream-300); }
+
+  /* Chat */
+  .chat {
+    margin-top: 32px;
+    background: var(--cream-50);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    min-height: 520px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .chat__head {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--line-soft);
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--cream-100);
+  }
+  .chat__head .agent {
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .chat__head .dot {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--tea-600);
+    box-shadow: 0 0 0 4px rgba(106,140,114,0.2);
+    animation: pulse 2s ease infinite;
+  }
+  @keyframes pulse { 50% { box-shadow: 0 0 0 6px rgba(106,140,114,0.05); } }
+
+  .chat__head .reset { background: none; border: 0; font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-500); cursor: pointer; }
+  .chat__head .reset:hover { color: var(--ink-900); }
+
+  .chat__body {
+    flex: 1;
+    padding: 28px;
+    display: flex; flex-direction: column; gap: 18px;
+    overflow-y: auto;
+  }
+  .msg { display: flex; gap: 12px; max-width: 80%; }
+  .msg__avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    flex: 0 0 32px;
+    display: grid; place-items: center;
+    font-family: var(--display); font-size: 14px;
+  }
+  .msg__avatar--ai { background: var(--tea-900); color: var(--cream-50); }
+  .msg__avatar--u { background: var(--copper-600); color: var(--cream-50); }
+  .msg__bubble {
+    background: var(--cream-100);
+    border-radius: 14px;
+    padding: 12px 16px;
+    font-size: 14.5px;
+    line-height: 1.5;
+    color: var(--ink-900);
+  }
+  .msg--u { margin-left: auto; flex-direction: row-reverse; }
+  .msg--u .msg__bubble { background: var(--ink-900); color: var(--cream-50); }
+  .msg__bubble p { margin: 0; }
+  .msg__bubble p + p { margin-top: 8px; }
+  .msg__bubble ul { margin: 8px 0 0; padding-left: 18px; }
+  .msg__bubble li { margin: 4px 0; }
+  .msg__bubble .cites {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--line-soft);
+  }
+  .msg__bubble .cite {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--cream-50);
+    border: 1px solid var(--line);
+    color: var(--ink-700);
+  }
+
+  /* Typing indicator */
+  .typing { display: inline-flex; gap: 4px; align-items: center; padding: 4px 0; }
+  .typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-500); animation: bounce 1.2s ease infinite; }
+  .typing span:nth-child(2) { animation-delay: .15s; }
+  .typing span:nth-child(3) { animation-delay: .3s; }
+  @keyframes bounce { 0%,80%,100% { transform: translateY(0); opacity: .4; } 40% { transform: translateY(-4px); opacity: 1; } }
+
+  /* Composer */
+  .composer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--line-soft);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    background: var(--cream-50);
+  }
+  .composer textarea {
+    resize: none;
+    font: inherit;
+    font-size: 15px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    padding: 12px 14px;
+    min-height: 44px;
+    max-height: 140px;
+    background: var(--cream-100);
+    color: var(--ink-900);
+  }
+  .composer textarea:focus { outline: 2px solid var(--copper-500); outline-offset: 1px; border-color: var(--copper-500); }
+  .composer .send { height: 44px; align-self: end; }
+
+  /* Suggested */
+  .suggestions { display: flex; gap: 8px; flex-wrap: wrap; padding: 0 20px 16px; }
+  .suggestion {
+    background: var(--cream-100);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 13px;
+    color: var(--ink-700);
+    cursor: pointer;
+  }
+  .suggestion:hover { background: var(--ink-900); color: var(--cream-50); border-color: var(--ink-900); }
+
+  /* Disclaimer */
+  .ai-disclaimer {
+    margin-top: 24px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--ink-500);
+    line-height: 1.6;
+    max-width: 68ch;
+  }
+  .ai-disclaimer strong { color: var(--ink-700); }
+
+  @media (max-width: 800px) {
+    .intents { grid-template-columns: 1fr; }
+    .chat { min-height: 420px; }
+    .msg { max-width: 92%; }
+  }
+</style>
+</head>
+<body data-page="founders" data-screen-label="12 AI Assistant">
+
+<div data-chrome-top></div>
+
+<section class="ai-hero">
+  <div class="container-text" style="max-width: 980px;">
+    <span class="badge" style="background: rgba(168,93,46,0.1); color: var(--copper-700); border-color: rgba(168,93,46,0.2);">
+      <span class="dot" style="background:var(--copper-600);"></span> NEATEHUB AI · POWERED BY GROQ
+    </span>
+    <h1>Ask anything about NEATeHUB.</h1>
+    <p class="lede">A focused assistant trained on our programs, eligibility criteria, portfolio, mentors, and a decade of agri-incubation knowledge. No login. No data stored.</p>
+  </div>
+
+  <div class="container-text" style="max-width: 980px;">
+    <div class="intents">
+      <button class="intent is-active" data-intent="eligibility">
+        <div class="num">Intent 01</div>
+        <h3>Am I eligible?</h3>
+        <p>Tell me your stage, sector, and capital need. I'll point you at the right program - or run the full eligibility wizard with you.</p>
+        <div class="ex">"Is RKVY right for a Series A-stage post-harvest startup?"</div>
+      </button>
+      <button class="intent" data-intent="about">
+        <div class="num">Intent 02</div>
+        <h3>Tell me about NEATeHUB.</h3>
+        <p>Funders, governance, programs, portfolio, mentors, infrastructure, impact reports - whatever you need.</p>
+        <div class="ex">"How many startups have you funded under RKVY?"</div>
+      </button>
+      <button class="intent" data-intent="ideate">
+        <div class="num">Intent 03</div>
+        <h3>Help me ideate.</h3>
+        <p>Use the assistant as a thinking partner. We'll explore your problem space, push back where we should, and surface adjacent ventures.</p>
+        <div class="ex">"What's a defensible bio-input venture for Assamese tea estates?"</div>
+      </button>
+    </div>
+
+    <!-- Chat -->
+    <div class="chat">
+      <div class="chat__head">
+        <div class="agent"><span class="dot"></span> NEATeHUB AI · Eligibility mode</div>
+        <button class="reset" onclick="resetChat()">↺ Clear conversation</button>
+      </div>
+      <div class="chat__body" id="chat-body">
+        <div class="msg">
+          <div class="msg__avatar msg__avatar--ai">N</div>
+          <div class="msg__bubble">
+            <p>Hi - I'm the NEATeHUB assistant. I know our seven programs, eligibility criteria, capital ceilings, and what stage of venture each one serves.</p>
+            <p>To point you at the right program, tell me two things: what stage your venture is at, and what sector you're in. If you'd rather just browse, I can also walk you through any program in detail.</p>
+          </div>
+        </div>
+      </div>
+      <div class="suggestions" id="suggestions">
+        <button class="suggestion" data-q="What's the difference between Isanya and Saranya?">What's the difference between Isanya and Saranya?</button>
+        <button class="suggestion" data-q="I have a working prototype and ₹0 revenue. Where should I apply?">Where should I apply with a prototype and ₹0 revenue?</button>
+        <button class="suggestion" data-q="Do you fund non-NE founders?">Do you fund non-NE founders?</button>
+      </div>
+      <form class="composer" onsubmit="event.preventDefault(); sendUser();">
+        <textarea id="composer-input" placeholder="Type your question…" rows="1"></textarea>
+        <button type="submit" class="btn btn-primary send">Send <span class="arrow">→</span></button>
+      </form>
+    </div>
+
+    <p class="ai-disclaimer">
+      <strong>Heads up:</strong> This is a prototype assistant. In production it runs on Groq's inference API, retrieves from a curated knowledge base, and cites every program rule it surfaces. It does not store conversations and does not collect identifying information unless you explicitly ask to be contacted. For binding eligibility, always confirm with <a href="mailto:programs@neatehub.org" class="link">programs@neatehub.org</a>.
+    </p>
+  </div>
+</section>
+
+<div data-chrome-bottom></div>
+
+<script src="chrome.js"></script>
+<script src="shared.js"></script>
+<script>
+// Intent switching
+const intentLabels = {
+  eligibility: "Eligibility mode",
+  about: "Knowledge mode",
+  ideate: "Ideation mode"
+};
+const intentOpens = {
+  eligibility: [`<p>Hi - I'm the NEATeHUB assistant. I know our seven programs, eligibility criteria, capital ceilings, and what stage of venture each one serves.</p><p>To point you at the right program, tell me two things: what stage your venture is at, and what sector you're in.</p>`],
+  about: [`<p>I can walk you through any aspect of NEATeHUB - governance, funders, programs, portfolio, mentor network, infrastructure, impact numbers, and historical decisions. What would you like to know?</p>`],
+  ideate: [`<p>Use me as a thinking partner. Share your problem space and I'll help you sharpen it - what's been tried, where the unit economics typically break, and what adjacent ventures look like in our portfolio.</p><p>What are you exploring?</p>`]
+};
+
+document.querySelectorAll('.intent').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.intent').forEach(x => x.classList.remove('is-active'));
+    b.classList.add('is-active');
+    const k = b.dataset.intent;
+    document.querySelector('.agent').innerHTML = `<span class="dot"></span> NEATeHUB AI · ${intentLabels[k]}`;
+    document.getElementById('chat-body').innerHTML = `
+      <div class="msg">
+        <div class="msg__avatar msg__avatar--ai">N</div>
+        <div class="msg__bubble">${intentOpens[k][0]}</div>
+      </div>`;
+  });
+});
+
+// Chat behavior - simulated
+function appendMsg(who, html, cites) {
+  const body = document.getElementById('chat-body');
+  const div = document.createElement('div');
+  div.className = `msg msg--${who}`;
+  const av = who === 'ai' ? 'N' : 'U';
+  const avc = who === 'ai' ? 'msg__avatar--ai' : 'msg__avatar--u';
+  let citeHtml = '';
+  if (cites && cites.length) {
+    citeHtml = `<div class="cites">${cites.map(c => `<span class="cite">${c}</span>`).join('')}</div>`;
+  }
+  div.innerHTML = `<div class="msg__avatar ${avc}">${av}</div><div class="msg__bubble">${html}${citeHtml}</div>`;
+  body.appendChild(div);
+  body.scrollTop = body.scrollHeight;
+}
+
+function appendTyping() {
+  const body = document.getElementById('chat-body');
+  const div = document.createElement('div');
+  div.className = 'msg';
+  div.id = 'typing-msg';
+  div.innerHTML = `<div class="msg__avatar msg__avatar--ai">N</div><div class="msg__bubble"><div class="typing"><span></span><span></span><span></span></div></div>`;
+  body.appendChild(div);
+  body.scrollTop = body.scrollHeight;
+}
+function removeTyping() {
+  const t = document.getElementById('typing-msg');
+  if (t) t.remove();
+}
+
+// Canned responses keyed by simple match
+const CANNED = [
+  {
+    match: /isanya.+saranya|difference.+isanya|difference.+saranya/i,
+    reply: `<p><strong>Short answer:</strong> Both Isanya and Saranya are sub-programs <em>of RKVY RAFTAAR</em> - same funder, different stages.</p>
+            <ul>
+              <li><strong>Isanya</strong> - 8-week residential at Jorhat, idea or early prototype, grants up to <strong>₹5L</strong>, cohort of 12.</li>
+              <li><strong>Saranya</strong> - 12-18 months, revenue-generating ventures (₹10L+ ARR ideal), grants up to <strong>₹25L</strong>, milestone-tranched capital.</li>
+            </ul>
+            <p>About 30% of our Saranya cohort came up from Isanya - the structure allows movement between sub-programs. Want me to run the eligibility wizard with you?</p>`,
+    cites: ['RKVY · Isanya', 'RKVY · Saranya']
+  },
+  {
+    match: /prototype.+revenue|prototype.+apply|where.+apply/i,
+    reply: `<p>With a working prototype and ₹0 revenue, you have two paths inside the RKVY structure:</p>
+            <ul>
+              <li><strong>Isanya</strong> (best fit) - 8-week residential, ₹5L grant, designed for exactly this stage. A sub-program of RKVY RAFTAAR.</li>
+              <li><strong>AIC track</strong> - outside RKVY. If you can't relocate, AIC accepts prototype-stage ventures with quarterly intake.</li>
+            </ul>
+            <p>Saranya (the growth-stage RKVY sub-program) usually requires pilot data with at least one paying customer. I'd hold it for after Isanya.</p>`,
+    cites: ['RKVY · Isanya', 'AIC']
+  },
+  {
+    match: /non.?ne|outside.+northeast|not.+northeast|bangalore|delhi|mumbai/i,
+    reply: `<p>Yes, but with conditions.</p>
+            <ul>
+              <li><strong>RKVY RAFTAAR</strong> and <strong>AIC</strong> accept ventures from across India. No NE-residency requirement.</li>
+              <li><strong>Saranya</strong> prefers ventures with operations or customers in NE India - not mandatory, but weighted in evaluation.</li>
+              <li><strong>Isanya, ASRLM, Student First</strong> are NE-focused. Non-NE founders are not eligible.</li>
+            </ul>
+            <p>If your venture has even a single NE customer or pilot, mention it in your application - it changes the conversation.</p>`,
+    cites: ['Eligibility · Geography']
+  }
+];
+
+const DEFAULT_REPLY = `<p>That's a good question. In production, I'd pull from the NEATeHUB knowledge base and cite specific program documents - for this prototype, here's the general direction:</p>
+  <p>Your best next step is probably the eligibility wizard - it'll narrow you down to one or two programs in under two minutes. Or you can browse the <a href="programs.html" class="link">programs page</a> for the full set.</p>`;
+
+function sendUser(textOverride) {
+  const input = document.getElementById('composer-input');
+  const text = textOverride || input.value.trim();
+  if (!text) return;
+  appendMsg('u', `<p>${text.replace(/</g,'&lt;')}</p>`);
+  input.value = '';
+  document.getElementById('suggestions').style.display = 'none';
+  appendTyping();
+  setTimeout(() => {
+    removeTyping();
+    const hit = CANNED.find(c => c.match.test(text));
+    if (hit) appendMsg('ai', hit.reply, hit.cites);
+    else appendMsg('ai', DEFAULT_REPLY, ['Programs', 'Eligibility wizard']);
+  }, 900 + Math.random() * 600);
+}
+
+document.querySelectorAll('.suggestion').forEach(b => {
+  b.addEventListener('click', () => sendUser(b.dataset.q));
+});
+
+document.getElementById('composer-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendUser(); }
+});
+
+function resetChat() {
+  const k = document.querySelector('.intent.is-active').dataset.intent;
+  document.getElementById('chat-body').innerHTML = `
+    <div class="msg">
+      <div class="msg__avatar msg__avatar--ai">N</div>
+      <div class="msg__bubble">${intentOpens[k][0]}</div>
+    </div>`;
+  document.getElementById('suggestions').style.display = 'flex';
+}
+window.resetChat = resetChat;
+</script>
+</body>
+</html>

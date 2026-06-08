@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Saranya '26 Founder Open House - Events · NEATeHUB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  /* Breadcrumb */
+  .crumb {
+    padding: 16px var(--gutter) 0;
+    max-width: var(--max);
+    margin: 0 auto;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-500);
+  }
+  .crumb a:hover { color: var(--ink-900); }
+  .crumb .sep { margin: 0 8px; opacity: 0.5; }
+  .crumb .cur { color: var(--ink-900); }
+
+  /* Hero */
+  .ev-hero { padding: clamp(28px, 4vw, 48px) 0 0; }
+  .ev-hero__inner {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: clamp(28px, 5vw, 64px);
+    align-items: end;
+    margin-bottom: clamp(32px, 4vw, 56px);
+  }
+  .ev-hero h1 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(48px, 7vw, 108px);
+    letter-spacing: -0.025em;
+    line-height: 0.96;
+    margin: 16px 0 0;
+    text-wrap: balance;
+  }
+  .ev-hero__chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+
+  /* Big date block */
+  .ev-date {
+    background: var(--tea-900);
+    color: var(--cream-50);
+    border-radius: var(--r-lg);
+    padding: 28px;
+    display: grid;
+    gap: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .ev-date::before {
+    content: ""; position: absolute; inset: 0;
+    background:
+      linear-gradient(rgba(216,205,181,0.06) 1px, transparent 1px) 0 0 / 36px 36px,
+      linear-gradient(90deg, rgba(216,205,181,0.06) 1px, transparent 1px) 0 0 / 36px 36px;
+    pointer-events: none;
+  }
+  .ev-date > * { position: relative; z-index: 1; }
+  .ev-date__big {
+    font-family: var(--display);
+    font-size: clamp(64px, 7vw, 96px);
+    letter-spacing: -0.03em;
+    line-height: 0.9;
+    color: var(--cream-50);
+  }
+  .ev-date__big small {
+    display: block;
+    font-family: var(--mono);
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--copper-500);
+    font-weight: 400;
+    margin-top: 8px;
+  }
+  .ev-date__line {
+    display: flex; justify-content: space-between; gap: 14px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(216,205,181,0.18);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cream-300);
+  }
+  .ev-date__line strong { color: var(--cream-50); font-weight: 500; }
+
+  /* Status pill in hero */
+  .ev-status {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    background: rgba(74,111,84,0.12);
+    color: var(--tea-700);
+  }
+  .ev-status .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--tea-600); animation: pulse 2s infinite; }
+  @keyframes pulse { 50% { opacity: 0.4; } }
+
+  /* Hero photo */
+  .ev-hero__photo {
+    aspect-ratio: 16/7;
+    margin: 0 calc(-1 * var(--gutter));
+    border-radius: 0;
+  }
+
+  /* Body */
+  .ev-body {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: clamp(28px, 5vw, 80px);
+    padding: clamp(40px, 5vw, 64px) 0 clamp(48px, 6vw, 80px);
+  }
+  .ev-main h2 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(28px, 3vw, 40px);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin: clamp(40px, 5vw, 56px) 0 16px;
+  }
+  .ev-main h2:first-child { margin-top: 0; }
+  .ev-main p { font-size: 17px; line-height: 1.65; color: var(--ink-900); max-width: 60ch; margin: 0 0 18px; }
+
+  /* Agenda */
+  .agenda { margin-top: 8px; }
+  .agenda__row {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 24px;
+    padding: 18px 0;
+    border-top: 1px solid var(--line-soft);
+    align-items: start;
+  }
+  .agenda__row:first-child { border-top: 0; padding-top: 0; }
+  .agenda__time {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-500);
+    padding-top: 4px;
+  }
+  .agenda__what {
+    font-family: var(--display);
+    font-size: 20px;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    color: var(--ink-900);
+  }
+  .agenda__what small {
+    display: block;
+    font-family: var(--sans);
+    font-size: 13.5px;
+    color: var(--ink-700);
+    margin-top: 4px;
+    font-weight: 400;
+    line-height: 1.55;
+    max-width: 50ch;
+  }
+
+  /* Speakers */
+  .speakers { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .speaker {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 14px;
+    align-items: start;
+    padding: 18px 0;
+    border-top: 1px solid var(--line-soft);
+  }
+  .speaker:nth-child(-n+2) { border-top: 0; padding-top: 0; }
+  .speaker .photo { width: 64px; height: 64px; aspect-ratio: 1; border-radius: 50%; overflow: hidden; }
+  .speaker h4 { font-family: var(--display); font-size: 18px; letter-spacing: -0.01em; margin: 0 0 2px; font-weight: 400; }
+  .speaker .role { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--copper-700); margin-bottom: 6px; }
+  .speaker p { font-size: 13px; color: var(--ink-700); line-height: 1.5; margin: 0; max-width: none; }
+
+  /* What to bring */
+  .bring { list-style: none; padding: 0; margin: 8px 0 0; }
+  .bring li {
+    padding: 12px 0 12px 28px;
+    border-top: 1px solid var(--line-soft);
+    position: relative;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-900);
+  }
+  .bring li:first-child { border-top: 0; padding-top: 12px; }
+  .bring li::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 19px;
+    width: 14px; height: 1px;
+    background: var(--copper-600);
+  }
+  .bring li small {
+    display: block;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--ink-500);
+    margin-top: 4px;
+    text-transform: none;
+    line-height: 1.5;
+  }
+
+  /* RSVP card (sidebar) */
+  .ev-side { position: sticky; top: 100px; align-self: start; }
+  .rsvp {
+    background: var(--cream-50);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 24px;
+  }
+  .rsvp h3 { font-family: var(--display); font-size: 24px; letter-spacing: -0.01em; margin: 0 0 6px; font-weight: 400; }
+  .rsvp p { font-size: 13px; color: var(--ink-700); line-height: 1.55; margin: 0 0 18px; }
+  .rsvp__row {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 12px;
+    padding: 10px 0;
+    border-top: 1px solid var(--line-soft);
+    font-size: 13.5px;
+  }
+  .rsvp__row:first-of-type { border-top: 0; padding-top: 0; }
+  .rsvp__row .k { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-500); padding-top: 2px; }
+  .rsvp__row .v { color: var(--ink-900); line-height: 1.5; }
+  .rsvp__row .v strong { display: block; margin-bottom: 2px; }
+  .rsvp__form {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    gap: 10px;
+  }
+  .rsvp__form input { background: var(--cream-100); }
+  .rsvp__form .btn { width: 100%; }
+  .rsvp__form .legal { font-family: var(--mono); font-size: 10px; color: var(--ink-500); line-height: 1.6; }
+
+  .seats {
+    margin-top: 18px;
+    padding: 14px 16px;
+    background: var(--cream-100);
+    border-radius: var(--r-md);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--ink-700);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .seats strong { color: var(--copper-700); font-family: var(--display); font-size: 16px; letter-spacing: -0.01em; }
+
+  /* Location */
+  .location {
+    background: var(--cream-100);
+    border-radius: var(--r-lg);
+    padding: 28px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: center;
+    margin-top: 24px;
+  }
+  .location__photo {
+    aspect-ratio: 4/3;
+    border-radius: var(--r-md);
+    background: var(--cream-200);
+    background-image:
+      linear-gradient(rgba(58,52,45,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(58,52,45,0.06) 1px, transparent 1px);
+    background-size: 24px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .location__photo .pin {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -100%);
+    color: var(--copper-600);
+    font-family: var(--display);
+    font-size: 30px;
+  }
+  .location__photo .label {
+    position: absolute; bottom: 12px; left: 12px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--ink-500);
+    text-transform: uppercase;
+  }
+  .location h3 { font-family: var(--display); font-weight: 400; font-size: 22px; letter-spacing: -0.01em; margin: 0 0 8px; }
+  .location p { font-family: var(--mono); font-size: 13px; line-height: 1.7; color: var(--ink-700); margin: 0 0 12px; }
+  .location .row { gap: 8px; }
+
+  /* Related events */
+  .ev-related { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .ev-card {
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    transition: border-color .2s, transform .2s;
+  }
+  .ev-card:hover { border-color: var(--ink-900); transform: translateY(-1px); }
+  .ev-card__date {
+    font-family: var(--display);
+    font-size: 36px;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: var(--ink-900);
+    margin-bottom: 4px;
+  }
+  .ev-card__date small {
+    display: block;
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink-500);
+    font-weight: 400;
+    margin-top: 4px;
+  }
+  .ev-card h3 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    margin: 16px 0 8px;
+  }
+  .ev-card .where { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-500); margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line-soft); }
+
+  @media (max-width: 1000px) {
+    .ev-body { grid-template-columns: 1fr; }
+    .ev-side { position: static; }
+  }
+  @media (max-width: 800px) {
+    .ev-hero__inner { grid-template-columns: 1fr; }
+    .speakers { grid-template-columns: 1fr; }
+    .speaker:nth-child(-n+2) { border-top: 1px solid var(--line-soft); padding-top: 18px; }
+    .speaker:first-child { border-top: 0; padding-top: 0; }
+    .location { grid-template-columns: 1fr; }
+    .agenda__row { grid-template-columns: 1fr; gap: 4px; }
+    .ev-related { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body data-page="insights" data-screen-label="07b · Event detail">
+
+<div data-chrome-top></div>
+
+<nav class="crumb" aria-label="Breadcrumb">
+  <a href="index.html">Home</a><span class="sep">/</span><a href="insights.html">Insights & Events</a><span class="sep">/</span><span class="cur">Saranya '26 Founder Open House</span>
+</nav>
+
+<!-- Hero -->
+<section class="ev-hero">
+  <div class="container">
+    <div class="ev-hero__inner">
+      <div>
+        <div class="ev-hero__chips">
+          <span class="badge badge-copper">RKVY · Saranya</span>
+          <span class="badge">In person</span>
+          <span class="badge">Free entry</span>
+        </div>
+        <h1>Saranya '26 Founder Open House.</h1>
+        <p style="font-family: var(--display); font-size: clamp(18px, 1.5vw, 22px); line-height: 1.4; color: var(--ink-700); margin: 24px 0 24px; max-width: 50ch;">A walk-in afternoon for prospective Saranya applicants. Bring your one-pager. Leave with a clear go / no-go from a programme manager.</p>
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <span class="ev-status"><span class="dot"></span> Registrations open</span>
+          <span style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-500);">26 / 40 seats taken</span>
+        </div>
+      </div>
+
+      <div class="ev-date">
+        <div class="ev-date__big">14 Jun<small>SATURDAY · 2026</small></div>
+        <div class="ev-date__line">
+          <span>14:00 - 17:00 <strong>IST</strong></span>
+          <span>~3 hrs</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="photo photo-tea ev-hero__photo">
+      <div class="photo-label">PHOTO: NEATeHUB main hall during a previous open house - founders mid-conversation in small groups, soft afternoon light, AAU campus context visible through windows</div>
+    </div>
+  </div>
+</section>
+
+<!-- Body -->
+<section style="padding-top: 0;">
+  <div class="container">
+    <div class="ev-body">
+
+      <article class="ev-main">
+        <h2>What this is.</h2>
+        <p>If you've been considering applying to Saranya Cohort 4 - the growth-stage programme under RKVY - this is the afternoon to come in, ask hard questions, and leave with a real answer about whether the programme fits your venture.</p>
+        <p>It is not a recruiting event, a pitch competition, or a polished founder-friendly performance. It's a working session. Three programme managers will be available the entire afternoon for one-on-one conversations. We've set aside two pre-deal-review slots for applicants who want to walk through their pitch with us informally - first-come, first-served.</p>
+
+        <h2>Agenda</h2>
+        <div class="agenda">
+          <div class="agenda__row">
+            <div class="agenda__time">14:00 - 14:20</div>
+            <div class="agenda__what">Welcome & programme overview<small>Director-led 20-minute walkthrough of Saranya structure, capital cadence, and FY26 cohort outcomes. Slides will be shared.</small></div>
+          </div>
+          <div class="agenda__row">
+            <div class="agenda__time">14:20 - 15:00</div>
+            <div class="agenda__what">Two founders, in conversation<small>Ashish Bora (Thalo Cold) and Dr. Rohan Hazarika (Kaziranga Bio) on what the Saranya engagement actually looked like for them - month by month.</small></div>
+          </div>
+          <div class="agenda__row">
+            <div class="agenda__time">15:00 - 15:30</div>
+            <div class="agenda__what">Tea + informal mixing<small>Real Assam tea. Real conversations. Mentors and current cohort founders present.</small></div>
+          </div>
+          <div class="agenda__row">
+            <div class="agenda__time">15:30 - 16:30</div>
+            <div class="agenda__what">1:1 office hours with programme managers<small>Three concurrent rooms. 12-minute slots, signed up first-come on the day. Bring your one-pager.</small></div>
+          </div>
+          <div class="agenda__row">
+            <div class="agenda__time">16:30 - 17:00</div>
+            <div class="agenda__what">Closing Q&A + application walkthrough<small>Live walkthrough of the application form. We answer every "but what about my situation" question. Honest.</small></div>
+          </div>
+        </div>
+
+        <h2>Who you'll meet</h2>
+        <div class="speakers">
+          <div class="speaker">
+            <div class="photo photo-tea"><div class="photo-label">Headshot</div></div>
+            <div>
+              <h4>Dr. P. Saikia</h4>
+              <div class="role">Director - Operations</div>
+              <p>Runs Saranya end-to-end. Will be present in 1:1 slots throughout the afternoon.</p>
+            </div>
+          </div>
+          <div class="speaker">
+            <div class="photo"><div class="photo-label">Headshot</div></div>
+            <div>
+              <h4>Anirban Das</h4>
+              <div class="role">RKVY Program Manager</div>
+              <p>Anchors the RKVY application process. Best person to talk to about eligibility edge-cases.</p>
+            </div>
+          </div>
+          <div class="speaker">
+            <div class="photo photo-copper"><div class="photo-label">Headshot</div></div>
+            <div>
+              <h4>Tridib Saharia</h4>
+              <div class="role">Saranya Programme Lead</div>
+              <p>Runs the current Saranya cohort. Will speak to what month-by-month engagement looks like.</p>
+            </div>
+          </div>
+          <div class="speaker">
+            <div class="photo"><div class="photo-label">Headshot</div></div>
+            <div>
+              <h4>Mridusmita Kalita</h4>
+              <div class="role">Mentor Network</div>
+              <p>Will be available to discuss which mentors fit your venture's sector and stage.</p>
+            </div>
+          </div>
+        </div>
+
+        <h2>What to bring</h2>
+        <ul class="bring">
+          <li>A one-pager about your venture<small>Single A4. PDF or print. Sector, stage, what you've shipped, what you need. We'll read it before the 1:1.</small></li>
+          <li>One question you don't have a good answer to<small>The 1:1 is most useful when you bring your hardest question, not your polished pitch.</small></li>
+          <li>Honest financials, if you have them<small>Not for evaluation - for conversation. We'll respect confidence; nothing leaves the room.</small></li>
+          <li>Comfortable clothes<small>You'll be walking between buildings. The campus is large.</small></li>
+        </ul>
+
+        <h2>Logistics</h2>
+        <div class="location">
+          <div class="location__photo">
+            <div class="pin">⌖</div>
+            <span class="label">AAU CAMPUS · JORHAT</span>
+          </div>
+          <div>
+            <h3>NEATeHUB main hall</h3>
+            <p>Assam Agricultural University<br>Borbheta, Jorhat - 785013<br>Assam<br><br>26.7271° N · 94.2037° E<br>~30 min from Jorhat Airport</p>
+            <div class="row">
+              <a href="#" class="btn btn-ghost btn-sm">Get directions ↗</a>
+              <a href="#" class="btn btn-ghost btn-sm">Download .ics</a>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Sidebar RSVP -->
+      <aside class="ev-side">
+        <div class="rsvp">
+          <h3>RSVP</h3>
+          <p>Free, but space-limited. We close registrations at 40 to keep the 1:1 slots meaningful.</p>
+
+          <div class="rsvp__row">
+            <div class="k">When</div>
+            <div class="v"><strong>14 June 2026</strong>14:00 - 17:00 IST</div>
+          </div>
+          <div class="rsvp__row">
+            <div class="k">Where</div>
+            <div class="v"><strong>Jorhat, Assam</strong>NEATeHUB main hall, AAU</div>
+          </div>
+          <div class="rsvp__row">
+            <div class="k">Format</div>
+            <div class="v"><strong>In person</strong>Not livestreamed</div>
+          </div>
+          <div class="rsvp__row">
+            <div class="k">Cost</div>
+            <div class="v"><strong>Free</strong>Including tea</div>
+          </div>
+
+          <form class="rsvp__form" onsubmit="event.preventDefault(); rsvpDone(this);">
+            <input class="input" type="text" placeholder="Your name" required>
+            <input class="input" type="email" placeholder="your@email.com" required>
+            <input class="input" type="text" placeholder="Venture name (if any)">
+            <button class="btn btn-primary" type="submit">Reserve a seat</button>
+            <p class="legal">By registering you agree to be added to the Saranya '26 mailing list. Unsubscribe anytime.</p>
+          </form>
+
+          <div class="seats">
+            <span>SEATS LEFT</span>
+            <strong>14 / 40</strong>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</section>
+
+<!-- Related events -->
+<section class="bg-cream-100">
+  <div class="container">
+    <div class="row-between">
+      <div>
+        <div class="eyebrow">More events</div>
+        <h2 class="display display-m mt-2">Upcoming on the calendar.</h2>
+      </div>
+      <a href="insights.html" class="btn btn-ghost">All events <span class="arrow">→</span></a>
+    </div>
+    <div class="ev-related mt-5">
+      <a class="ev-card" href="#">
+        <div class="ev-card__date">28<small>JUN · Online</small></div>
+        <h3>Mentor-in-residence: Aqua-feed innovation</h3>
+        <div class="where">Online · 15:00 IST</div>
+      </a>
+      <a class="ev-card" href="#">
+        <div class="ev-card__date">18<small>JUL · Tezpur</small></div>
+        <h3>KVK roundtable: producer-side innovation</h3>
+        <div class="where">Tezpur · Day-long · Invite-only</div>
+      </a>
+      <a class="ev-card" href="#">
+        <div class="ev-card__date">09<small>AUG · Jorhat</small></div>
+        <h3>Demo Day · Saranya Cohort 3</h3>
+        <div class="where">Jorhat · AAU · 10:00-17:00</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<div data-chrome-bottom></div>
+
+<script src="chrome.js"></script>
+<script src="shared.js"></script>
+<script>
+function rsvpDone(form) {
+  form.innerHTML = `
+    <div style="text-align: center; padding: 16px 0;">
+      <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--tea-700); color: var(--cream-50); margin: 0 auto 14px; display: grid; place-items: center; font-size: 22px;">✓</div>
+      <h4 style="font-family: var(--display); font-size: 22px; letter-spacing: -0.01em; margin: 0 0 6px;">You're in.</h4>
+      <p style="font-size: 13.5px; color: var(--ink-700); line-height: 1.55; margin: 0;">We'll send a confirmation email shortly with the .ics and directions.</p>
+    </div>`;
+}
+</script>
+</body>
+</html>

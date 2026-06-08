@@ -1,0 +1,961 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RKVY RAFTAAR - Programs · NEATeHUB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  /* ---------- Breadcrumb ---------- */
+  .crumb {
+    padding: 16px var(--gutter) 0;
+    max-width: var(--max);
+    margin: 0 auto;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    color: var(--ink-500);
+  }
+  .crumb a:hover { color: var(--ink-900); }
+  .crumb .sep { margin: 0 8px; opacity: 0.5; }
+  .crumb .cur { color: var(--ink-900); }
+
+  /* ---------- Hero ---------- */
+  .pd-hero { padding: clamp(28px, 4vw, 48px) 0 clamp(40px, 5vw, 64px); }
+  .pd-hero__inner {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: clamp(32px, 5vw, 80px);
+    align-items: end;
+  }
+  .pd-hero__num { font-family: var(--sans); font-size: 13px; font-weight: 600; letter-spacing: 0.01em; text-transform: none; color: var(--copper-600); }
+  .pd-hero h1 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(40px, 5vw, 72px);
+    letter-spacing: -0.02em;
+    line-height: 1.0;
+    margin: 16px 0 0;
+  }
+  .pd-hero h1 small {
+    display: block;
+    font-family: var(--sans);
+    font-size: clamp(12px, 1vw, 14px);
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    color: var(--ink-500);
+    font-weight: 400;
+    margin-top: 18px;
+  }
+  .pd-hero__side { border-top: 1px solid var(--line); padding-top: 20px; }
+  .pd-hero__status {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(74,111,84,0.1);
+    color: var(--tea-700);
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 0.01em; text-transform: none;
+  }
+  .pd-hero__status .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--tea-600); }
+  .pd-hero__side p { color: var(--ink-700); font-size: 15px; line-height: 1.6; margin: 16px 0 24px; }
+
+  /* ---------- Spec strip ---------- */
+  .pd-spec {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .pd-spec > div { padding: 24px 24px 24px 0; border-right: 1px solid var(--line-soft); }
+  .pd-spec > div:last-child { border-right: 0; }
+  .pd-spec .k { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 0.01em; text-transform: none; color: var(--ink-500); }
+  .pd-spec .v {
+    font-family: var(--display);
+    font-size: clamp(22px, 2.4vw, 32px);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    margin-top: 10px;
+    color: var(--ink-900);
+  }
+  .pd-spec .v small { font-family: var(--sans); font-size: 12px; font-weight: 400; color: var(--ink-500); letter-spacing: 0; }
+
+  /* ---------- Sticky sub-nav ---------- */
+  .pd-subnav {
+    position: sticky;
+    top: 67px;
+    z-index: 20;
+    background: rgba(250,246,238,0.92);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .pd-subnav__inner {
+    display: flex;
+    gap: 0;
+    padding: 0 var(--gutter);
+    max-width: var(--max);
+    margin: 0 auto;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .pd-subnav__inner::-webkit-scrollbar { display: none; }
+  .pd-subnav a {
+    padding: 14px 0;
+    margin-right: 24px;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    color: var(--ink-500);
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+  }
+  .pd-subnav a:hover { color: var(--ink-900); }
+  .pd-subnav a.is-active { color: var(--ink-900); border-bottom-color: var(--copper-600); }
+
+  /* ---------- Two-column body ---------- */
+  .pd-section { padding: clamp(56px, 7vw, 96px) 0; border-top: 1px solid var(--line-soft); }
+  .pd-section:first-of-type { border-top: 0; }
+  .pd-section__head { margin-bottom: 40px; }
+  .pd-section__head h2 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(32px, 4vw, 56px);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    margin: 12px 0 0;
+    max-width: 20ch;
+  }
+  .pd-section__head .lede { margin-top: 20px; max-width: 60ch; }
+
+  /* ---------- Vehicles overview diagram (capital ladder, inline) ---------- */
+  .ladder-canvas {
+    background: var(--tea-900);
+    border-radius: var(--r-lg);
+    padding: clamp(28px, 4vw, 48px);
+    position: relative;
+    overflow: hidden;
+    margin-top: 20px;
+  }
+  .ladder-canvas::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(rgba(216,205,181,0.06) 1px, transparent 1px) 0 0 / 36px 36px,
+      linear-gradient(90deg, rgba(216,205,181,0.06) 1px, transparent 1px) 0 0 / 36px 36px,
+      repeating-linear-gradient(45deg, transparent 0 17px, rgba(216,205,181,0.025) 17px 18px);
+    pointer-events: none;
+  }
+  .ladder-canvas svg { position: relative; width: 100%; height: auto; }
+  .ladder-canvas .corner-tag {
+    position: absolute; top: 18px; right: 22px;
+    font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.01em; text-transform: none;
+    color: rgba(216,205,181,0.55);
+  }
+  .dgrm text.lbl { font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.01em; text-transform: none; fill: rgba(216,205,181,0.55); }
+  .dgrm text.nm-sm { font-family: var(--display); font-size: 14px; fill: var(--cream-50); letter-spacing: -0.005em; }
+  .dgrm text.meta { font-family: var(--sans); font-size: 10px; fill: rgba(216,205,181,0.55); letter-spacing: 0.02em; }
+  .dgrm .axis { stroke: rgba(216,205,181,0.22); stroke-width: 1; }
+  .dgrm .grid-line { stroke: rgba(216,205,181,0.08); stroke-width: 0.5; }
+  .draw { stroke-dasharray: var(--dl, 1000); stroke-dashoffset: var(--dl, 1000); transition: stroke-dashoffset 1.4s cubic-bezier(0.65,0,0.35,1); }
+  .draw.is-in { stroke-dashoffset: 0; }
+  .node { opacity: 0; transition: opacity .3s ease; }
+  .node.is-in { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    .draw, .node { transition: none; }
+    .draw { stroke-dashoffset: 0; }
+    .node { opacity: 1; }
+  }
+
+  /* ---------- Vehicle cards ---------- */
+  .vehicles { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 40px; }
+  .vehicle {
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    padding: 28px;
+    display: flex; flex-direction: column;
+    background: var(--cream-50);
+    transition: border-color .2s;
+  }
+  .vehicle:hover { border-color: var(--ink-900); }
+  .vehicle__stage { font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.01em; text-transform: none; color: var(--copper-700); }
+  .vehicle h3 { font-family: var(--display); font-weight: 400; font-size: clamp(28px, 3vw, 40px); letter-spacing: -0.02em; line-height: 1; margin: 12px 0 6px; }
+  .vehicle h3 small { display: block; font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 0.01em; text-transform: none; color: var(--ink-500); margin-top: 8px; font-weight: 400; }
+  .vehicle__pitch { color: var(--ink-700); font-size: 14px; line-height: 1.55; margin: 14px 0 18px; }
+  .vehicle__spec {
+    display: grid; grid-template-columns: 1fr 1fr;
+    border-top: 1px solid var(--line-soft);
+    margin: 0 0 18px;
+  }
+  .vehicle__spec > div { padding: 12px 12px 12px 0; border-right: 1px solid var(--line-soft); }
+  .vehicle__spec > div:last-child { border-right: 0; padding-right: 0; padding-left: 12px; border-left: 1px solid var(--line-soft); margin-left: -1px; }
+  .vehicle__spec .k { font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.01em; text-transform: none; color: var(--ink-500); }
+  .vehicle__spec .v { font-family: var(--display); font-size: 18px; letter-spacing: -0.01em; margin-top: 4px; }
+  .vehicle__status {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 999px;
+    font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.01em; text-transform: none;
+  }
+  .vehicle__status .dot { width: 5px; height: 5px; border-radius: 50%; }
+  .status-open { background: rgba(74,111,84,0.1); color: var(--tea-700); }
+  .status-open .dot { background: var(--tea-600); }
+  .status-rolling { background: var(--cream-100); color: var(--ink-700); }
+  .status-rolling .dot { background: var(--ink-500); }
+  .vehicle__criteria {
+    list-style: none; padding: 0; margin: 14px 0 18px;
+  }
+  .vehicle__criteria li {
+    padding: 8px 0 8px 16px;
+    position: relative;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-700);
+    border-top: 1px solid var(--line-soft);
+  }
+  .vehicle__criteria li:first-child { border-top: 0; }
+  .vehicle__criteria li::before {
+    content: ""; position: absolute; left: 0; top: 16px;
+    width: 6px; height: 1px; background: var(--copper-600);
+  }
+  .vehicle .actions { margin-top: auto; display: flex; gap: 8px; padding-top: 14px; }
+  .vehicle .actions .btn { flex: 1; }
+
+  /* Highlight Saranya (currently open) */
+  .vehicle--featured { background: var(--tea-900); color: var(--cream-50); border-color: var(--tea-900); }
+  .vehicle--featured .vehicle__stage { color: var(--copper-500); }
+  .vehicle--featured h3 small { color: var(--cream-300); }
+  .vehicle--featured .vehicle__pitch { color: var(--cream-100); }
+  .vehicle--featured .vehicle__spec, .vehicle--featured .vehicle__spec > div { border-color: rgba(216,205,181,0.15); }
+  .vehicle--featured .vehicle__spec .k { color: var(--cream-300); }
+  .vehicle--featured .vehicle__criteria li { color: var(--cream-100); border-top-color: rgba(216,205,181,0.1); }
+  .vehicle--featured .btn-primary { background: var(--copper-500); color: var(--cream-50); }
+  .vehicle--featured .btn-primary:hover { background: var(--copper-600); }
+  .vehicle--featured .btn-ghost { color: var(--cream-50); border-color: rgba(216,205,181,0.3); }
+  .vehicle--featured .btn-ghost:hover { background: rgba(250,246,238,0.06); color: var(--cream-50); }
+
+  /* ---------- Eligibility ---------- */
+  .elig { display: grid; grid-template-columns: 1fr 1.4fr; gap: clamp(28px, 5vw, 80px); align-items: start; }
+  .elig__check {
+    background: var(--tea-900); color: var(--cream-50);
+    border-radius: var(--r-lg); padding: 28px;
+    position: sticky; top: 130px;
+  }
+  .elig__check h3 { font-family: var(--display); font-weight: 400; font-size: 22px; letter-spacing: -0.01em; margin: 0 0 10px; }
+  .elig__check p { color: var(--cream-300); font-size: 14px; line-height: 1.55; margin: 0 0 18px; }
+  .elig__check .quick { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(216,205,181,0.15); padding-left: 0; }
+  .elig__check .quick li {
+    list-style: none; padding: 8px 0; display: flex; gap: 10px;
+    color: var(--cream-100); font-size: 13px;
+    border-top: 1px solid rgba(216,205,181,0.08);
+  }
+  .elig__check .quick li:first-child { border-top: 0; }
+  .elig__check .quick li::before { content: "\2713"; color: var(--copper-500); flex: 0 0 14px; font-family: var(--sans); font-weight: 600; }
+
+  .elig__list { list-style: none; padding: 0; margin: 0; }
+  .elig__list li {
+    display: grid; grid-template-columns: 100px 1fr; gap: 24px;
+    padding: 22px 0; border-top: 1px solid var(--line-soft);
+  }
+  .elig__list li:first-child { border-top: 0; padding-top: 0; }
+  .elig__list .label { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 0.01em; text-transform: none; color: var(--ink-500); padding-top: 2px; }
+  .elig__list h4 { font-family: var(--display); font-weight: 400; font-size: 22px; letter-spacing: -0.01em; margin: 0 0 6px; }
+  .elig__list p { color: var(--ink-700); margin: 0; font-size: 14px; line-height: 1.55; }
+  .elig__list .excludes h4 { color: var(--copper-700); }
+
+  /* ---------- Process timeline (with inline line accent) ---------- */
+  .process { position: relative; }
+  .process::before {
+    content: "";
+    position: absolute; left: 22px; top: 18px; bottom: 18px; width: 1px;
+    background: var(--line);
+  }
+  .step {
+    display: grid; grid-template-columns: 64px 1fr 1fr; gap: 24px;
+    padding: 24px 0; border-top: 1px solid var(--line-soft);
+    position: relative; align-items: start;
+  }
+  .step:first-child { border-top: 0; padding-top: 0; }
+  .step__num {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--cream-50); border: 1px solid var(--line-strong);
+    display: grid; place-items: center;
+    font-family: var(--display); font-size: 18px; letter-spacing: -0.01em;
+    color: var(--ink-900); z-index: 1;
+  }
+  .step--done .step__num { background: var(--copper-600); color: var(--cream-50); border-color: var(--copper-600); }
+  .step__body h4 { font-family: var(--display); font-weight: 400; font-size: 22px; letter-spacing: -0.01em; margin: 8px 0 6px; }
+  .step__body p { color: var(--ink-700); font-size: 14px; line-height: 1.55; margin: 0; }
+  .step__meta { padding-top: 8px; }
+  .step__meta .k { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 0.01em; text-transform: none; color: var(--ink-500); }
+  .step__meta .v { font-family: var(--display); font-size: 18px; margin-top: 4px; letter-spacing: -0.01em; }
+  .step__meta .v small { font-family: var(--sans); font-size: 13px; color: var(--ink-500); font-weight: 400; }
+
+  /* ---------- Past cohorts ---------- */
+  .cohorts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .cohort { border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; }
+  .cohort .photo { aspect-ratio: 16/10; }
+  .cohort__body { padding: 20px 22px 22px; }
+  .cohort__year { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 0.01em; color: var(--copper-700); }
+  .cohort__title { font-family: var(--display); font-size: 22px; letter-spacing: -0.01em; margin: 6px 0 12px; }
+  .cohort__stats { display: flex; gap: 20px; padding-top: 14px; border-top: 1px solid var(--line-soft); }
+  .cohort__stats .k { font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.01em; text-transform: none; color: var(--ink-500); }
+  .cohort__stats .v { font-family: var(--display); font-size: 20px; letter-spacing: -0.01em; margin-top: 2px; }
+
+  /* ---------- Featured ventures ---------- */
+  .feat-vens { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .feat-ven { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; }
+  .feat-ven .photo { aspect-ratio: 16/10; }
+  .feat-ven__body { padding: 18px 20px 20px; }
+  .feat-ven__name { font-family: var(--display); font-size: 22px; letter-spacing: -0.01em; }
+  .feat-ven__sector { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 0.01em; text-transform: none; color: var(--copper-700); margin-top: 4px; }
+  .feat-ven__quote { color: var(--ink-700); font-size: 14px; line-height: 1.5; margin: 14px 0 0; font-style: italic; }
+
+  /* ---------- FAQ ---------- */
+  .faq { max-width: 880px; }
+  .faq-item { border-top: 1px solid var(--line); }
+  .faq-item:last-child { border-bottom: 1px solid var(--line); }
+  .faq-item summary {
+    cursor: pointer; padding: 22px 0; list-style: none;
+    display: flex; justify-content: space-between; align-items: center; gap: 24px;
+    font-family: var(--display); font-size: clamp(20px, 1.8vw, 26px); letter-spacing: -0.01em; line-height: 1.2;
+  }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::after {
+    content: "+"; font-family: var(--display); font-size: 28px; color: var(--copper-600);
+    flex: 0 0 28px; text-align: center; transition: transform .2s;
+  }
+  .faq-item[open] summary::after { content: "−"; }
+  .faq-item .a { padding: 0 56px 22px 0; color: var(--ink-700); font-size: 15px; line-height: 1.65; max-width: 60ch; }
+  .faq-item .a p { margin: 0 0 12px; }
+
+  /* ---------- Apply CTA ---------- */
+  .apply-cta {
+    background: var(--tea-900); color: var(--cream-50);
+    border-radius: var(--r-lg); padding: clamp(36px, 5vw, 64px);
+    display: grid; grid-template-columns: 1.4fr 1fr;
+    gap: clamp(28px, 4vw, 56px); align-items: center;
+    position: relative; overflow: hidden;
+  }
+  .apply-cta::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(216,205,181,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(216,205,181,0.04) 1px, transparent 1px);
+    background-size: 48px 48px; pointer-events: none;
+  }
+  .apply-cta > * { position: relative; z-index: 1; }
+  .apply-cta h2 { font-family: var(--display); font-weight: 400; font-size: clamp(28px, 3.5vw, 48px); letter-spacing: -0.01em; line-height: 1.05; margin: 12px 0 0; color: var(--cream-50); }
+  .apply-cta p { color: var(--cream-100); margin: 16px 0 24px; max-width: 50ch; }
+  .apply-cta__deadline { border-left: 2px solid var(--copper-500); padding: 16px 0 16px 18px; }
+  .apply-cta__deadline .k { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 0.01em; text-transform: none; color: var(--cream-300); }
+  .apply-cta__deadline .v { font-family: var(--display); font-size: 36px; letter-spacing: -0.02em; line-height: 1; color: var(--cream-50); margin-top: 6px; }
+  .apply-cta .btn-copper { background: var(--copper-500); }
+  .apply-cta .btn-copper:hover { background: var(--copper-600); }
+  .apply-cta .btn-ghost { color: var(--cream-50); border-color: rgba(216,205,181,0.3); }
+  .apply-cta .btn-ghost:hover { background: rgba(250,246,238,0.06); color: var(--cream-50); }
+
+  /* Related programs */
+  .related { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .related-card { padding: 24px; border: 1px solid var(--line); border-radius: var(--r-md); transition: border-color .2s, background .2s; }
+  .related-card:hover { border-color: var(--ink-900); background: var(--cream-100); }
+  .related-card .num { font-family: var(--sans); font-size: 12px; font-weight: 600; color: var(--copper-600); letter-spacing: 0.01em; }
+  .related-card h3 { font-family: var(--display); font-weight: 400; font-size: 24px; letter-spacing: -0.01em; margin: 14px 0 8px; }
+  .related-card p { color: var(--ink-700); font-size: 14px; line-height: 1.5; margin: 0; }
+  .related-card .meta { font-family: var(--sans); font-size: 12px; font-weight: 500; color: var(--ink-500); letter-spacing: 0.01em; text-transform: none; margin-top: 16px; }
+
+  @media (max-width: 1000px) {
+    .vehicles { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 900px) {
+    .pd-hero__inner { grid-template-columns: 1fr; gap: 24px; }
+    .pd-spec { grid-template-columns: 1fr 1fr; }
+    .pd-spec > div:nth-child(2n) { border-right: 0; }
+    .pd-spec > div { border-bottom: 1px solid var(--line-soft); }
+    .elig { grid-template-columns: 1fr; }
+    .elig__check { position: static; }
+    .step { grid-template-columns: 44px 1fr; }
+    .step__meta { grid-column: 2; }
+    .cohorts, .feat-vens, .related { grid-template-columns: 1fr; }
+    .apply-cta { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .pd-spec { grid-template-columns: 1fr; }
+    .pd-spec > div { border-right: 0; }
+    .elig__list li { grid-template-columns: 1fr; gap: 4px; }
+  }
+</style>
+</head>
+<body data-page="programs" data-screen-label="05 RKVY RAFTAAR">
+
+<div data-chrome-top></div>
+
+<nav class="crumb" aria-label="Breadcrumb">
+  <a href="index.html">Home</a><span class="sep">/</span><a href="programs.html">Programs</a><span class="sep">/</span><span class="cur">RKVY RAFTAAR</span>
+</nav>
+
+<!-- Hero -->
+<section class="pd-hero">
+  <div class="container">
+    <div class="pd-hero__inner">
+      <div>
+        <div class="pd-hero__num">Flagship program · Central Government</div>
+        <h1>RKVY RAFTAAR
+          <small>Rashtriya Krishi Vikas Yojana · Remunerative Approaches for Agriculture and Allied Sectors Rejuvenation</small>
+        </h1>
+      </div>
+      <div class="pd-hero__side">
+        <span class="pd-hero__status"><span class="dot"></span> Three sub-programs active · Rolling intake</span>
+        <p>Our flagship program. NEATeHUB runs three stage-based sub-programs under RKVY RAFTAAR - <strong>Isanya</strong> for idea-stage founders, <strong>Saranya</strong> for growth-stage ventures, and <strong>Navyam</strong> for student founders. One funder, one institutional framework, three doors.</p>
+        <div class="row">
+          <a href="#vehicles" class="btn btn-primary">See the sub-programs <span class="arrow">→</span></a>
+          <a href="for-founders.html#wizard" class="btn btn-ghost">Check eligibility</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="pd-spec mt-5">
+      <div><div class="k">Capital range</div><div class="v">₹2L - ₹25L <small>across sub-programs</small></div></div>
+      <div><div class="k">Equity dilution</div><div class="v">None <small>non-dilutive</small></div></div>
+      <div><div class="k">Sub-programs</div><div class="v">3</div></div>
+      <div><div class="k">Duration</div><div class="v">8 wk - 24 mo</div></div>
+      <div><div class="k">Funder</div><div class="v">MoA&FW <small>Govt of India</small></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Sticky sub-nav -->
+<nav class="pd-subnav" aria-label="Section navigation">
+  <div class="pd-subnav__inner">
+    <a href="#overview" class="is-active">Overview</a>
+    <a href="#vehicles">Sub-programs</a>
+    <a href="#eligibility">Eligibility</a>
+    <a href="#process">Process</a>
+    <a href="#cohorts">Past cohorts</a>
+    <a href="#ventures">Featured ventures</a>
+    <a href="#faq">FAQ</a>
+    <a href="#apply">Apply</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- Overview -->
+  <section class="pd-section" id="overview">
+    <div class="pd-section__head">
+      <div class="eyebrow">Overview</div>
+      <h2>One program. Three stage-based doors.</h2>
+      <p class="lede">RKVY RAFTAAR is a single central-government program with three stage-based sub-programs inside it. Founders enter at the stage that fits them, and the structure allows movement between sub-programs as the venture matures - Navyam founders graduate into Isanya; Isanya graduates step up to Saranya. Same funder, same eligibility envelope, escalating capital.</p>
+    </div>
+
+    <!-- Inline capital ladder diagram (formerly diagrams.html standalone) -->
+    <div class="ladder-canvas" data-anim="ladder">
+      <span class="corner-tag">Fig · Capital across RKVY sub-programs</span>
+      <svg class="dgrm" viewBox="0 0 1100 360" preserveAspectRatio="xMidYMid meet" aria-label="Capital across RKVY sub-programs">
+        <line class="axis" x1="80" y1="40" x2="80" y2="280"/>
+        <line class="axis" x1="80" y1="280" x2="1040" y2="280"/>
+
+        <text class="meta" x="68" y="284" text-anchor="end">₹0</text>
+        <line class="grid-line" x1="80" y1="232" x2="1040" y2="232"/>
+        <text class="meta" x="68" y="236" text-anchor="end">₹5L</text>
+        <line class="grid-line" x1="80" y1="184" x2="1040" y2="184"/>
+        <text class="meta" x="68" y="188" text-anchor="end">₹10L</text>
+        <line class="grid-line" x1="80" y1="136" x2="1040" y2="136"/>
+        <text class="meta" x="68" y="140" text-anchor="end">₹15L</text>
+        <line class="grid-line" x1="80" y1="88" x2="1040" y2="88"/>
+        <text class="meta" x="68" y="92" text-anchor="end">₹20L</text>
+        <line class="grid-line" x1="80" y1="40" x2="1040" y2="40"/>
+        <text class="meta" x="68" y="44" text-anchor="end">₹25L</text>
+
+        <text class="lbl" x="80" y="22">CAPITAL CEILING</text>
+        <text class="lbl" x="1040" y="306" text-anchor="end">→ VENTURE STAGE</text>
+
+        <!-- Navyam: 2L -->
+        <g class="node" data-delay="100" transform="translate(200, 0)">
+          <rect x="-70" y="262" width="140" height="18" fill="none" stroke="#c97849" stroke-width="1.5"/>
+          <line class="draw" data-delay="100" x1="-70" y1="262" x2="70" y2="262" stroke="#c97849" stroke-width="2.5" style="--dl: 140;"/>
+          <text class="nm-sm" x="0" y="308" text-anchor="middle">Navyam</text>
+          <text class="meta" x="0" y="324" text-anchor="middle">₹2L · Student First</text>
+        </g>
+        <!-- Isanya: 5L -->
+        <g class="node" data-delay="350" transform="translate(480, 0)">
+          <rect x="-90" y="232" width="180" height="48" fill="none" stroke="#c97849" stroke-width="1.5"/>
+          <line class="draw" data-delay="350" x1="-90" y1="232" x2="90" y2="232" stroke="#c97849" stroke-width="2.5" style="--dl: 180;"/>
+          <text class="nm-sm" x="0" y="308" text-anchor="middle">Isanya</text>
+          <text class="meta" x="0" y="324" text-anchor="middle">₹5L · 8 wk residential</text>
+        </g>
+        <!-- Saranya: 25L -->
+        <g class="node" data-delay="600" transform="translate(820, 0)">
+          <rect x="-120" y="40" width="240" height="240" fill="rgba(201,120,73,0.07)" stroke="#c97849" stroke-width="1.5"/>
+          <line class="draw" data-delay="600" x1="-120" y1="40" x2="120" y2="40" stroke="#c97849" stroke-width="3" style="--dl: 240;"/>
+          <text class="nm-sm" x="0" y="308" text-anchor="middle" style="fill: #c97849;">Saranya</text>
+          <text class="meta" x="0" y="324" text-anchor="middle">₹25L · 12-18 mo growth</text>
+        </g>
+
+        <!-- Connecting flow line between vehicles -->
+        <path class="draw" data-delay="1000" d="M 270 262 L 390 232 M 570 232 L 700 40"
+              stroke="rgba(216,205,181,0.4)" stroke-width="1" fill="none" stroke-dasharray="3 4" style="--dl: 360;"/>
+        <text class="meta" x="320" y="244">graduate</text>
+        <text class="meta" x="610" y="130">graduate</text>
+      </svg>
+    </div>
+
+    <p style="font-family: var(--sans); font-size: 13px; color: var(--ink-500); margin-top: 16px; max-width: 60ch; line-height: 1.6;">
+      ⓘ Bars are grant ceilings. Dashed line shows the typical graduation path - a founder may start at Navyam as a student, move to Isanya post-graduation, then enter Saranya once revenue scales. Not every founder takes this full path.
+    </p>
+  </section>
+
+  <!-- The Sub-programs -->
+  <section class="pd-section" id="vehicles">
+    <div class="pd-section__head">
+      <div class="eyebrow">Sub-programs</div>
+      <h2>Pick the one that matches your stage.</h2>
+      <p class="lede">All three sit under RKVY RAFTAAR - same funder, same NEATeHUB management. They differ on capital ceiling, format, and who they're built for.</p>
+    </div>
+
+    <div class="vehicles">
+      <!-- Navyam -->
+      <article class="vehicle" id="navyam">
+        <div class="vehicle__stage">Sub-program 01 · Student stage</div>
+        <h3>Navyam <small>Student stage</small></h3>
+        <p class="vehicle__pitch">Curriculum-integrated entrepreneurship pathway for student founders at AAU and Northeast universities. Sandbox grant, lab time, mentor.</p>
+        <div class="vehicle__spec">
+          <div><div class="k">Grant</div><div class="v">₹2 L</div></div>
+          <div><div class="k">Duration</div><div class="v">2 sem.</div></div>
+        </div>
+        <span class="vehicle__status status-open"><span class="dot"></span> Annual · Apr 2026</span>
+        <h4 class="h-section" style="margin-top: 14px;">Who this is for</h4>
+        <ul class="vehicle__criteria">
+          <li>Currently enrolled UG / PG student</li>
+          <li>At AAU or any NE-region university</li>
+          <li>Idea or prototype stage, no revenue expected</li>
+        </ul>
+        <div class="actions">
+          <a href="for-founders.html#apply" class="btn btn-primary btn-sm">Apply to Navyam</a>
+        </div>
+      </article>
+
+      <!-- Isanya -->
+      <article class="vehicle" id="isanya">
+        <div class="vehicle__stage">Sub-program 02 · Idea stage</div>
+        <h3>Isanya <small>Idea-stage residential</small></h3>
+        <p class="vehicle__pitch">An 8-week residential at AAU campus. Cohort of 12 founders, full-time, in-residence. Lab access, agronomist mentorship, founder community.</p>
+        <div class="vehicle__spec">
+          <div><div class="k">Grant</div><div class="v">₹5 L</div></div>
+          <div><div class="k">Duration</div><div class="v">8 wk</div></div>
+        </div>
+        <span class="vehicle__status status-open"><span class="dot"></span> Cohort 7 · Sep 2026</span>
+        <h4 class="h-section" style="margin-top: 14px;">Who this is for</h4>
+        <ul class="vehicle__criteria">
+          <li>Idea or very early prototype, no revenue required</li>
+          <li>Solo or two-person teams, NE-rooted preferred</li>
+          <li>Can commit full-time, in-residence at Jorhat</li>
+        </ul>
+        <div class="actions">
+          <a href="for-founders.html#apply" class="btn btn-primary btn-sm">Apply to Isanya</a>
+        </div>
+      </article>
+
+      <!-- Saranya (featured, currently open) -->
+      <article class="vehicle vehicle--featured" id="saranya">
+        <div class="vehicle__stage">Sub-program 03 · Growth stage</div>
+        <h3>Saranya <small>Early & growth-stage</small></h3>
+        <p class="vehicle__pitch">For ventures past pilot with paying customers. Capital up to ₹25L, dedicated GTM mentorship, follow-on networks. Non-residential. Milestone-tranched capital.</p>
+        <div class="vehicle__spec">
+          <div><div class="k">Capital</div><div class="v">₹25 L</div></div>
+          <div><div class="k">Duration</div><div class="v">12-18 mo</div></div>
+        </div>
+        <span class="vehicle__status" style="background: rgba(201,120,73,0.2); color: var(--copper-500);"><span class="dot" style="background: var(--copper-500);"></span> Cohort 4 · Apply by 30 Jun</span>
+        <h4 class="h-section" style="margin-top: 14px; color: var(--cream-300);">Who this is for</h4>
+        <ul class="vehicle__criteria">
+          <li>Revenue-generating, ideally ₹10L+ ARR</li>
+          <li>All agri-allied sectors, including agri-fintech</li>
+          <li>Optional SAFE for longer runway</li>
+        </ul>
+        <div class="actions">
+          <a href="for-founders.html#apply" class="btn btn-primary btn-sm">Apply to Saranya</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Eligibility (umbrella-level) -->
+  <section class="pd-section" id="eligibility">
+    <div class="pd-section__head">
+      <div class="eyebrow">Eligibility</div>
+      <h2>The eligibility criteria.</h2>
+      <p class="lede">These apply to all three sub-programs of RKVY. Sub-program-specific additions are listed inside each card above.</p>
+    </div>
+
+    <div class="elig">
+      <aside class="elig__check">
+        <h3>Quick check</h3>
+        <p>Tick these before reading the full criteria. You don't need to pass every line - but you must pass at least four.</p>
+        <ul class="quick">
+          <li>DPIIT-recognised startup</li>
+          <li>Incorporated &lt; 7 years</li>
+          <li>Working MVP or pilot</li>
+          <li>Agri-allied sector</li>
+          <li>Indian-citizen founder(s)</li>
+        </ul>
+        <a href="for-founders.html#wizard" class="btn btn-cream mt-3" style="margin-top: 24px; width: 100%;">Run full wizard <span class="arrow">→</span></a>
+      </aside>
+
+      <ol class="elig__list">
+        <li>
+          <span class="label">Required · 01</span>
+          <div>
+            <h4>DPIIT-recognised startup</h4>
+            <p>Active recognition from the Department for Promotion of Industry and Internal Trade. If you're not yet recognised, sort that first - one-form online application, turns around in 2-3 weeks. Navyam (student) applicants are exempt from this requirement.</p>
+          </div>
+        </li>
+        <li>
+          <span class="label">Required · 02</span>
+          <div>
+            <h4>Incorporated less than 7 years ago</h4>
+            <p>Calculated from the date of incorporation on your MCA filing. Older ventures fall outside the central scheme guidelines.</p>
+          </div>
+        </li>
+        <li>
+          <span class="label">Required · 03</span>
+          <div>
+            <h4>Working MVP or documented pilot</h4>
+            <p>For Saranya: real users running the product with data. For Isanya: working prototype with at least one validated user interview cycle. For Navyam: a working concept and a feasibility plan.</p>
+          </div>
+        </li>
+        <li>
+          <span class="label">Required · 04</span>
+          <div>
+            <h4>Agri-allied sector</h4>
+            <p>Agri-input, post-harvest, livestock, fisheries, food processing, agri-services, agri-fintech. If you're unsure whether your venture qualifies, ask <a href="ai-assistant.html" class="link">our AI</a> - it'll route you correctly.</p>
+          </div>
+        </li>
+        <li>
+          <span class="label">Required · 05</span>
+          <div>
+            <h4>Indian-citizen founder(s)</h4>
+            <p>Majority equity held by Indian citizens. OCIs eligible. Foreign founders are not, under the central scheme.</p>
+          </div>
+        </li>
+        <li>
+          <span class="label">Preferred</span>
+          <div>
+            <h4>Operations or pilots in NE India</h4>
+            <p>Not required - RKVY is a central scheme - but weighted positively. If you don't have NE operations, name a credible plan to develop one.</p>
+          </div>
+        </li>
+        <li class="excludes">
+          <span class="label">Excludes</span>
+          <div>
+            <h4>Pure trading, distribution, or services without innovation core</h4>
+            <p>If your edge is procurement or geography, this isn't your program. We look for a technical, process, or product innovation that's reproducible. ASRLM may be a better fit for producer-aggregation businesses.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Process -->
+  <section class="pd-section" id="process">
+    <div class="pd-section__head">
+      <div class="eyebrow">Process</div>
+      <h2>From application to first capital tranche.</h2>
+      <p class="lede">Same five-step flow across all three sub-programs, with different timelines. Saranya: 11 weeks. Isanya: 6 weeks (cohort-driven). Navyam: 4 weeks.</p>
+    </div>
+
+    <div class="process">
+      <div class="step step--done">
+        <div class="step__num">01</div>
+        <div class="step__body">
+          <span class="kicker" style="color: var(--copper-700);">Week 0</span>
+          <h4>Application</h4>
+          <p>Submit the application form, deck, and pilot data through the portal. We assign a program manager within 5 working days. Tell us which sub-program you're applying to.</p>
+        </div>
+        <div class="step__meta">
+          <div class="k">Your effort</div>
+          <div class="v">~6 hrs</div>
+        </div>
+      </div>
+      <div class="step step--done">
+        <div class="step__num">02</div>
+        <div class="step__body">
+          <span class="kicker" style="color: var(--copper-700);">Week 1-3</span>
+          <h4>First-pass evaluation</h4>
+          <p>Internal scoring against the rubric for the specific sub-program. Two-person review. Outcome: Yes / No / Conditional / More-info.</p>
+        </div>
+        <div class="step__meta">
+          <div class="k">Advance rate</div>
+          <div class="v">~32% <small>Saranya · varies</small></div>
+        </div>
+      </div>
+      <div class="step step--done">
+        <div class="step__num">03</div>
+        <div class="step__body">
+          <span class="kicker" style="color: var(--copper-700);">Week 4-6</span>
+          <h4>Deep dive + reference checks</h4>
+          <p>Founder interview, two reference calls (one customer, one peer), site visit if accessible. Independent technical review by a sector specialist.</p>
+        </div>
+        <div class="step__meta">
+          <div class="k">Your effort</div>
+          <div class="v">~10 hrs</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step__num">04</div>
+        <div class="step__body">
+          <span class="kicker" style="color: var(--copper-700);">Week 7-9</span>
+          <h4>Selection committee + RKVY MAC review</h4>
+          <p>Internal committee selects; approved ventures go to RKVY Monitoring & Advisory Committee for formal clearance. We don't control the central-government calendar here.</p>
+        </div>
+        <div class="step__meta">
+          <div class="k">Visibility</div>
+          <div class="v">Full</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step__num">05</div>
+        <div class="step__body">
+          <span class="kicker" style="color: var(--copper-700);">Week 10-11</span>
+          <h4>Onboarding + Tranche 1</h4>
+          <p>Sign the engagement letter, set the milestone plan with your principal mentor, receive Tranche 1 (varies: ₹1L for Navyam, ₹2L for Isanya, ₹5L for Saranya).</p>
+        </div>
+        <div class="step__meta">
+          <div class="k">First capital</div>
+          <div class="v">₹1L - ₹5L</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Past cohorts -->
+  <section class="pd-section" id="cohorts">
+    <div class="pd-section__head">
+      <div class="eyebrow">Past cohorts</div>
+      <h2>Six years, 124 ventures.</h2>
+      <p class="lede">Across the three sub-programs. Some are still in-program, some have exited, some have raised follow-on equity. A handful have wound down.</p>
+    </div>
+
+    <div class="cohorts">
+      <div class="cohort">
+        <div class="photo photo-tea"><div class="photo-label">PHOTO: 2024 Saranya cohort group portrait</div></div>
+        <div class="cohort__body">
+          <div class="cohort__year">FY2024 · Saranya Cohort 2</div>
+          <div class="cohort__title">12 ventures funded</div>
+          <p style="color: var(--ink-700); font-size: 14px; line-height: 1.55; margin: 0;">Post-harvest-heavy. Two are at Series A discussions; one wound down. ₹2.4Cr deployed.</p>
+          <div class="cohort__stats">
+            <div><div class="k">Funded</div><div class="v">12</div></div>
+            <div><div class="k">Capital</div><div class="v">₹2.4Cr</div></div>
+            <div><div class="k">Active</div><div class="v">11</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="cohort">
+        <div class="photo"><div class="photo-label">PHOTO: Isanya Cohort 6 residential opening</div></div>
+        <div class="cohort__body">
+          <div class="cohort__year">FY2024 · Isanya Cohort 6</div>
+          <div class="cohort__title">12 founders, 10 ventures</div>
+          <p style="color: var(--ink-700); font-size: 14px; line-height: 1.55; margin: 0;">Two teams merged mid-cohort. Six advanced to Saranya in FY25. ₹50L deployed.</p>
+          <div class="cohort__stats">
+            <div><div class="k">Funded</div><div class="v">10</div></div>
+            <div><div class="k">Capital</div><div class="v">₹50L</div></div>
+            <div><div class="k">→ Saranya</div><div class="v">6</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="cohort">
+        <div class="photo photo-copper"><div class="photo-label">PHOTO: Navyam student showcase, AAU</div></div>
+        <div class="cohort__body">
+          <div class="cohort__year">FY2024 · Navyam</div>
+          <div class="cohort__title">28 student projects</div>
+          <p style="color: var(--ink-700); font-size: 14px; line-height: 1.55; margin: 0;">Cohort drawn from AAU + 4 NE universities. Three projects fast-tracked into Isanya. ₹56L sandbox capital.</p>
+          <div class="cohort__stats">
+            <div><div class="k">Projects</div><div class="v">28</div></div>
+            <div><div class="k">Capital</div><div class="v">₹56L</div></div>
+            <div><div class="k">→ Isanya</div><div class="v">3</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured ventures -->
+  <section class="pd-section" id="ventures">
+    <div class="pd-section__head">
+      <div class="eyebrow">Featured ventures</div>
+      <h2>Three founders, three sub-programs, in their words.</h2>
+    </div>
+
+    <div class="feat-vens">
+      <a class="feat-ven" href="portfolio-kaziranga-bio.html">
+        <div class="photo photo-tea"><div class="photo-label">PHOTO: Kaziranga Bio founder in tea estate</div></div>
+        <div class="feat-ven__body">
+          <div class="feat-ven__name">Kaziranga Bio</div>
+          <div class="feat-ven__sector">Bio-inputs · Saranya '24</div>
+          <p class="feat-ven__quote">"NEATeHUB's mistake-budget is what got us out of the lab and into nine actual gardens. Most accelerators don't fund honest failure."</p>
+        </div>
+      </a>
+      <a class="feat-ven" href="portfolio.html">
+        <div class="photo"><div class="photo-label">PHOTO: Mati Labs founder with mobile soil-test rig</div></div>
+        <div class="feat-ven__body">
+          <div class="feat-ven__name">Mati Labs</div>
+          <div class="feat-ven__sector">Soil testing · Isanya '25</div>
+          <p class="feat-ven__quote">"Eight weeks of in-residence was relentless. We came in with a sensor pack idea and left with a working mobile test rig and KVK pilots queued."</p>
+        </div>
+      </a>
+      <a class="feat-ven" href="portfolio.html">
+        <div class="photo photo-copper"><div class="photo-label">PHOTO: Navyam student team at AAU showcase</div></div>
+        <div class="feat-ven__body">
+          <div class="feat-ven__name">Pukhuri Fish</div>
+          <div class="feat-ven__sector">Aquaculture · Navyam '23 → Isanya '24</div>
+          <p class="feat-ven__quote">"Started as a final-year project. Navyam's ₹2L bought us our first sensor units; Isanya turned it into a real venture."</p>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="pd-section" id="faq">
+    <div class="pd-section__head">
+      <div class="eyebrow">FAQ</div>
+      <h2>Questions we get most often.</h2>
+    </div>
+
+    <div class="faq">
+      <details class="faq-item" open>
+        <summary>Should I apply to RKVY, or to a specific sub-program (Isanya / Saranya / Navyam)?</summary>
+        <div class="a"><p>Apply to the sub-program, not the parent. RKVY RAFTAAR is the funder framework; Isanya / Saranya / Navyam are the doors you actually walk through. The application form has a sub-program dropdown - pick the one that matches your stage.</p><p>If you're not sure which one fits, run the eligibility wizard. It will route you to a specific sub-program.</p></div>
+      </details>
+      <details class="faq-item">
+        <summary>Can I move from one sub-program to another?</summary>
+        <div class="a"><p>Yes - that's the whole point of the structure. Navyam graduates can apply directly to Isanya without going through the full intake again. Isanya alumni get a fast-track to Saranya when they hit the revenue threshold. About 30% of our Saranya cohort came from Isanya.</p></div>
+      </details>
+      <details class="faq-item">
+        <summary>Is the ₹25L a single payment?</summary>
+        <div class="a"><p>No. Across sub-programs, capital is released in milestone-linked tranches. Saranya: 3 tranches over 12-18 months. Isanya: 2 tranches over 8 weeks. Navyam: usually 1-2 tranches over 2 semesters. Each tranche is gated on the milestone plan we set together in week 1.</p></div>
+      </details>
+      <details class="faq-item">
+        <summary>Do I have to relocate to Jorhat?</summary>
+        <div class="a"><p>Only for Isanya - it's residential by design. Saranya and Navyam are non-residential. You'll visit Jorhat for quarterly reviews regardless.</p></div>
+      </details>
+      <details class="faq-item">
+        <summary>What's the equity expectation?</summary>
+        <div class="a"><p>RKVY is non-dilutive - we take no equity across any of the three sub-programs. The optional SAFE we offer with Saranya is exactly that: optional, and only for ventures that want longer runway.</p></div>
+      </details>
+      <details class="faq-item">
+        <summary>What happens if my venture isn't a fit for any sub-program?</summary>
+        <div class="a"><p>We route - not reject. If RKVY's sub-programs don't fit, we check AIC, ASRLM, Student First, and TIC-AISF. If nothing fits, we tell you why and suggest who else might. Edge cases route to a callback, not a form letter.</p></div>
+      </details>
+    </div>
+  </section>
+
+  <!-- Apply CTA -->
+  <section class="pd-section" id="apply">
+    <div class="apply-cta">
+      <div>
+        <div class="eyebrow" style="color: var(--copper-500);">Apply now</div>
+        <h2>Rolling intake across all three sub-programs. Decision in 4-11 weeks.</h2>
+        <p>The single RKVY RAFTAAR application form lets you flag interest in one or more sub-programs. The next Saranya review batch closes <strong style="color: var(--cream-50);">30 June 2026</strong>. Isanya Cohort 7 opens applications in <strong style="color: var(--cream-50);">August</strong>.</p>
+        <div class="row mt-3">
+          <a href="#" class="btn btn-copper btn-lg">Start application <span class="arrow">→</span></a>
+          <a href="#" class="btn btn-ghost btn-lg">Download program brief (PDF)</a>
+        </div>
+      </div>
+      <div class="apply-cta__deadline">
+        <div class="k">Saranya · Next cycle closes</div>
+        <div class="v">30 Jun 2026</div>
+        <p style="font-family: var(--sans); font-size: 13px; color: var(--cream-300); margin: 14px 0 0; line-height: 1.6;">
+          Average elapsed time from Saranya application to first capital tranche: 11 weeks. Isanya: 6. Navyam: 4.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related (other RKVY-adjacent programs) -->
+  <section class="pd-section">
+    <div class="pd-section__head">
+      <div class="eyebrow">Not quite the right fit?</div>
+      <h2>Other programs we run.</h2>
+    </div>
+    <div class="related">
+      <a href="programs-aic.html" class="related-card">
+        <div class="num">National</div>
+        <h3>AIC · NITI Aayog</h3>
+        <p>National-level recognition under Atal Innovation Mission. Pan-India mentor network, separate funder.</p>
+        <div class="meta">Quarterly intake</div>
+      </a>
+      <a href="programs-asrlm.html" class="related-card">
+        <div class="num">State · Producer-led</div>
+        <h3>ASRLM</h3>
+        <p>Assam State Rural Livelihoods. FPOs, SHGs, producer-aggregation ventures.</p>
+        <div class="meta">Continuous</div>
+      </a>
+      <a href="programs-ticiitg.html" class="related-card">
+        <div class="num">Deep-tech</div>
+        <h3>TIC (IITG) - AISF</h3>
+        <p>Joint program with IIT Guwahati for engineering-heavy agri founders. Robotics, sensing, ML.</p>
+        <div class="meta">Closed · Reopens Q3</div>
+      </a>
+    </div>
+  </section>
+</div>
+
+<div data-chrome-bottom></div>
+
+<script src="chrome.js"></script>
+<script src="shared.js"></script>
+<script>
+// Sticky sub-nav active state on scroll
+const subnavLinks = document.querySelectorAll('.pd-subnav a');
+const sections = [...subnavLinks].map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+function syncSubnav() {
+  const top = window.scrollY + 180;
+  let active = sections[0];
+  for (const s of sections) { if (s.offsetTop <= top) active = s; }
+  subnavLinks.forEach(a => a.classList.toggle('is-active', a.getAttribute('href') === '#' + active.id));
+}
+window.addEventListener('scroll', syncSubnav, { passive: true });
+syncSubnav();
+subnavLinks.forEach(a => {
+  a.addEventListener('click', (e) => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    const y = target.getBoundingClientRect().top + window.scrollY - 110;
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  });
+});
+
+// Capital ladder animation (inline diagram, on scroll)
+function prepareLadder(scope) {
+  scope.querySelectorAll('.draw').forEach(el => {
+    let len;
+    if (typeof el.getTotalLength === 'function') { try { len = el.getTotalLength(); } catch(e) {} }
+    if (len && !isNaN(len)) {
+      el.style.setProperty('--dl', Math.ceil(len));
+      el.style.strokeDasharray = Math.ceil(len);
+      el.style.strokeDashoffset = Math.ceil(len);
+    }
+  });
+}
+function runLadder(scope) {
+  scope.querySelectorAll('.draw, .node').forEach(el => {
+    el.classList.remove('is-in');
+    const delay = parseInt(el.dataset.delay || '0', 10);
+    setTimeout(() => el.classList.add('is-in'), delay + 50);
+  });
+}
+const ladder = document.querySelector('.ladder-canvas');
+if (ladder) {
+  prepareLadder(ladder);
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { runLadder(e.target); io.unobserve(e.target); } });
+    }, { threshold: 0.3 });
+    io.observe(ladder);
+  } else { runLadder(ladder); }
+}
+</script>
+</body>
+</html>
