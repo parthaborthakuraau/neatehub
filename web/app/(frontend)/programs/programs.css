@@ -1,0 +1,83 @@
+/* =========================================================
+   NEATeHUB — Programs hub styles (ported from programs.html)
+   ========================================================= */
+
+.pg-hero { padding: clamp(48px, 6vw, 80px) 0 clamp(40px, 5vw, 64px); }
+.pg-hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(36px, 4.4vw, 60px); letter-spacing: -0.02em; line-height: 1.04; margin: 16px 0 0; max-width: 22ch; }
+.pg-hero .lede { margin-top: 22px; max-width: 60ch; }
+.pg-stats { display: grid; grid-template-columns: repeat(4,1fr); border-top: 1px solid var(--line); margin-top: 56px; }
+.pg-stats > div { padding: 24px 24px 0 0; border-right: 1px solid var(--line-soft); }
+.pg-stats > div:last-child { border-right: 0; }
+.pg-stats .num { font-family: var(--display); font-size: clamp(28px, 3vw, 44px); letter-spacing: -0.02em; line-height: 1; }
+.pg-stats .lbl { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 0.01em; text-transform: none; color: var(--ink-500); margin-top: 8px; }
+
+.section-bar {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin: clamp(40px, 5vw, 56px) 0 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+.section-bar h2 { font-family: var(--display); font-weight: 400; font-size: clamp(24px, 2.4vw, 32px); letter-spacing: -0.02em; margin: 0; line-height: 1.05; }
+.section-bar .ix { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 0.01em; text-transform: none; color: var(--copper-700); }
+
+/* Programs grid */
+.programs-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.program-card {
+  display: flex; flex-direction: column;
+  background: var(--cream-50);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: 28px;
+  transition: border-color .2s, transform .2s;
+}
+.program-card:hover { border-color: var(--ink-900); transform: translateY(-1px); }
+.program-card__num { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 0.01em; text-transform: none; color: var(--copper-700); }
+.program-card h3 {
+  font-family: var(--display); font-weight: 400;
+  font-size: clamp(28px, 3vw, 40px);
+  letter-spacing: -0.02em; line-height: 1;
+  margin: 12px 0 4px;
+}
+.program-card h3 small {
+  display: block;
+  font-family: var(--sans); font-size: 12px; font-weight: 400;
+  letter-spacing: 0.01em; text-transform: none;
+  color: var(--ink-500);
+  margin-top: 10px;
+}
+.program-card .pitch { color: var(--ink-700); font-size: 14.5px; line-height: 1.55; margin: 16px 0 20px; }
+.program-card__spec {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  border-top: 1px solid var(--line-soft);
+  margin-bottom: 18px;
+}
+.program-card__spec > div { padding: 14px 14px 14px 0; border-right: 1px solid var(--line-soft); }
+.program-card__spec > div:last-child { border-right: 0; padding-right: 0; padding-left: 14px; border-left: 1px solid var(--line-soft); margin-left: -1px; }
+.program-card__spec .k { font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.01em; text-transform: none; color: var(--ink-500); }
+.program-card__spec .v { font-family: var(--display); font-size: 19px; letter-spacing: -0.01em; margin-top: 4px; }
+.program-card__status {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 999px;
+  font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.01em; text-transform: none;
+  margin-bottom: 4px;
+  align-self: flex-start;
+}
+.program-card__status.open { background: rgba(74,111,84,0.12); color: var(--tea-700); }
+.program-card__status.rolling { background: var(--cream-100); color: var(--ink-700); border: 1px solid var(--line); }
+.program-card__status.closed { background: transparent; color: var(--ink-500); border: 1px solid var(--line); }
+.program-card__status .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.program-card .actions { margin-top: auto; display: flex; gap: 8px; padding-top: 14px; }
+.program-card .actions .btn { flex: 1; }
+
+.eligibility-cta { display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; align-items: center; }
+
+@media (max-width: 900px) {
+  .pg-stats { grid-template-columns: 1fr 1fr; }
+  .programs-grid { grid-template-columns: 1fr; }
+  .program-card__spec { grid-template-columns: 1fr 1fr; }
+  .eligibility-cta { grid-template-columns: 1fr; gap: 24px; }
+}
