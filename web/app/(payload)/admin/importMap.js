@@ -1,4 +1,6 @@
-// Payload admin import map.
-// Empty because the config uses only built-in field types / no custom admin components.
-// If you later add custom components, regenerate with: npm run generate:importmap
-export const importMap = {};
+import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
+
+/** @type import('payload').ImportMap */
+export const importMap = {
+  "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
+}
