@@ -1,0 +1,179 @@
+/* =========================================================
+   NEATeHUB — /ask (AI assistant) page-specific styles
+   Ported from ai-assistant.html inline <style>.
+   Shared classes (.container-text, .badge, .lede, .btn*, etc.)
+   live in globals.css and are intentionally NOT redefined here.
+   ========================================================= */
+
+.ai-hero { padding: clamp(40px, 5vw, 56px) 0 clamp(20px, 2vw, 32px); }
+.ai-hero .badge { background: rgba(168, 93, 46, 0.1); color: var(--copper-700); border-color: rgba(168, 93, 46, 0.2); }
+.ai-hero h1 {
+  font-family: var(--display); font-weight: 400;
+  font-size: clamp(40px, 5.5vw, 80px);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin: 16px 0 0;
+  max-width: 18ch;
+}
+.ai-hero .lede { margin-top: 18px; max-width: 56ch; }
+
+/* Intent cards */
+.intents { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 36px; }
+.intent {
+  display: flex; flex-direction: column;
+  background: var(--cream-50);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: 24px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color .2s, background .2s, transform .2s;
+  font: inherit; color: inherit;
+}
+.intent:hover { border-color: var(--ink-900); transform: translateY(-1px); }
+.intent.is-active { background: var(--ink-900); color: var(--cream-50); border-color: var(--ink-900); }
+.intent .num { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; color: var(--copper-600); }
+.intent.is-active .num { color: var(--copper-500); }
+.intent h3 { font-family: var(--display); font-weight: 400; font-size: 22px; letter-spacing: -0.01em; margin: 12px 0 8px; }
+.intent p { color: var(--ink-700); font-size: 13px; line-height: 1.55; margin: 0; }
+.intent.is-active p { color: var(--cream-300); }
+.intent .ex { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line-soft); font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-500); }
+.intent.is-active .ex { border-top-color: rgba(216, 205, 181, 0.15); color: var(--cream-300); }
+
+/* Chat */
+.chat {
+  margin-top: 32px;
+  background: var(--cream-50);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  min-height: 520px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.chat__head {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--line-soft);
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--cream-100);
+}
+.chat__head .agent {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.chat__head .dot {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--tea-600);
+  box-shadow: 0 0 0 4px rgba(106, 140, 114, 0.2);
+  animation: ask-pulse 2s ease infinite;
+}
+@keyframes ask-pulse { 50% { box-shadow: 0 0 0 6px rgba(106, 140, 114, 0.05); } }
+
+.chat__head .reset { background: none; border: 0; font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-500); cursor: pointer; }
+.chat__head .reset:hover { color: var(--ink-900); }
+
+.chat__body {
+  flex: 1;
+  padding: 28px;
+  display: flex; flex-direction: column; gap: 18px;
+  overflow-y: auto;
+}
+.msg { display: flex; gap: 12px; max-width: 80%; }
+.msg__avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  flex: 0 0 32px;
+  display: grid; place-items: center;
+  font-family: var(--display); font-size: 14px;
+}
+.msg__avatar--ai { background: var(--tea-900); color: var(--cream-50); }
+.msg__avatar--u { background: var(--copper-600); color: var(--cream-50); }
+.msg__bubble {
+  background: var(--cream-100);
+  border-radius: 14px;
+  padding: 12px 16px;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--ink-900);
+}
+.msg--u { margin-left: auto; flex-direction: row-reverse; }
+.msg--u .msg__bubble { background: var(--ink-900); color: var(--cream-50); }
+.msg__bubble p { margin: 0; }
+.msg__bubble p + p { margin-top: 8px; }
+.msg__bubble ul { margin: 8px 0 0; padding-left: 18px; }
+.msg__bubble li { margin: 4px 0; }
+.msg__bubble .cites {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line-soft);
+}
+.msg__bubble .cite {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--cream-50);
+  border: 1px solid var(--line);
+  color: var(--ink-700);
+}
+
+/* Typing indicator */
+.typing { display: inline-flex; gap: 4px; align-items: center; padding: 4px 0; }
+.typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-500); animation: ask-bounce 1.2s ease infinite; }
+.typing span:nth-child(2) { animation-delay: .15s; }
+.typing span:nth-child(3) { animation-delay: .3s; }
+@keyframes ask-bounce { 0%, 80%, 100% { transform: translateY(0); opacity: .4; } 40% { transform: translateY(-4px); opacity: 1; } }
+
+/* Composer */
+.composer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--line-soft);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  background: var(--cream-50);
+}
+.composer textarea {
+  resize: none;
+  font: inherit;
+  font-size: 15px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: 12px 14px;
+  min-height: 44px;
+  max-height: 140px;
+  background: var(--cream-100);
+  color: var(--ink-900);
+}
+.composer textarea:focus { outline: 2px solid var(--copper-500); outline-offset: 1px; border-color: var(--copper-500); }
+.composer .send { height: 44px; align-self: end; }
+
+/* Suggested */
+.suggestions { display: flex; gap: 8px; flex-wrap: wrap; padding: 0 20px 16px; }
+.suggestion {
+  background: var(--cream-100);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: var(--ink-700);
+  cursor: pointer;
+}
+.suggestion:hover { background: var(--ink-900); color: var(--cream-50); border-color: var(--ink-900); }
+
+/* Disclaimer */
+.ai-disclaimer {
+  margin-top: 24px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--ink-500);
+  line-height: 1.6;
+  max-width: 68ch;
+}
+.ai-disclaimer strong { color: var(--ink-700); }
+
+@media (max-width: 800px) {
+  .intents { grid-template-columns: 1fr; }
+  .chat { min-height: 420px; }
+  .msg { max-width: 92%; }
+}

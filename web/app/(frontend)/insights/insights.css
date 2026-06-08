@@ -1,0 +1,98 @@
+.in-hero { padding: clamp(48px, 6vw, 80px) 0 clamp(32px, 4vw, 48px); }
+.in-hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(40px, 6vw, 88px); letter-spacing: -0.02em; line-height: 0.98; margin: 16px 0 0; }
+.in-tabs { display: flex; gap: 4px; margin-top: 32px; padding-bottom: 0; border-bottom: 1px solid var(--line); }
+.in-tab {
+  background: none; border: 0;
+  padding: 14px 18px;
+  font-family: var(--sans);
+  font-size: 15px;
+  color: var(--ink-500);
+  cursor: pointer;
+  position: relative;
+}
+.in-tab .count {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-400);
+  margin-left: 4px;
+}
+.in-tab.is-active { color: var(--ink-900); }
+.in-tab.is-active::after { content: ""; position: absolute; left: 14px; right: 14px; bottom: -1px; height: 2px; background: var(--copper-600); }
+
+.in-pane { display: none; padding-top: 40px; }
+.in-pane.is-active { display: block; }
+
+/* Featured post */
+.feature-post {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: clamp(28px, 4vw, 56px);
+  align-items: center;
+  padding-bottom: 56px;
+  border-bottom: 1px solid var(--line);
+}
+.feature-post .photo { aspect-ratio: 16/11; border-radius: var(--r-md); }
+.feature-post .meta-row { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; }
+.feature-post h2 { font-family: var(--display); font-weight: 400; font-size: clamp(32px, 4.5vw, 60px); letter-spacing: -0.02em; line-height: 1.05; margin: 0; }
+.feature-post p { color: var(--ink-700); margin: 20px 0 0; font-size: 17px; line-height: 1.55; max-width: 50ch; }
+.feature-post .byline { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-500); margin-top: 24px; }
+
+/* Editorial list */
+.ed-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(20px, 2.5vw, 36px); padding-top: 56px; }
+.ed-card .photo { aspect-ratio: 4/3; border-radius: var(--r-md); margin-bottom: 16px; }
+.ed-card .meta { display: flex; gap: 10px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-500); }
+.ed-card h3 { font-family: var(--display); font-weight: 400; font-size: clamp(20px, 1.8vw, 26px); letter-spacing: -0.01em; line-height: 1.18; margin: 10px 0 0; }
+.ed-card:hover h3 { color: var(--tea-800); }
+.ed-card p { color: var(--ink-700); font-size: 14px; margin-top: 8px; line-height: 1.5; }
+
+/* Events */
+.ev-list { border-top: 1px solid var(--line); }
+.ev-row {
+  display: grid;
+  grid-template-columns: 90px 1.4fr 1fr 100px 80px;
+  gap: 24px;
+  align-items: center;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--line-soft);
+  transition: background .15s;
+}
+.ev-row:hover { background: var(--cream-100); }
+.ev-date {
+  font-family: var(--display);
+  font-size: 36px;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--ink-900);
+}
+.ev-date small { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-500); font-weight: 400; margin-top: 4px; }
+.ev-title { font-family: var(--display); font-size: 22px; letter-spacing: -0.01em; }
+.ev-title small { display: block; font-family: var(--sans); font-size: 13px; color: var(--ink-700); margin-top: 4px; max-width: 50ch; font-weight: 400; }
+.ev-meta { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-700); }
+.ev-stat .badge { display: inline-flex; }
+.ev-row .arrow { color: var(--ink-700); }
+.ev-row:hover .arrow { color: var(--copper-700); }
+
+/* Empty state for quiet month */
+.quiet-month {
+  background: var(--cream-100);
+  border-radius: var(--r-lg);
+  padding: 40px;
+  text-align: center;
+  margin-top: 32px;
+}
+.quiet-month .label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-500); }
+.quiet-month h3 { font-family: var(--display); font-weight: 400; font-size: 28px; letter-spacing: -0.01em; margin: 8px 0; }
+.quiet-month p { color: var(--ink-700); max-width: 44ch; margin: 8px auto 0; }
+
+@media (max-width: 900px) {
+  .feature-post { grid-template-columns: 1fr; }
+  .ed-list { grid-template-columns: 1fr 1fr; }
+  .ev-row { grid-template-columns: 70px 1fr 80px; }
+  .ev-meta { display: none; }
+  .in-tabs { overflow-x: auto; }
+}
+@media (max-width: 600px) {
+  .ed-list { grid-template-columns: 1fr; }
+  .ev-row { grid-template-columns: 60px 1fr; gap: 12px; }
+  .ev-stat { display: none; }
+}
