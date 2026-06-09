@@ -12,6 +12,7 @@ import { EVENTS_HERO } from "./content/events-hero";
 import { EVENTS_GEN } from "./content/events";
 import { DOWNLOADS, IMPACT_REPORTS, MENTORS } from "./content/resources";
 import { CAREERS } from "./content/careers";
+import { DIRECTORS, TEAM, PARTNERS } from "./content/about";
 
 /**
  * Dev-only seeding endpoint. GET /dev-seed populates ventures, insights
@@ -40,7 +41,10 @@ export async function GET() {
       | "downloads"
       | "impactReports"
       | "mentors"
-      | "careers",
+      | "careers"
+      | "directors"
+      | "team"
+      | "partners",
     rows: { slug: string }[]
   ) {
     for (const row of rows) {
@@ -66,6 +70,9 @@ export async function GET() {
   await seed("impactReports", IMPACT_REPORTS);
   await seed("mentors", MENTORS);
   await seed("careers", CAREERS);
+  await seed("directors", DIRECTORS);
+  await seed("team", TEAM);
+  await seed("partners", PARTNERS);
 
   // Banner has no slug — seed one if the collection is empty.
   const banners = await payload.find({ collection: "banners", limit: 1 });
@@ -97,6 +104,9 @@ export async function GET() {
       impactReports: IMPACT_REPORTS.length,
       mentors: MENTORS.length,
       careers: CAREERS.length,
+      directors: DIRECTORS.length,
+      team: TEAM.length,
+      partners: PARTNERS.length,
     },
     results,
   });

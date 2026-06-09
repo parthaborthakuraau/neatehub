@@ -582,6 +582,57 @@ export default buildConfig({
         },
       ],
     },
+
+    // ---------- Directors ----------
+    {
+      slug: "directors",
+      labels: { singular: "Director", plural: "Directors" },
+      admin: { useAsTitle: "name", group: "About", defaultColumns: ["name", "title"] },
+      fields: [
+        { name: "name", type: "text", required: true },
+        { name: "slug", type: "text", required: true, unique: true },
+        { name: "title", type: "text", admin: { description: 'e.g. "Director · NEATeHUB"' } },
+        { name: "quote", type: "textarea" },
+        { name: "photoLabel", type: "textarea", admin: { description: "Photo brief." } },
+        { name: "order", type: "number" },
+      ],
+    },
+
+    // ---------- Team ----------
+    {
+      slug: "team",
+      labels: { singular: "Team member", plural: "Team" },
+      admin: { useAsTitle: "name", group: "About", defaultColumns: ["name", "role"] },
+      fields: [
+        { name: "name", type: "text", required: true },
+        { name: "slug", type: "text", required: true, unique: true },
+        { name: "role", type: "text" },
+        {
+          name: "photoTreatment",
+          type: "select",
+          defaultValue: "default",
+          options: [
+            { label: "Default", value: "default" },
+            { label: "Tea", value: "tea" },
+            { label: "Copper", value: "copper" },
+          ],
+        },
+        { name: "order", type: "number" },
+      ],
+    },
+
+    // ---------- Partners ----------
+    {
+      slug: "partners",
+      labels: { singular: "Partner", plural: "Partners" },
+      admin: { useAsTitle: "name", group: "About", defaultColumns: ["name", "context"] },
+      fields: [
+        { name: "name", type: "text", required: true },
+        { name: "slug", type: "text", required: true, unique: true },
+        { name: "context", type: "text", admin: { description: 'e.g. "Ministry of Agriculture"' } },
+        { name: "order", type: "number" },
+      ],
+    },
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",

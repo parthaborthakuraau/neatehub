@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./about.css";
 import EcosystemMap from "./EcosystemMap";
 import { getCareers } from "../lib/content";
+import { getDirectors, getTeam, getPartners } from "../lib/about";
 
 export const metadata: Metadata = {
   title: "About",
@@ -13,7 +14,12 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function AboutPage() {
-  const careers = await getCareers();
+  const [careers, directors, team, partners] = await Promise.all([
+    getCareers(),
+    getDirectors(),
+    getTeam(),
+    getPartners(),
+  ]);
 
   return (
     <>
@@ -150,32 +156,16 @@ export default async function AboutPage() {
             </div>
           </div>
           <div className="dir-grid mt-5">
-            <div className="dir-card">
-              <div className="photo" aria-hidden="true">
-                <div className="photo-label">
-                  PHOTO: Dr. Bhattacharyya, environmental portrait at AAU lab,
-                  eye-level, natural light
+            {directors.map((d) => (
+              <div className="dir-card" key={d.slug}>
+                <div className="photo" aria-hidden="true">
+                  <div className="photo-label">{d.photoLabel}</div>
                 </div>
+                <h3>{d.name}</h3>
+                <div className="title">{d.title}</div>
+                {d.quote ? <blockquote>{d.quote}</blockquote> : null}
               </div>
-              <h3>Dr. A.K. Bhattacharyya</h3>
-              <div className="title">Director · NEATeHUB</div>
-              <blockquote>
-                Agriculture in the Northeast is not a sector - it is the substrate.
-              </blockquote>
-            </div>
-            <div className="dir-card">
-              <div className="photo" aria-hidden="true">
-                <div className="photo-label">
-                  PHOTO: Director Operations, at field station, mid-shot
-                </div>
-              </div>
-              <h3>Dr. P. Saikia</h3>
-              <div className="title">Director - Operations</div>
-              <blockquote>
-                What&apos;s missing in NE agri is not ideas - it&apos;s
-                institutional patience. We sell time.
-              </blockquote>
-            </div>
+            ))}
           </div>
         </div>
       </section>
@@ -194,14 +184,23 @@ export default async function AboutPage() {
             </div>
           </div>
           <div className="team-grid mt-5">
-            <div className="team-card"><div className="photo"><div className="photo-label">Headshot - natural light</div></div><div className="name">Rituparna Borah</div><div className="role">Programs Lead</div></div>
-            <div className="team-card"><div className="photo photo-tea"><div className="photo-label">Headshot</div></div><div className="name">Anirban Das</div><div className="role">RKVY Program Manager</div></div>
-            <div className="team-card"><div className="photo"><div className="photo-label">Headshot</div></div><div className="name">Mridusmita Kalita</div><div className="role">Mentor Network</div></div>
-            <div className="team-card"><div className="photo photo-copper"><div className="photo-label">Headshot</div></div><div className="name">Khanin Phukan</div><div className="role">Operations</div></div>
-            <div className="team-card"><div className="photo"><div className="photo-label">Headshot</div></div><div className="name">Bidisha Gogoi</div><div className="role">Finance &amp; Grants</div></div>
-            <div className="team-card"><div className="photo photo-tea"><div className="photo-label">Headshot</div></div><div className="name">Tridib Saharia</div><div className="role">Saranya Program</div></div>
-            <div className="team-card"><div className="photo photo-copper"><div className="photo-label">Headshot</div></div><div className="name">Nilakshi Hazarika</div><div className="role">Communications</div></div>
-            <div className="team-card"><div className="photo"><div className="photo-label">Headshot</div></div><div className="name">Pranab Borgohain</div><div className="role">Infrastructure</div></div>
+            {team.map((m) => (
+              <div className="team-card" key={m.slug}>
+                <div
+                  className={`photo${
+                    m.photoTreatment === "tea"
+                      ? " photo-tea"
+                      : m.photoTreatment === "copper"
+                      ? " photo-copper"
+                      : ""
+                  }`}
+                >
+                  <div className="photo-label">Headshot</div>
+                </div>
+                <div className="name">{m.name}</div>
+                <div className="role">{m.role}</div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -227,30 +226,22 @@ export default async function AboutPage() {
           <EcosystemMap />
 
           <div className="partner-grid mt-5">
-            <div className="partner-cell" style={{ background: "rgba(250,246,238,0.05)", borderColor: "rgba(216,205,181,0.2)" }}>
-              <div><div className="nm" style={{ color: "var(--cream-50)" }}>RKVY RAFTAAR</div><div className="ctx" style={{ color: "var(--cream-300)" }}>Ministry of Agriculture</div></div>
-            </div>
-            <div className="partner-cell" style={{ background: "rgba(250,246,238,0.05)", borderColor: "rgba(216,205,181,0.2)" }}>
-              <div><div className="nm" style={{ color: "var(--cream-50)" }}>NITI Aayog</div><div className="ctx" style={{ color: "var(--cream-300)" }}>Atal Innovation Mission</div></div>
-            </div>
-            <div className="partner-cell" style={{ background: "rgba(250,246,238,0.05)", borderColor: "rgba(216,205,181,0.2)" }}>
-              <div><div className="nm" style={{ color: "var(--cream-50)" }}>ASRLM</div><div className="ctx" style={{ color: "var(--cream-300)" }}>Govt of Assam</div></div>
-            </div>
-            <div className="partner-cell" style={{ background: "rgba(250,246,238,0.05)", borderColor: "rgba(216,205,181,0.2)" }}>
-              <div><div className="nm" style={{ color: "var(--cream-50)" }}>AAU Jorhat</div><div className="ctx" style={{ color: "var(--cream-300)" }}>Host institution</div></div>
-            </div>
-            <div className="partner-cell" style={{ background: "rgba(250,246,238,0.05)", borderColor: "rgba(216,205,181,0.2)" }}>
-              <div><div className="nm" style={{ color: "var(--cream-50)" }}>DA&amp;FW</div><div className="ctx" style={{ color: "var(--cream-300)" }}>Centre of Excellence</div></div>
-            </div>
-            <div className="partner-cell" style={{ background: "rgba(250,246,238,0.05)", borderColor: "rgba(216,205,181,0.2)" }}>
-              <div><div className="nm" style={{ color: "var(--cream-50)" }}>DST · NSTEDB</div><div className="ctx" style={{ color: "var(--cream-300)" }}>National network</div></div>
-            </div>
-            <div className="partner-cell" style={{ background: "rgba(250,246,238,0.05)", borderColor: "rgba(216,205,181,0.2)" }}>
-              <div><div className="nm" style={{ color: "var(--cream-50)" }}>ICAR</div><div className="ctx" style={{ color: "var(--cream-300)" }}>Research linkage</div></div>
-            </div>
-            <div className="partner-cell" style={{ background: "rgba(250,246,238,0.05)", borderColor: "rgba(216,205,181,0.2)" }}>
-              <div><div className="nm" style={{ color: "var(--cream-50)" }}>IIT Guwahati</div><div className="ctx" style={{ color: "var(--cream-300)" }}>Build Club partnership</div></div>
-            </div>
+            {partners.map((p) => (
+              <div
+                className="partner-cell"
+                key={p.slug}
+                style={{ background: "rgba(250,246,238,0.05)", borderColor: "rgba(216,205,181,0.2)" }}
+              >
+                <div>
+                  <div className="nm" style={{ color: "var(--cream-50)" }}>
+                    {p.name}
+                  </div>
+                  <div className="ctx" style={{ color: "var(--cream-300)" }}>
+                    {p.context}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
