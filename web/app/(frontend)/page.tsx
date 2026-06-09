@@ -1,6 +1,11 @@
 import Link from "next/link";
 import "./home.css";
 import NewsletterForm from "./components/NewsletterForm";
+import { getVentureCards } from "./lib/ventures";
+import { getInsights, getNewsroom, getEvents } from "./lib/content";
+
+// Static with ISR — the teasers reflect CMS content within a minute.
+export const revalidate = 60;
 
 function RowArrow() {
   return (
@@ -12,7 +17,50 @@ function RowArrow() {
   );
 }
 
-export default function Home() {
+function photoClass(t?: string | null): string {
+  return t === "tea" ? "photo-tea" : t === "copper" ? "photo-copper" : "";
+}
+
+export default async function Home() {
+  const [ventures, insights, newsroom, events] = await Promise.all([
+    getVentureCards(),
+    getInsights(),
+    getNewsroom(),
+    getEvents(),
+  ]);
+
+  const teaser = ventures.slice(0, 4);
+  const featured = insights.find((i) => i.featured) ?? insights[0] ?? null;
+
+  const newsRows = [
+    ...events.map((e) => ({
+      key: `ev-${e.slug}`,
+      tag: "Event",
+      cls: "tag-event",
+      title: e.title,
+      meta: [e.dateBig, e.location?.venue].filter(Boolean).join(" · "),
+      href: `/insights/events/${e.slug}`,
+    })),
+    ...newsroom.map((n) => ({
+      key: `nw-${n.slug}`,
+      tag: "News",
+      cls: "tag-news",
+      title: n.title,
+      meta: [n.date, n.category].filter(Boolean).join(" · "),
+      href: `/insights/${n.slug}`,
+    })),
+    ...insights
+      .filter((i) => i !== featured)
+      .map((i) => ({
+        key: `in-${i.slug}`,
+        tag: "Insight",
+        cls: "tag-insight",
+        title: i.title,
+        meta: [i.date, i.category].filter(Boolean).join(" · "),
+        href: `/insights/${i.slug}`,
+      })),
+  ].slice(0, 6);
+
   return (
     <>
       {/* ============ HERO ============ */}
@@ -357,50 +405,25 @@ export default function Home() {
           </div>
 
           <div className="pf-grid mt-5">
-            <Link className="pf-card" href="/portfolio/kaziranga-bio">
-              <div className="photo photo-tea" style={{ aspectRatio: "4/5" }}>
-                <div className="photo-label">
-                  PHOTO: Founder in tea estate, golden hour
+            {teaser.map((v) => (
+              <Link className="pf-card" href={v.url} key={v.slug}>
+                <div
+                  className={`photo ${photoClass(v.photo)}`}
+                  style={{ aspectRatio: "4/5" }}
+                >
+                  <div className="photo-label">
+                    PHOTO: {v.name}
+                    {v.loc ? `, ${v.loc.split(",")[0]}` : ""}
+                  </div>
                 </div>
-              </div>
-              <div className="meta">
-                <div className="name">Kaziranga Bio</div>
-                <div className="sector">Bio-inputs · Saranya &apos;24</div>
-              </div>
-            </Link>
-            <Link className="pf-card" href="/portfolio">
-              <div className="photo" style={{ aspectRatio: "4/5" }}>
-                <div className="photo-label">
-                  PHOTO: Post-harvest cold-chain unit, Jorhat
+                <div className="meta">
+                  <div className="name">{v.name}</div>
+                  <div className="sector">
+                    {[v.sector, v.program].filter(Boolean).join(" · ")}
+                  </div>
                 </div>
-              </div>
-              <div className="meta">
-                <div className="name">Thalo Cold</div>
-                <div className="sector">Post-harvest · RKVY &apos;23</div>
-              </div>
-            </Link>
-            <Link className="pf-card" href="/portfolio">
-              <div className="photo photo-copper" style={{ aspectRatio: "4/5" }}>
-                <div className="photo-label">
-                  PHOTO: Fish-feed lab close-up, Tezpur
-                </div>
-              </div>
-              <div className="meta">
-                <div className="name">Brahma Aqua</div>
-                <div className="sector">Aquaculture · AIC &apos;24</div>
-              </div>
-            </Link>
-            <Link className="pf-card" href="/portfolio">
-              <div className="photo" style={{ aspectRatio: "4/5" }}>
-                <div className="photo-label">
-                  PHOTO: Mobile soil-test rig in field
-                </div>
-              </div>
-              <div className="meta">
-                <div className="name">Mati Labs</div>
-                <div className="sector">Ag-input testing · Isanya &apos;25</div>
-              </div>
-            </Link>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
@@ -446,81 +469,43 @@ export default function Home() {
           </div>
 
           <div className="news-grid mt-5">
-            <article className="news-feature">
-              <Link href="/insights/fy26-cohort-post-harvest">
-                <div className="photo">
-                  <div className="photo-label">
-                    PHOTO: Founders presenting at Demo Day, AAU auditorium
+            {featured ? (
+              <article className="news-feature">
+                <Link href={`/insights/${featured.slug}`}>
+                  <div className={`photo ${photoClass(featured.photoTreatment)}`}>
+                    <div className="photo-label">
+                      {featured.heroPhotoLabel ||
+                        "PHOTO: Founders presenting at Demo Day, AAU auditorium"}
+                    </div>
                   </div>
-                </div>
-                <div className="news-feature__meta">
-                  <span className="badge badge-copper">Feature</span>
-                  <span>May 14, 2026 · 8 min read</span>
-                </div>
-                <h3>
-                  What the FY26 cohort taught us about post-harvest losses in the
-                  Northeast.
-                </h3>
-                <p>
-                  Twelve founders, four sectors, one stubborn truth — cold-chain
-                  isn&apos;t a product problem, it&apos;s a routing problem. Notes
-                  from a year of building with them.
-                </p>
-                <span className="news-feature__cta">Read the story →</span>
-              </Link>
-            </article>
+                  <div className="news-feature__meta">
+                    <span className="badge badge-copper">
+                      {featured.category || "Feature"}
+                    </span>
+                    <span>
+                      {[featured.date, featured.readTime]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </span>
+                  </div>
+                  <h3>{featured.title}</h3>
+                  <p>{featured.dek}</p>
+                  <span className="news-feature__cta">Read the story →</span>
+                </Link>
+              </article>
+            ) : null}
 
             <div className="news-list">
-              <Link className="news-row" href="/insights/events/saranya-26-open-house">
-                <span className="news-row__tag tag-event">Event</span>
-                <div className="news-row__body">
-                  <h4>Saranya &apos;26 Founder Open House</h4>
-                  <div className="news-row__meta">14 Jun · Jorhat, AAU</div>
-                </div>
-                <span className="news-row__arrow">→</span>
-              </Link>
-              <Link className="news-row" href="/insights">
-                <span className="news-row__tag tag-news">News</span>
-                <div className="news-row__body">
-                  <h4>
-                    NEATeHUB recognised as Centre of Excellence by DA&amp;FW.
-                  </h4>
-                  <div className="news-row__meta">02 May · Press</div>
-                </div>
-                <span className="news-row__arrow">→</span>
-              </Link>
-              <Link className="news-row" href="/insights">
-                <span className="news-row__tag tag-event">Event</span>
-                <div className="news-row__body">
-                  <h4>Mentor-in-residence: Aqua-feed innovation</h4>
-                  <div className="news-row__meta">28 Jun · Online</div>
-                </div>
-                <span className="news-row__arrow">→</span>
-              </Link>
-              <Link className="news-row" href="/insights">
-                <span className="news-row__tag tag-insight">Insight</span>
-                <div className="news-row__body">
-                  <h4>FY25 Impact Report: ₹7Cr deployed, 70 funded.</h4>
-                  <div className="news-row__meta">12 Apr · Report</div>
-                </div>
-                <span className="news-row__arrow">→</span>
-              </Link>
-              <Link className="news-row" href="/insights">
-                <span className="news-row__tag tag-news">News</span>
-                <div className="news-row__body">
-                  <h4>Robotics Lab inauguration with AAU &amp; state govt.</h4>
-                  <div className="news-row__meta">08 Apr · Partnership</div>
-                </div>
-                <span className="news-row__arrow">→</span>
-              </Link>
-              <Link className="news-row" href="/insights">
-                <span className="news-row__tag tag-event">Event</span>
-                <div className="news-row__body">
-                  <h4>KVK roundtable: producer-side innovation</h4>
-                  <div className="news-row__meta">18 Jul · Tezpur</div>
-                </div>
-                <span className="news-row__arrow">→</span>
-              </Link>
+              {newsRows.map((r) => (
+                <Link className="news-row" href={r.href} key={r.key}>
+                  <span className={`news-row__tag ${r.cls}`}>{r.tag}</span>
+                  <div className="news-row__body">
+                    <h4>{r.title}</h4>
+                    <div className="news-row__meta">{r.meta}</div>
+                  </div>
+                  <span className="news-row__arrow">→</span>
+                </Link>
+              ))}
             </div>
           </div>
         </div>
