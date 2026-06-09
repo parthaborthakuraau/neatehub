@@ -1,20 +1,55 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import "./event-detail.css";
 import RSVPForm from "./RSVPForm";
+import { getEventBySlug, getEvents, type EventDoc } from "../../../lib/content";
 
-export const metadata: Metadata = {
-  title: "Event",
-  description:
-    "Saranya '26 Founder Open House — a walk-in afternoon for prospective Saranya applicants at AAU, Jorhat.",
+export const dynamic = "force-dynamic";
+
+const FORMAT_LABEL: Record<string, string> = {
+  "in-person": "In person",
+  online: "Online",
+  hybrid: "Hybrid",
 };
+
+function photoClass(t?: string | null): string {
+  return t === "tea" ? "photo-tea" : t === "copper" ? "photo-copper" : "";
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const ev = await getEventBySlug(slug);
+  if (!ev) return { title: "Event not found" };
+  return {
+    title: ev.title,
+    description: ev.dek ?? undefined,
+  };
+}
 
 export default async function EventDetailPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  await params;
+  const { slug } = await params;
+  const ev = await getEventBySlug(slug);
+  if (!ev) notFound();
+
+  const related = (await getEvents())
+    .filter((e) => e.slug !== ev.slug)
+    .slice(0, 3);
+
+  const statusLabel =
+    ev.status === "open"
+      ? "Registrations open"
+      : ev.status
+        ? ev.status.charAt(0).toUpperCase() + ev.status.slice(1)
+        : null;
 
   return (
     <>
@@ -23,7 +58,7 @@ export default async function EventDetailPage({
         <span className="sep">/</span>
         <Link href="/insights">Insights &amp; Events</Link>
         <span className="sep">/</span>
-        <span className="cur">Saranya &apos;26 Founder Open House</span>
+        <span className="cur">{ev.title}</span>
       </nav>
 
       {/* Hero */}
@@ -32,62 +67,78 @@ export default async function EventDetailPage({
           <div className="ev-hero__inner">
             <div>
               <div className="ev-hero__chips">
-                <span className="badge badge-copper">RKVY · Saranya</span>
-                <span className="badge">In person</span>
-                <span className="badge">Free entry</span>
+                {ev.programTag ? (
+                  <span className="badge badge-copper">{ev.programTag}</span>
+                ) : null}
+                {ev.format ? (
+                  <span className="badge">
+                    {FORMAT_LABEL[ev.format] ?? ev.format}
+                  </span>
+                ) : null}
+                {ev.free ? <span className="badge">Free entry</span> : null}
               </div>
-              <h1>Saranya &apos;26 Founder Open House.</h1>
-              <p
-                style={{
-                  fontFamily: "var(--display)",
-                  fontSize: "clamp(18px, 1.5vw, 22px)",
-                  lineHeight: 1.4,
-                  color: "var(--ink-700)",
-                  margin: "24px 0 24px",
-                  maxWidth: "50ch",
-                }}
-              >
-                A walk-in afternoon for prospective Saranya applicants. Bring your
-                one-pager. Leave with a clear go / no-go from a programme manager.
-              </p>
-              <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                <span className="ev-status">
-                  <span className="dot" /> Registrations open
-                </span>
-                <span
+              <h1>{ev.title}</h1>
+              {ev.dek ? (
+                <p
                   style={{
-                    fontFamily: "var(--mono)",
-                    fontSize: 11,
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
-                    color: "var(--ink-500)",
+                    fontFamily: "var(--display)",
+                    fontSize: "clamp(18px, 1.5vw, 22px)",
+                    lineHeight: 1.4,
+                    color: "var(--ink-700)",
+                    margin: "24px 0 24px",
+                    maxWidth: "50ch",
                   }}
                 >
-                  26 / 40 seats taken
-                </span>
+                  {ev.dek}
+                </p>
+              ) : null}
+              <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                {statusLabel ? (
+                  ev.status === "open" ? (
+                    <span className="ev-status">
+                      <span className="dot" /> {statusLabel}
+                    </span>
+                  ) : (
+                    <span className="ev-status">{statusLabel}</span>
+                  )
+                ) : null}
+                {ev.seatsTotal ? (
+                  <span
+                    style={{
+                      fontFamily: "var(--mono)",
+                      fontSize: 11,
+                      letterSpacing: "0.08em",
+                      textTransform: "uppercase",
+                      color: "var(--ink-500)",
+                    }}
+                  >
+                    {ev.seatsTaken ?? 0} / {ev.seatsTotal} seats taken
+                  </span>
+                ) : null}
               </div>
             </div>
 
             <div className="ev-date">
               <div className="ev-date__big">
-                14 Jun<small>SATURDAY · 2026</small>
+                {ev.dateBig}
+                {ev.dayLabel ? <small>{ev.dayLabel}</small> : null}
               </div>
               <div className="ev-date__line">
                 <span>
-                  14:00 - 17:00 <strong>IST</strong>
+                  {ev.timeLabel} {ev.tz ? <strong>{ev.tz}</strong> : null}
                 </span>
-                <span>~3 hrs</span>
+                {ev.duration ? <span>{ev.duration}</span> : null}
               </div>
             </div>
           </div>
 
-          <div className="photo photo-tea ev-hero__photo">
-            <div className="photo-label">
-              PHOTO: NEATeHUB main hall during a previous open house - founders
-              mid-conversation in small groups, soft afternoon light, AAU campus
-              context visible through windows
+          {ev.heroPhotoLabel ? (
+            <div
+              className={`photo ${photoClass(ev.photoTreatment)} ev-hero__photo`}
+            >
+              <div className="photo-label">{ev.heroPhotoLabel}</div>
             </div>
-          </div>
+          ) : null}
         </div>
       </section>
 
@@ -96,195 +147,113 @@ export default async function EventDetailPage({
         <div className="container">
           <div className="ev-body">
             <article className="ev-main">
-              <h2>What this is.</h2>
-              <p>
-                If you&apos;ve been considering applying to Saranya Cohort 4 - the
-                growth-stage programme under RKVY - this is the afternoon to come
-                in, ask hard questions, and leave with a real answer about whether
-                the programme fits your venture.
-              </p>
-              <p>
-                It is not a recruiting event, a pitch competition, or a polished
-                founder-friendly performance. It&apos;s a working session. Three
-                programme managers will be available the entire afternoon for
-                one-on-one conversations. We&apos;ve set aside two pre-deal-review
-                slots for applicants who want to walk through their pitch with us
-                informally - first-come, first-served.
-              </p>
+              {ev.intro && ev.intro.length ? (
+                <>
+                  <h2>What this is.</h2>
+                  {ev.intro.map((p, i) => (
+                    <p key={i}>{p.text}</p>
+                  ))}
+                </>
+              ) : null}
 
-              <h2>Agenda</h2>
-              <div className="agenda">
-                <div className="agenda__row">
-                  <div className="agenda__time">14:00 - 14:20</div>
-                  <div className="agenda__what">
-                    Welcome &amp; programme overview
-                    <small>
-                      Director-led 20-minute walkthrough of Saranya structure,
-                      capital cadence, and FY26 cohort outcomes. Slides will be
-                      shared.
-                    </small>
+              {ev.agenda && ev.agenda.length ? (
+                <>
+                  <h2>Agenda</h2>
+                  <div className="agenda">
+                    {ev.agenda.map((a, i) => (
+                      <div className="agenda__row" key={i}>
+                        <div className="agenda__time">{a.time}</div>
+                        <div className="agenda__what">
+                          {a.what}
+                          {a.detail ? <small>{a.detail}</small> : null}
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                </div>
-                <div className="agenda__row">
-                  <div className="agenda__time">14:20 - 15:00</div>
-                  <div className="agenda__what">
-                    Two founders, in conversation
-                    <small>
-                      Ashish Bora (Thalo Cold) and Dr. Rohan Hazarika (Kaziranga
-                      Bio) on what the Saranya engagement actually looked like for
-                      them - month by month.
-                    </small>
-                  </div>
-                </div>
-                <div className="agenda__row">
-                  <div className="agenda__time">15:00 - 15:30</div>
-                  <div className="agenda__what">
-                    Tea + informal mixing
-                    <small>
-                      Real Assam tea. Real conversations. Mentors and current
-                      cohort founders present.
-                    </small>
-                  </div>
-                </div>
-                <div className="agenda__row">
-                  <div className="agenda__time">15:30 - 16:30</div>
-                  <div className="agenda__what">
-                    1:1 office hours with programme managers
-                    <small>
-                      Three concurrent rooms. 12-minute slots, signed up
-                      first-come on the day. Bring your one-pager.
-                    </small>
-                  </div>
-                </div>
-                <div className="agenda__row">
-                  <div className="agenda__time">16:30 - 17:00</div>
-                  <div className="agenda__what">
-                    Closing Q&amp;A + application walkthrough
-                    <small>
-                      Live walkthrough of the application form. We answer every
-                      &quot;but what about my situation&quot; question. Honest.
-                    </small>
-                  </div>
-                </div>
-              </div>
+                </>
+              ) : null}
 
-              <h2>Who you&apos;ll meet</h2>
-              <div className="speakers">
-                <div className="speaker">
-                  <div className="photo photo-tea">
-                    <div className="photo-label">Headshot</div>
+              {ev.speakers && ev.speakers.length ? (
+                <>
+                  <h2>Who you&apos;ll meet</h2>
+                  <div className="speakers">
+                    {ev.speakers.map((s, i) => (
+                      <div className="speaker" key={i}>
+                        <div className={`photo ${photoClass(s.photoTreatment)}`}>
+                          <div className="photo-label">Headshot</div>
+                        </div>
+                        <div>
+                          <h4>{s.name}</h4>
+                          {s.role ? <div className="role">{s.role}</div> : null}
+                          {s.bio ? <p>{s.bio}</p> : null}
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <div>
-                    <h4>Dr. P. Saikia</h4>
-                    <div className="role">Director - Operations</div>
-                    <p>
-                      Runs Saranya end-to-end. Will be present in 1:1 slots
-                      throughout the afternoon.
-                    </p>
-                  </div>
-                </div>
-                <div className="speaker">
-                  <div className="photo">
-                    <div className="photo-label">Headshot</div>
-                  </div>
-                  <div>
-                    <h4>Anirban Das</h4>
-                    <div className="role">RKVY Program Manager</div>
-                    <p>
-                      Anchors the RKVY application process. Best person to talk to
-                      about eligibility edge-cases.
-                    </p>
-                  </div>
-                </div>
-                <div className="speaker">
-                  <div className="photo photo-copper">
-                    <div className="photo-label">Headshot</div>
-                  </div>
-                  <div>
-                    <h4>Tridib Saharia</h4>
-                    <div className="role">Saranya Programme Lead</div>
-                    <p>
-                      Runs the current Saranya cohort. Will speak to what
-                      month-by-month engagement looks like.
-                    </p>
-                  </div>
-                </div>
-                <div className="speaker">
-                  <div className="photo">
-                    <div className="photo-label">Headshot</div>
-                  </div>
-                  <div>
-                    <h4>Mridusmita Kalita</h4>
-                    <div className="role">Mentor Network</div>
-                    <p>
-                      Will be available to discuss which mentors fit your
-                      venture&apos;s sector and stage.
-                    </p>
-                  </div>
-                </div>
-              </div>
+                </>
+              ) : null}
 
-              <h2>What to bring</h2>
-              <ul className="bring">
-                <li>
-                  A one-pager about your venture
-                  <small>
-                    Single A4. PDF or print. Sector, stage, what you&apos;ve
-                    shipped, what you need. We&apos;ll read it before the 1:1.
-                  </small>
-                </li>
-                <li>
-                  One question you don&apos;t have a good answer to
-                  <small>
-                    The 1:1 is most useful when you bring your hardest question,
-                    not your polished pitch.
-                  </small>
-                </li>
-                <li>
-                  Honest financials, if you have them
-                  <small>
-                    Not for evaluation - for conversation. We&apos;ll respect
-                    confidence; nothing leaves the room.
-                  </small>
-                </li>
-                <li>
-                  Comfortable clothes
-                  <small>
-                    You&apos;ll be walking between buildings. The campus is large.
-                  </small>
-                </li>
-              </ul>
+              {ev.bring && ev.bring.length ? (
+                <>
+                  <h2>What to bring</h2>
+                  <ul className="bring">
+                    {ev.bring.map((b, i) => (
+                      <li key={i}>
+                        {b.what}
+                        {b.detail ? <small>{b.detail}</small> : null}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : null}
 
-              <h2>Logistics</h2>
-              <div className="location">
-                <div className="location__photo">
-                  <div className="pin">⌖</div>
-                  <span className="label">AAU CAMPUS · JORHAT</span>
-                </div>
-                <div>
-                  <h3>NEATeHUB main hall</h3>
-                  <p>
-                    Assam Agricultural University
-                    <br />
-                    Borbheta, Jorhat - 785013
-                    <br />
-                    Assam
-                    <br />
-                    <br />
-                    26.7271° N · 94.2037° E
-                    <br />
-                    ~30 min from Jorhat Airport
-                  </p>
-                  <div className="row">
-                    <a href="#" className="btn btn-ghost btn-sm">
-                      Get directions ↗
-                    </a>
-                    <a href="#" className="btn btn-ghost btn-sm">
-                      Download .ics
-                    </a>
+              {ev.location ? (
+                <>
+                  <h2>Logistics</h2>
+                  <div className="location">
+                    <div className="location__photo">
+                      <div className="pin">⌖</div>
+                      <span className="label">
+                        {(ev.location.venue || ev.location.address || "").toUpperCase()}
+                      </span>
+                    </div>
+                    <div>
+                      {ev.location.venue ? <h3>{ev.location.venue}</h3> : null}
+                      <p>
+                        {ev.location.address
+                          ? ev.location.address.split("\n").map((ln, i, arr) => (
+                              <span key={i}>
+                                {ln}
+                                {i < arr.length - 1 ? <br /> : null}
+                              </span>
+                            ))
+                          : null}
+                        {ev.location.coords ? (
+                          <>
+                            <br />
+                            <br />
+                            {ev.location.coords}
+                          </>
+                        ) : null}
+                        {ev.location.travel ? (
+                          <>
+                            <br />
+                            {ev.location.travel}
+                          </>
+                        ) : null}
+                      </p>
+                      <div className="row">
+                        <a href="#" className="btn btn-ghost btn-sm">
+                          Get directions ↗
+                        </a>
+                        <a href="#" className="btn btn-ghost btn-sm">
+                          Download .ics
+                        </a>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </>
+              ) : null}
             </article>
 
             {/* Sidebar RSVP */}
@@ -296,42 +265,46 @@ export default async function EventDetailPage({
       </section>
 
       {/* Related events */}
-      <section className="bg-cream-100">
-        <div className="container">
-          <div className="row-between">
-            <div>
-              <div className="eyebrow">More events</div>
-              <h2 className="display display-m mt-2">Upcoming on the calendar.</h2>
+      {related.length ? (
+        <section className="bg-cream-100">
+          <div className="container">
+            <div className="row-between">
+              <div>
+                <div className="eyebrow">More events</div>
+                <h2 className="display display-m mt-2">
+                  Upcoming on the calendar.
+                </h2>
+              </div>
+              <Link href="/insights" className="btn btn-ghost">
+                All events <span className="arrow">→</span>
+              </Link>
             </div>
-            <Link href="/insights" className="btn btn-ghost">
-              All events <span className="arrow">→</span>
-            </Link>
+            <div className="ev-related mt-5">
+              {related.map((e) => (
+                <Link
+                  className="ev-card"
+                  href={`/insights/events/${e.slug}`}
+                  key={e.slug}
+                >
+                  <div className="ev-card__date">
+                    {e.dateDay}
+                    <small>
+                      {e.dateMonth}
+                      {e.location?.venue ? ` · ${e.location.venue}` : ""}
+                    </small>
+                  </div>
+                  <h3>{e.title}</h3>
+                  <div className="where">
+                    {e.location?.venue || ""}
+                    {e.location?.venue && e.timeLabel ? " · " : ""}
+                    {e.timeLabel || ""}
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
-          <div className="ev-related mt-5">
-            <a className="ev-card" href="#">
-              <div className="ev-card__date">
-                28<small>JUN · Online</small>
-              </div>
-              <h3>Mentor-in-residence: Aqua-feed innovation</h3>
-              <div className="where">Online · 15:00 IST</div>
-            </a>
-            <a className="ev-card" href="#">
-              <div className="ev-card__date">
-                18<small>JUL · Tezpur</small>
-              </div>
-              <h3>KVK roundtable: producer-side innovation</h3>
-              <div className="where">Tezpur · Day-long · Invite-only</div>
-            </a>
-            <a className="ev-card" href="#">
-              <div className="ev-card__date">
-                09<small>AUG · Jorhat</small>
-              </div>
-              <h3>Demo Day · Saranya Cohort 3</h3>
-              <div className="where">Jorhat · AAU · 10:00-17:00</div>
-            </a>
-          </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
     </>
   );
 }

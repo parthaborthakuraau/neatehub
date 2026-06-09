@@ -2,11 +2,52 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import type { InsightDoc, EventDoc } from "../lib/content";
 
 type Tab = "insights" | "events" | "newsroom";
 
-export default function InsightsTabs() {
+type Props = {
+  featured: InsightDoc | null;
+  rest: InsightDoc[];
+  newsroom: InsightDoc[];
+  events: EventDoc[];
+};
+
+function photoClass(treatment?: string | null): string {
+  if (treatment === "tea") return "photo photo-tea";
+  if (treatment === "copper") return "photo photo-copper";
+  return "photo";
+}
+
+const ArrowIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+    <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.4" />
+  </svg>
+);
+
+function EventBadge({ status }: { status?: string | null }) {
+  if (status === "open") {
+    return (
+      <span className="badge badge-tea">
+        <span className="dot" />
+        OPEN
+      </span>
+    );
+  }
+  if (status === "invite") {
+    return <span className="badge badge-copper">INVITE</span>;
+  }
+  if (status === "closed") {
+    return <span className="badge">CLOSED</span>;
+  }
+  // "rsvp" and any other/default
+  return <span className="badge">RSVP</span>;
+}
+
+export default function InsightsTabs({ featured, rest, newsroom, events }: Props) {
   const [tab, setTab] = useState<Tab>("insights");
+
+  const insightsCount = (featured ? 1 : 0) + rest.length;
 
   return (
     <>
@@ -23,19 +64,19 @@ export default function InsightsTabs() {
               className={`in-tab${tab === "insights" ? " is-active" : ""}`}
               onClick={() => setTab("insights")}
             >
-              Insights <span className="count">12</span>
+              Insights <span className="count">{insightsCount}</span>
             </button>
             <button
               className={`in-tab${tab === "events" ? " is-active" : ""}`}
               onClick={() => setTab("events")}
             >
-              Events <span className="count">7</span>
+              Events <span className="count">{events.length}</span>
             </button>
             <button
               className={`in-tab${tab === "newsroom" ? " is-active" : ""}`}
               onClick={() => setTab("newsroom")}
             >
-              Newsroom <span className="count">24</span>
+              Newsroom <span className="count">{newsroom.length}</span>
             </button>
           </div>
         </div>
@@ -45,136 +86,56 @@ export default function InsightsTabs() {
         <div className="container">
           {/* INSIGHTS PANE */}
           <div className={`in-pane${tab === "insights" ? " is-active" : ""}`}>
-            <article className="feature-post">
-              <Link href="/insights/fy26-cohort-post-harvest">
-                <div className="photo">
-                  <div className="photo-label">
-                    PHOTO: Cold-chain micro-unit at FPO collection point, Tezpur
-                    - wide shot, daylight
+            {featured && (
+              <article className="feature-post">
+                <Link href={`/insights/${featured.slug}`}>
+                  <div className="photo">
+                    <div className="photo-label">{featured.heroPhotoLabel}</div>
                   </div>
+                </Link>
+                <div>
+                  <div className="meta-row">
+                    <span className="badge badge-copper">{featured.category}</span>
+                    <span className="kicker">
+                      {featured.date} · {featured.readTime} · {featured.section}
+                    </span>
+                  </div>
+                  <h2>
+                    <Link href={`/insights/${featured.slug}`}>
+                      {featured.title}
+                    </Link>
+                  </h2>
+                  <p>{featured.dek}</p>
+                  {featured.author && (
+                    <div className="byline">
+                      By {featured.author.name} · {featured.author.role}
+                    </div>
+                  )}
                 </div>
-              </Link>
-              <div>
-                <div className="meta-row">
-                  <span className="badge badge-copper">Feature</span>
-                  <span className="kicker">
-                    14 May 2026 · 8 min read · Field Notes
-                  </span>
-                </div>
-                <h2>
-                  <Link href="/insights/fy26-cohort-post-harvest">
-                    What the FY26 cohort taught us about post-harvest losses in
-                    the Northeast.
-                  </Link>
-                </h2>
-                <p>
-                  Twelve founders, four sectors, one stubborn truth - cold-chain
-                  isn&apos;t a product problem, it&apos;s a routing problem.
-                  Notes from a year of building with them, the assumptions we got
-                  wrong, and what&apos;s worth replicating in FY27.
-                </p>
-                <div className="byline">By Dr. P. Saikia · Director, Operations</div>
-              </div>
-            </article>
+              </article>
+            )}
 
             <div className="ed-list">
-              <a className="ed-card" href="#">
-                <div className="photo photo-tea">
-                  <div className="photo-label">
-                    PHOTO: Tea pluckers at dawn, hill estate
+              {rest.map((post) => (
+                <Link
+                  key={post.slug}
+                  className="ed-card"
+                  href={`/insights/${post.slug}`}
+                >
+                  {post.photoTreatment ? (
+                    <div className={photoClass(post.photoTreatment)}>
+                      <div className="photo-label">{post.heroPhotoLabel}</div>
+                    </div>
+                  ) : null}
+                  <div className="meta">
+                    <span>{post.category}</span>
+                    <span>·</span>
+                    <span>{post.date}</span>
                   </div>
-                </div>
-                <div className="meta">
-                  <span>Sector</span>
-                  <span>·</span>
-                  <span>12 Apr</span>
-                </div>
-                <h3>Tea bio-stimulants: where the unit economics actually break.</h3>
-                <p>
-                  Why most pilots stall at the 200-bush mark, and what the FY25
-                  ventures are doing differently.
-                </p>
-              </a>
-              <a className="ed-card" href="#">
-                <div className="photo">
-                  <div className="photo-label">
-                    PHOTO: KVK farmer training, Dhemaji
-                  </div>
-                </div>
-                <div className="meta">
-                  <span>Program</span>
-                  <span>·</span>
-                  <span>28 Mar</span>
-                </div>
-                <h3>Saranya &apos;25 retrospective: what worked, what we changed.</h3>
-                <p>
-                  Half the cohort exceeded milestones. Two pivoted. Two paused.
-                  Here&apos;s our honest accounting.
-                </p>
-              </a>
-              <a className="ed-card" href="#">
-                <div className="photo photo-copper">
-                  <div className="photo-label">
-                    PHOTO: Fish pond, sensor deployment
-                  </div>
-                </div>
-                <div className="meta">
-                  <span>Sector</span>
-                  <span>·</span>
-                  <span>09 Mar</span>
-                </div>
-                <h3>Aquaculture sensing in the Northeast: a five-year scan.</h3>
-                <p>
-                  Why so many sensor startups fail in pond conditions, and the
-                  three we think will not.
-                </p>
-              </a>
-              <a className="ed-card" href="#">
-                <div className="photo">
-                  <div className="photo-label">
-                    PHOTO: Founder portrait, mid-shot
-                  </div>
-                </div>
-                <div className="meta">
-                  <span>Founder Story</span>
-                  <span>·</span>
-                  <span>18 Feb</span>
-                </div>
-                <h3>From AAU classroom to ₹3.2Cr raise: the Kaziranga Bio story.</h3>
-                <p>A six-year arc, told by the founder.</p>
-              </a>
-              <a className="ed-card" href="#">
-                <div className="photo photo-tea">
-                  <div className="photo-label">PHOTO: Lab work, microscope</div>
-                </div>
-                <div className="meta">
-                  <span>Method</span>
-                  <span>·</span>
-                  <span>02 Feb</span>
-                </div>
-                <h3>
-                  How we evaluate idea-stage applications. Inside the Isanya
-                  scorecard.
-                </h3>
-                <p>
-                  Released so founders can self-assess. Honest about what we
-                  weight and what we don&apos;t.
-                </p>
-              </a>
-              <a className="ed-card" href="#">
-                <div className="photo photo-copper">
-                  <div className="photo-label">
-                    PHOTO: Funder visit, formal session
-                  </div>
-                </div>
-                <div className="meta">
-                  <span>Report</span>
-                  <span>·</span>
-                  <span>22 Jan</span>
-                </div>
-                <h3>FY25 Impact Report: 70 funded, ₹7.2Cr deployed, what it bought.</h3>
-                <p>Full numbers, methodology, and what we&apos;d still call uncertain.</p>
-              </a>
+                  <h3>{post.title}</h3>
+                  <p>{post.dek}</p>
+                </Link>
+              ))}
             </div>
 
             <div style={{ marginTop: 56, textAlign: "center" }}>
@@ -190,157 +151,33 @@ export default function InsightsTabs() {
               Upcoming · FY26
             </h2>
             <div className="ev-list mt-3">
-              <div className="ev-row">
-                <div className="ev-date">
-                  14 <small>JUN</small>
+              {events.map((ev) => (
+                <div className="ev-row" key={ev.slug}>
+                  <div className="ev-date">
+                    {ev.dateDay} <small>{ev.dateMonth}</small>
+                  </div>
+                  <div className="ev-title">
+                    {ev.title}
+                    <small>{ev.dek}</small>
+                  </div>
+                  <div className="ev-meta">
+                    {ev.location?.venue}
+                    <br />
+                    <span style={{ color: "var(--ink-500)" }}>
+                      {ev.timeLabel} {ev.tz}
+                    </span>
+                  </div>
+                  <div className="ev-stat">
+                    <EventBadge status={ev.status} />
+                  </div>
+                  <Link
+                    href={`/insights/events/${ev.slug}`}
+                    className="arrow"
+                  >
+                    <ArrowIcon />
+                  </Link>
                 </div>
-                <div className="ev-title">
-                  Saranya &apos;26 Founder Open House
-                  <small>
-                    Walk-in info session for prospective applicants. Bring your
-                    one-pager, leave with a clear go/no-go.
-                  </small>
-                </div>
-                <div className="ev-meta">
-                  Jorhat · AAU
-                  <br />
-                  <span style={{ color: "var(--ink-500)" }}>14:00-17:00 IST</span>
-                </div>
-                <div className="ev-stat">
-                  <span className="badge badge-tea">
-                    <span className="dot" />
-                    OPEN
-                  </span>
-                </div>
-                <Link
-                  href="/insights/events/saranya-26-open-house"
-                  className="arrow"
-                >
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                    <path
-                      d="M1 7h12M8 2l5 5-5 5"
-                      stroke="currentColor"
-                      strokeWidth="1.4"
-                    />
-                  </svg>
-                </Link>
-              </div>
-              <div className="ev-row">
-                <div className="ev-date">
-                  28 <small>JUN</small>
-                </div>
-                <div className="ev-title">
-                  Mentor-in-residence: Aqua-feed innovation
-                  <small>
-                    Dr. K. Iyer, fisheries researcher, on what&apos;s working in
-                    indigenous feed formulation.
-                  </small>
-                </div>
-                <div className="ev-meta">
-                  Online
-                  <br />
-                  <span style={{ color: "var(--ink-500)" }}>15:00-16:30 IST</span>
-                </div>
-                <div className="ev-stat">
-                  <span className="badge">RSVP</span>
-                </div>
-                <a href="#" className="arrow">
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                    <path
-                      d="M1 7h12M8 2l5 5-5 5"
-                      stroke="currentColor"
-                      strokeWidth="1.4"
-                    />
-                  </svg>
-                </a>
-              </div>
-              <div className="ev-row">
-                <div className="ev-date">
-                  18 <small>JUL</small>
-                </div>
-                <div className="ev-title">
-                  KVK roundtable: producer-side innovation
-                  <small>
-                    Closed-door working session with KVK scientists across 6 NE
-                    states.
-                  </small>
-                </div>
-                <div className="ev-meta">
-                  Tezpur
-                  <br />
-                  <span style={{ color: "var(--ink-500)" }}>Day-long</span>
-                </div>
-                <div className="ev-stat">
-                  <span className="badge badge-copper">INVITE</span>
-                </div>
-                <a href="#" className="arrow">
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                    <path
-                      d="M1 7h12M8 2l5 5-5 5"
-                      stroke="currentColor"
-                      strokeWidth="1.4"
-                    />
-                  </svg>
-                </a>
-              </div>
-              <div className="ev-row">
-                <div className="ev-date">
-                  09 <small>AUG</small>
-                </div>
-                <div className="ev-title">
-                  Demo Day · Saranya Cohort 3
-                  <small>
-                    Twelve growth-stage founders, ten-minute pitches, no demo
-                    theatre - just numbers.
-                  </small>
-                </div>
-                <div className="ev-meta">
-                  Jorhat · AAU
-                  <br />
-                  <span style={{ color: "var(--ink-500)" }}>10:00-17:00 IST</span>
-                </div>
-                <div className="ev-stat">
-                  <span className="badge badge-tea">
-                    <span className="dot" />
-                    OPEN
-                  </span>
-                </div>
-                <a href="#" className="arrow">
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                    <path
-                      d="M1 7h12M8 2l5 5-5 5"
-                      stroke="currentColor"
-                      strokeWidth="1.4"
-                    />
-                  </svg>
-                </a>
-              </div>
-              <div className="ev-row">
-                <div className="ev-date">
-                  21 <small>SEP</small>
-                </div>
-                <div className="ev-title">
-                  Isanya Cohort 7 - Welcome week
-                  <small>Closed cohort kickoff. Public sessions begin Oct.</small>
-                </div>
-                <div className="ev-meta">
-                  Jorhat
-                  <br />
-                  <span style={{ color: "var(--ink-500)" }}>Week-long</span>
-                </div>
-                <div className="ev-stat">
-                  <span className="badge">CLOSED</span>
-                </div>
-                <a href="#" className="arrow">
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                    <path
-                      d="M1 7h12M8 2l5 5-5 5"
-                      stroke="currentColor"
-                      strokeWidth="1.4"
-                    />
-                  </svg>
-                </a>
-              </div>
+              ))}
             </div>
 
             {/* Designed quiet-month state */}
@@ -361,61 +198,21 @@ export default function InsightsTabs() {
           {/* NEWSROOM PANE */}
           <div className={`in-pane${tab === "newsroom" ? " is-active" : ""}`}>
             <div className="ed-list" style={{ paddingTop: 0 }}>
-              <a className="ed-card" href="#">
-                <div className="meta">
-                  <span>Press</span>
-                  <span>·</span>
-                  <span>02 May 2026</span>
-                </div>
-                <h3 className="mt-2">
-                  NEATeHUB recognised as Centre of Excellence by DA&amp;FW.
-                </h3>
-                <p>
-                  Designation comes with three years of operational funding and
-                  pan-India recognition for the agri-tech track.
-                </p>
-              </a>
-              <a className="ed-card" href="#">
-                <div className="meta">
-                  <span>Partnership</span>
-                  <span>·</span>
-                  <span>08 Apr 2026</span>
-                </div>
-                <h3 className="mt-2">
-                  Robotics Lab inauguration with AAU &amp; state government.
-                </h3>
-                <p>
-                  Shared infrastructure for deep-tech founders. ₹2.1Cr capex,
-                  supported by AIM.
-                </p>
-              </a>
-              <a className="ed-card" href="#">
-                <div className="meta">
-                  <span>Press</span>
-                  <span>·</span>
-                  <span>14 Mar 2026</span>
-                </div>
-                <h3 className="mt-2">
-                  Saranya Cohort 4 applications open - apply by 30 June.
-                </h3>
-                <p>
-                  Up to ₹25L per venture, 12-18 month engagement, non-residential.
-                </p>
-              </a>
-              <a className="ed-card" href="#">
-                <div className="meta">
-                  <span>Coverage</span>
-                  <span>·</span>
-                  <span>11 Mar 2026</span>
-                </div>
-                <h3 className="mt-2">
-                  The Hindu BusinessLine on Northeast agri-tech.
-                </h3>
-                <p>
-                  Long-read on the regional ecosystem with extended quotes from
-                  our director.
-                </p>
-              </a>
+              {newsroom.map((item) => (
+                <Link
+                  key={item.slug}
+                  className="ed-card"
+                  href={`/insights/${item.slug}`}
+                >
+                  <div className="meta">
+                    <span>{item.category}</span>
+                    <span>·</span>
+                    <span>{item.date}</span>
+                  </div>
+                  <h3 className="mt-2">{item.title}</h3>
+                  <p>{item.dek}</p>
+                </Link>
+              ))}
             </div>
           </div>
         </div>
