@@ -74,6 +74,44 @@ export async function GET() {
   await seed("team", TEAM);
   await seed("partners", PARTNERS);
 
+  // Demo startup-owner so the /portal flow can be tested in dev.
+  const ownerEmail = "founder@kaziranga.test";
+  const existingOwner = await payload.find({
+    collection: "users",
+    where: { email: { equals: ownerEmail } },
+    limit: 1,
+  });
+  let ownerId = existingOwner.docs[0]?.id as string | number | undefined;
+  if (!ownerId) {
+    const created = await payload.create({
+      collection: "users",
+      data: {
+        email: ownerEmail,
+        password: "kaziranga123",
+        role: "startup-owner",
+        name: "Kaziranga Bio (owner)",
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any,
+    });
+    ownerId = created.id;
+    results.push(`created demo owner: ${ownerEmail} / kaziranga123`);
+  }
+  const kb = await payload.find({
+    collection: "ventures",
+    where: { slug: { equals: "kaziranga-bio" } },
+    limit: 1,
+    depth: 0,
+  });
+  if (kb.docs[0] && !kb.docs[0].owner && ownerId) {
+    await payload.update({
+      collection: "ventures",
+      id: kb.docs[0].id,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      data: { owner: ownerId } as any,
+    });
+    results.push("assigned kaziranga-bio -> demo owner");
+  }
+
   // Banner has no slug — seed one if the collection is empty.
   const banners = await payload.find({ collection: "banners", limit: 1 });
   if (!banners.docs.length) {

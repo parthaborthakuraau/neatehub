@@ -121,6 +121,18 @@ export default buildConfig({
         group: "Content",
         defaultColumns: ["name", "sector", "stage", "year"],
       },
+      // Public read; super-admin manages; a startup-owner may edit only their own.
+      access: {
+        read: () => true,
+        create: ({ req: { user } }) => isSuperAdmin(user as AccessUser),
+        delete: ({ req: { user } }) => isSuperAdmin(user as AccessUser),
+        update: ({ req: { user } }) => {
+          const u = user as AccessUser;
+          if (isSuperAdmin(u)) return true;
+          if (u && u.role === "startup-owner") return { owner: { equals: u.id } };
+          return false;
+        },
+      },
       fields: [
         { name: "name", type: "text", required: true },
         {
@@ -129,6 +141,17 @@ export default buildConfig({
           required: true,
           unique: true,
           admin: { description: "URL: /portfolio/<slug> — lowercase, hyphenated." },
+        },
+        {
+          name: "owner",
+          type: "relationship",
+          relationTo: "users",
+          hasMany: false,
+          admin: { description: "The startup-owner who can edit this venture via the portal." },
+          access: {
+            // Only a super-admin can (re)assign ownership.
+            update: ({ req: { user } }) => isSuperAdmin(user as AccessUser),
+          },
         },
         {
           name: "sector",
