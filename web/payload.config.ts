@@ -8,6 +8,12 @@ import sharp from "sharp";
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
+// ---------- Access-control helpers (Phase 2 RBAC) ----------
+// A user with no role is treated as super-admin (legacy / the first admin).
+type AccessUser = { id?: string | number; role?: string | null } | null | undefined;
+const isSuperAdmin = (user: AccessUser): boolean =>
+  !!user && (!user.role || user.role === "super-admin");
+
 export default buildConfig({
   admin: {
     user: "users",
@@ -21,7 +27,41 @@ export default buildConfig({
       slug: "users",
       auth: true,
       admin: { useAsTitle: "email", group: "Admin" },
-      fields: [{ name: "name", type: "text" }],
+      // Only super-admins can reach the CMS admin panel.
+      access: {
+        admin: ({ req: { user } }) => isSuperAdmin(user as AccessUser),
+        create: ({ req: { user } }) => isSuperAdmin(user as AccessUser),
+        delete: ({ req: { user } }) => isSuperAdmin(user as AccessUser),
+        update: ({ req: { user } }) => {
+          const u = user as AccessUser;
+          if (isSuperAdmin(u)) return true;
+          // Anyone else may only update their own record.
+          return u ? { id: { equals: u.id } } : false;
+        },
+        read: ({ req: { user } }) => {
+          const u = user as AccessUser;
+          if (isSuperAdmin(u)) return true;
+          return u ? { id: { equals: u.id } } : false;
+        },
+      },
+      fields: [
+        { name: "name", type: "text" },
+        {
+          name: "role",
+          type: "select",
+          defaultValue: "startup-owner",
+          admin: { description: "Controls access. Only a super-admin can change roles." },
+          access: {
+            update: ({ req: { user } }) => isSuperAdmin(user as AccessUser),
+          },
+          options: [
+            { label: "Super-admin (full access)", value: "super-admin" },
+            { label: "Director (HR only)", value: "director" },
+            { label: "Employee (HR + agents)", value: "employee" },
+            { label: "Startup owner (own venture only)", value: "startup-owner" },
+          ],
+        },
+      ],
     },
 
     // ---------- Media library ----------
