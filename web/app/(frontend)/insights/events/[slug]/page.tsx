@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import "./event-detail.css";
 import RSVPForm from "./RSVPForm";
+import JsonLd from "../../../components/JsonLd";
 import { getEventBySlug, getEvents, type EventDoc } from "../../../lib/content";
 
 export const dynamic = "force-dynamic";
@@ -51,8 +52,34 @@ export default async function EventDetailPage({
         ? ev.status.charAt(0).toUpperCase() + ev.status.slice(1)
         : null;
 
+  const eventJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    name: ev.title,
+    description: ev.dek ?? undefined,
+    startDate: ev.dateBig ?? undefined,
+    eventAttendanceMode:
+      ev.format === "online"
+        ? "https://schema.org/OnlineEventAttendanceMode"
+        : "https://schema.org/OfflineEventAttendanceMode",
+    location:
+      ev.format === "online"
+        ? { "@type": "VirtualLocation", url: "https://neatehub.org" }
+        : {
+            "@type": "Place",
+            name: ev.location?.venue ?? "NEATeHUB",
+            address: ev.location?.address ?? undefined,
+          },
+    organizer: {
+      "@type": "Organization",
+      name: "NEATeHUB",
+      url: "https://neatehub.org",
+    },
+  };
+
   return (
     <>
+      <JsonLd data={eventJsonLd} />
       <nav className="crumb" aria-label="Breadcrumb">
         <Link href="/">Home</Link>
         <span className="sep">/</span>

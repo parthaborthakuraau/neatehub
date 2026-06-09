@@ -43,6 +43,13 @@ export const metadata: Metadata = {
       "North East Agriculture Technology Entrepreneurs Hub. A government-recognised Centre of Excellence at Assam Agricultural University.",
     type: "website",
     siteName: "NEATeHUB",
+    locale: "en_IN",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "NEATeHUB — Backing agri-founders from the Northeast",
+    description:
+      "North East Agriculture Technology Entrepreneurs Hub. A government-recognised Centre of Excellence at Assam Agricultural University.",
   },
 };
 

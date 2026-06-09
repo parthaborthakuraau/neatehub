@@ -3,6 +3,27 @@ import "./home.css";
 import NewsletterForm from "./components/NewsletterForm";
 import { getVentureCards } from "./lib/ventures";
 import { getInsights, getNewsroom, getEvents } from "./lib/content";
+import JsonLd from "./components/JsonLd";
+
+const ORG_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "NEATeHUB",
+  legalName: "North East Agriculture Technology Entrepreneurs Hub",
+  url: "https://neatehub.org",
+  description:
+    "Agri-tech incubator at Assam Agricultural University, Jorhat — a Section-8 company and government-recognised Centre of Excellence.",
+  foundingDate: "2018",
+  email: "hello@neatehub.org",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Assam Agricultural University, Borbheta",
+    addressLocality: "Jorhat",
+    addressRegion: "Assam",
+    postalCode: "785013",
+    addressCountry: "IN",
+  },
+};
 
 // Static with ISR — the teasers reflect CMS content within a minute.
 export const revalidate = 60;
@@ -63,6 +84,7 @@ export default async function Home() {
 
   return (
     <>
+      <JsonLd data={ORG_JSONLD} />
       {/* ============ HERO ============ */}
       <section className="hero">
         <div className="container">

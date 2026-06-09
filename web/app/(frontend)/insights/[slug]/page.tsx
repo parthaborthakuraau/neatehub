@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import "./insight-detail.css";
 import NewsletterForm from "../../components/NewsletterForm";
+import JsonLd from "../../components/JsonLd";
 import {
   getInsightBySlug,
   getInsights,
@@ -92,8 +93,26 @@ export default async function InsightDetailPage({
     .filter((p) => p.slug !== insight.slug)
     .slice(0, 3);
 
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: insight.title,
+    description: insight.dek ?? undefined,
+    datePublished: insight.date ?? undefined,
+    author: author?.name
+      ? { "@type": "Person", name: author.name }
+      : undefined,
+    publisher: {
+      "@type": "Organization",
+      name: "NEATeHUB",
+      url: "https://neatehub.org",
+    },
+    mainEntityOfPage: `https://neatehub.org/insights/${insight.slug}`,
+  };
+
   return (
     <>
+      <JsonLd data={articleJsonLd} />
       <nav className="crumb" aria-label="Breadcrumb">
         <Link href="/">Home</Link>
         <span className="sep">/</span>
