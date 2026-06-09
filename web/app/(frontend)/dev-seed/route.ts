@@ -54,6 +54,26 @@ export async function GET() {
   await seed("insights", INSIGHTS);
   await seed("events", EVENTS);
 
+  // Banner has no slug — seed one if the collection is empty.
+  const banners = await payload.find({ collection: "banners", limit: 1 });
+  if (!banners.docs.length) {
+    await payload.create({
+      collection: "banners",
+      data: {
+        message:
+          "Saranya Cohort 4 — early & growth-stage agri-tech ventures. Apply by 30 June 2026.",
+        badge: "APPLICATIONS OPEN",
+        variant: "announce",
+        ctaLabel: "Check eligibility",
+        ctaHref: "/for-founders",
+        active: true,
+      },
+    });
+    results.push("created banner: saranya-c4");
+  } else {
+    results.push("skip banner (exists)");
+  }
+
   return NextResponse.json({
     ok: true,
     counts: { ventures: VENTURES.length, insights: INSIGHTS.length, events: EVENTS.length },

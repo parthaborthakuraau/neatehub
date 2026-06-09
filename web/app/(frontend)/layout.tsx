@@ -5,6 +5,7 @@ import SiteHeader from "./components/SiteHeader";
 import SiteFooter from "./components/SiteFooter";
 import ScrollReveal from "./components/ScrollReveal";
 import TopBanner from "./components/TopBanner";
+import { getActiveBanner } from "./lib/content";
 
 const newsreader = Newsreader({
   variable: "--font-newsreader",
@@ -45,11 +46,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const banner = await getActiveBanner();
+
   return (
     <html
       lang="en"
@@ -59,14 +62,19 @@ export default function RootLayout({
         <a href="#main" className="skip-link">
           Skip to content
         </a>
-        <TopBanner
-          campaignKey="saranya-c4-2026"
-          badge="APPLICATIONS OPEN"
-          cta={{ label: "Check eligibility", href: "/for-founders" }}
-        >
-          <strong>Saranya Cohort 4</strong> — early &amp; growth-stage agri-tech
-          ventures. Apply by 30 June 2026.
-        </TopBanner>
+        {banner ? (
+          <TopBanner
+            campaignKey={`banner-${banner.id}`}
+            badge={banner.badge || undefined}
+            cta={
+              banner.ctaLabel && banner.ctaHref
+                ? { label: banner.ctaLabel, href: banner.ctaHref }
+                : undefined
+            }
+          >
+            {banner.message}
+          </TopBanner>
+        ) : null}
         <SiteHeader />
         <main id="main">{children}</main>
         <SiteFooter />

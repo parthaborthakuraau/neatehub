@@ -1,5 +1,6 @@
 import { getPayload } from "payload";
 import config from "@payload-config";
+import { unstable_cache } from "next/cache";
 
 // ---------------- Insights / Newsroom ----------------
 
@@ -128,3 +129,34 @@ export async function getEventBySlug(slug: string): Promise<EventDoc | null> {
   });
   return (res.docs[0] as unknown as EventDoc) ?? null;
 }
+
+// ---------------- Banner (the top ribbon) ----------------
+
+export type BannerDoc = {
+  id: string | number;
+  message: string;
+  badge?: string | null;
+  variant?: string | null;
+  ctaLabel?: string | null;
+  ctaHref?: string | null;
+  active?: boolean | null;
+};
+
+/**
+ * The active site banner. Cached (60s) so reading it in the root layout does
+ * NOT opt every page out of static rendering — admin edits appear within ~a minute.
+ */
+export const getActiveBanner = unstable_cache(
+  async (): Promise<BannerDoc | null> => {
+    const payload = await getPayload({ config });
+    const res = await payload.find({
+      collection: "banners",
+      where: { active: { equals: true } },
+      limit: 1,
+      sort: "-updatedAt",
+    });
+    return (res.docs[0] as unknown as BannerDoc) ?? null;
+  },
+  ["active-banner"],
+  { revalidate: 60, tags: ["banners"] }
+);

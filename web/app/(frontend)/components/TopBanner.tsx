@@ -17,12 +17,13 @@ export default function TopBanner({
   children,
   cta,
 }: TopBannerProps) {
-  // Start hidden to avoid a flash before we know the dismissal state.
-  const [hidden, setHidden] = useState(true);
+  // Visible by default (server-rendered for crawlers / no-JS); hidden only if
+  // this campaign was previously dismissed (resolved on mount).
+  const [hidden, setHidden] = useState(false);
   const storageKey = `neate.banner.${campaignKey}`;
 
   useEffect(() => {
-    setHidden(localStorage.getItem(storageKey) === "1");
+    if (localStorage.getItem(storageKey) === "1") setHidden(true);
   }, [storageKey]);
 
   function dismiss() {
