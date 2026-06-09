@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./resources.css";
+import { getDownloads, getImpactReports, getMentors } from "../lib/resources";
 
 export const metadata: Metadata = {
   title: "Resources",
@@ -7,7 +8,31 @@ export const metadata: Metadata = {
     "Downloads, newsletter archive, impact reports, and the public NEATeHUB mentor directory.",
 };
 
-export default function ResourcesPage() {
+// Static with ISR — reflects CMS edits within a minute, stays fast.
+export const revalidate = 60;
+
+function DownloadIcon() {
+  return (
+    <span className="dl">
+      <svg width="14" height="14" viewBox="0 0 14 14">
+        <path
+          d="M7 1v10M3 7l4 4 4-4M1 13h12"
+          stroke="currentColor"
+          strokeWidth="1.4"
+          fill="none"
+        />
+      </svg>
+    </span>
+  );
+}
+
+export default async function ResourcesPage() {
+  const [downloads, reports, mentors] = await Promise.all([
+    getDownloads(),
+    getImpactReports(),
+    getMentors(),
+  ]);
+
   return (
     <>
       <section className="rs-hero">
@@ -18,7 +43,7 @@ export default function ResourcesPage() {
             <a href="#downloads" className="rs-tile">
               <div className="num">01</div>
               <h3>Downloads</h3>
-              <div className="count">28 documents</div>
+              <div className="count">{downloads.length} documents</div>
             </a>
             <a href="#newsletters" className="rs-tile">
               <div className="num">02</div>
@@ -28,7 +53,7 @@ export default function ResourcesPage() {
             <a href="#impact" className="rs-tile">
               <div className="num">03</div>
               <h3>Impact Reports</h3>
-              <div className="count">6 reports</div>
+              <div className="count">{reports.length} reports</div>
             </a>
             <a href="#mentors" className="rs-tile">
               <div className="num">04</div>
@@ -44,97 +69,19 @@ export default function ResourcesPage() {
         <div className="container">
           <h2 className="h-section">Downloads</h2>
           <div className="rs-list">
-            <a className="rs-row" href="#">
-              <div className="ext">PDF</div>
-              <div className="name">RKVY RAFTAAR - Program Brief FY26</div>
-              <div className="desc">
-                Eligibility, evaluation criteria, milestones, capital tranching.
-              </div>
-              <div className="meta">1.2 MB · Updated Apr 2026</div>
-              <span className="dl">
-                <svg width="14" height="14" viewBox="0 0 14 14">
-                  <path
-                    d="M7 1v10M3 7l4 4 4-4M1 13h12"
-                    stroke="currentColor"
-                    strokeWidth="1.4"
-                    fill="none"
-                  />
-                </svg>
-              </span>
-            </a>
-            <a className="rs-row" href="#">
-              <div className="ext">PDF</div>
-              <div className="name">Saranya Cohort 4 - Application Pack</div>
-              <div className="desc">
-                Pitch template, FAQ, evaluation rubric, FY26 timeline.
-              </div>
-              <div className="meta">2.4 MB · Mar 2026</div>
-              <span className="dl">
-                <svg width="14" height="14" viewBox="0 0 14 14">
-                  <path
-                    d="M7 1v10M3 7l4 4 4-4M1 13h12"
-                    stroke="currentColor"
-                    strokeWidth="1.4"
-                    fill="none"
-                  />
-                </svg>
-              </span>
-            </a>
-            <a className="rs-row" href="#">
-              <div className="ext">PDF</div>
-              <div className="name">Isanya scorecard - Self-assessment</div>
-              <div className="desc">
-                The exact rubric we use to evaluate idea-stage applications.
-              </div>
-              <div className="meta">340 KB · Feb 2026</div>
-              <span className="dl">
-                <svg width="14" height="14" viewBox="0 0 14 14">
-                  <path
-                    d="M7 1v10M3 7l4 4 4-4M1 13h12"
-                    stroke="currentColor"
-                    strokeWidth="1.4"
-                    fill="none"
-                  />
-                </svg>
-              </span>
-            </a>
-            <a className="rs-row" href="#">
-              <div className="ext">XLS</div>
-              <div className="name">Capital tranching template</div>
-              <div className="desc">
-                Milestone-linked capital release sheet for Saranya / RKVY
-                ventures.
-              </div>
-              <div className="meta">88 KB · 2025</div>
-              <span className="dl">
-                <svg width="14" height="14" viewBox="0 0 14 14">
-                  <path
-                    d="M7 1v10M3 7l4 4 4-4M1 13h12"
-                    stroke="currentColor"
-                    strokeWidth="1.4"
-                    fill="none"
-                  />
-                </svg>
-              </span>
-            </a>
-            <a className="rs-row" href="#">
-              <div className="ext">PDF</div>
-              <div className="name">Annual Report · FY25</div>
-              <div className="desc">
-                Full programmatic and financial accounting.
-              </div>
-              <div className="meta">8.2 MB · Sep 2025</div>
-              <span className="dl">
-                <svg width="14" height="14" viewBox="0 0 14 14">
-                  <path
-                    d="M7 1v10M3 7l4 4 4-4M1 13h12"
-                    stroke="currentColor"
-                    strokeWidth="1.4"
-                    fill="none"
-                  />
-                </svg>
-              </span>
-            </a>
+            {downloads.map((d) => (
+              <a className="rs-row" href={d.fileUrl || "#"} key={d.slug}>
+                <div className="ext">{d.ext}</div>
+                <div className="name">{d.title}</div>
+                <div className="desc">{d.description}</div>
+                <div className="meta">
+                  {d.size}
+                  {d.size && d.updated ? " · " : ""}
+                  {d.updated ? `Updated ${d.updated}` : ""}
+                </div>
+                <DownloadIcon />
+              </a>
+            ))}
           </div>
         </div>
       </section>
@@ -149,44 +96,18 @@ export default function ResourcesPage() {
             </div>
           </div>
           <div className="grid-3 mt-4">
-            <a href="#" className="card" style={{ padding: 28 }}>
-              <div className="kicker">FY25 · September 2025</div>
-              <h3 className="display display-s mt-2" style={{ marginBottom: 8 }}>
-                ₹7.2 Cr deployed
-              </h3>
-              <p style={{ color: "var(--ink-700)", margin: 0 }}>
-                70 funded ventures, 9 sectors, 6 NE states. Full accounting and
-                methodology.
-              </p>
-              <div className="kicker mt-3" style={{ color: "var(--copper-700)" }}>
-                Read the report →
-              </div>
-            </a>
-            <a href="#" className="card" style={{ padding: 28 }}>
-              <div className="kicker">FY24 · September 2024</div>
-              <h3 className="display display-s mt-2" style={{ marginBottom: 8 }}>
-                52 funded
-              </h3>
-              <p style={{ color: "var(--ink-700)", margin: 0 }}>
-                First post-CoE year. Saranya formalised, two cohorts of Isanya
-                completed.
-              </p>
-              <div className="kicker mt-3" style={{ color: "var(--copper-700)" }}>
-                Read the report →
-              </div>
-            </a>
-            <a href="#" className="card" style={{ padding: 28 }}>
-              <div className="kicker">FY23 · September 2023</div>
-              <h3 className="display display-s mt-2" style={{ marginBottom: 8 }}>
-                36 funded
-              </h3>
-              <p style={{ color: "var(--ink-700)", margin: 0 }}>
-                RKVY scale-up year. First international portfolio exit.
-              </p>
-              <div className="kicker mt-3" style={{ color: "var(--copper-700)" }}>
-                Read the report →
-              </div>
-            </a>
+            {reports.map((r) => (
+              <a href={r.reportUrl || "#"} className="card" style={{ padding: 28 }} key={r.slug}>
+                <div className="kicker">{r.period}</div>
+                <h3 className="display display-s mt-2" style={{ marginBottom: 8 }}>
+                  {r.headline}
+                </h3>
+                <p style={{ color: "var(--ink-700)", margin: 0 }}>{r.summary}</p>
+                <div className="kicker mt-3" style={{ color: "var(--copper-700)" }}>
+                  Read the report →
+                </div>
+              </a>
+            ))}
           </div>
         </div>
       </section>
@@ -210,75 +131,14 @@ export default function ResourcesPage() {
           </div>
 
           <div className="mentor-grid mt-5">
-            <div className="mentor">
-              <div className="av">DR</div>
-              <div className="name">Dr. Rituparna Das</div>
-              <div className="role">Agronomy · Soil Science</div>
-              <p className="cred">
-                Principal Scientist, ICAR-RC NEH. 25 years field experience
-                across NE.
-              </p>
-            </div>
-            <div className="mentor">
-              <div className="av">KI</div>
-              <div className="name">Dr. K. Iyer</div>
-              <div className="role">Fisheries · Aqua-feed</div>
-              <p className="cred">
-                Former Head of Research, CIFA. Published on indigenous feed
-                formulation.
-              </p>
-            </div>
-            <div className="mentor">
-              <div className="av">SM</div>
-              <div className="name">Sandip Mukherjee</div>
-              <div className="role">Post-harvest · Cold-chain</div>
-              <p className="cred">
-                Built India&apos;s first PPP cold-chain network. Operator, not
-                consultant.
-              </p>
-            </div>
-            <div className="mentor">
-              <div className="av">PB</div>
-              <div className="name">Priyanka Bordoloi</div>
-              <div className="role">Brand · Food</div>
-              <p className="cred">
-                Founder, Naga-origin specialty foods brand. Operator-mentor for
-                FMCG ventures.
-              </p>
-            </div>
-            <div className="mentor">
-              <div className="av">AS</div>
-              <div className="name">Arnab Saharia</div>
-              <div className="role">Finance · Rural credit</div>
-              <p className="cred">
-                Ex-NABARD. Designs grant-to-equity transitions for FPO-led
-                startups.
-              </p>
-            </div>
-            <div className="mentor">
-              <div className="av">VM</div>
-              <div className="name">Dr. Vinod Menon</div>
-              <div className="role">Livestock · Dairy</div>
-              <p className="cred">
-                25+ years dairy science. Advisor to two state milk federations.
-              </p>
-            </div>
-            <div className="mentor">
-              <div className="av">NT</div>
-              <div className="name">Niharika Tamuly</div>
-              <div className="role">GTM · Agri-input</div>
-              <p className="cred">
-                Ex-Bayer, ex-Insecticides India. Built rural sales for 18 years.
-              </p>
-            </div>
-            <div className="mentor">
-              <div className="av">RB</div>
-              <div className="name">Rajiv Bharali</div>
-              <div className="role">Policy · Compliance</div>
-              <p className="cred">
-                Advises portfolio on FSSAI, APEDA, state-level approvals.
-              </p>
-            </div>
+            {mentors.map((m) => (
+              <div className="mentor" key={m.slug}>
+                <div className="av">{m.initials}</div>
+                <div className="name">{m.name}</div>
+                <div className="role">{m.expertise}</div>
+                <p className="cred">{m.credential}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>

@@ -492,6 +492,58 @@ export default buildConfig({
         },
       ],
     },
+
+    // ---------- Resources: Downloads ----------
+    {
+      slug: "downloads",
+      labels: { singular: "Download", plural: "Downloads" },
+      admin: { useAsTitle: "title", group: "Resources", defaultColumns: ["title", "ext", "updated"] },
+      fields: [
+        { name: "title", type: "text", required: true },
+        { name: "slug", type: "text", required: true, unique: true },
+        {
+          name: "ext",
+          type: "select",
+          defaultValue: "PDF",
+          options: ["PDF", "XLS", "DOC", "ZIP", "CSV"],
+        },
+        { name: "description", type: "textarea" },
+        { name: "size", type: "text", admin: { description: 'e.g. "1.2 MB"' } },
+        { name: "updated", type: "text", admin: { description: 'e.g. "Apr 2026"' } },
+        { name: "fileUrl", type: "text", admin: { description: "Link to the file (upload support later)." } },
+        { name: "order", type: "number", admin: { description: "Lower shows first." } },
+      ],
+    },
+
+    // ---------- Resources: Impact Reports ----------
+    {
+      slug: "impactReports",
+      labels: { singular: "Impact Report", plural: "Impact Reports" },
+      admin: { useAsTitle: "headline", group: "Resources", defaultColumns: ["headline", "period"] },
+      fields: [
+        { name: "slug", type: "text", required: true, unique: true },
+        { name: "period", type: "text", admin: { description: 'e.g. "FY25 · September 2025"' } },
+        { name: "headline", type: "text", required: true, admin: { description: 'e.g. "₹7.2 Cr deployed"' } },
+        { name: "summary", type: "textarea" },
+        { name: "reportUrl", type: "text" },
+        { name: "order", type: "number", admin: { description: "Lower shows first." } },
+      ],
+    },
+
+    // ---------- Resources: Public mentor directory ----------
+    {
+      slug: "mentors",
+      labels: { singular: "Mentor", plural: "Mentors (public)" },
+      admin: { useAsTitle: "name", group: "Resources", defaultColumns: ["name", "expertise"] },
+      fields: [
+        { name: "name", type: "text", required: true },
+        { name: "slug", type: "text", required: true, unique: true },
+        { name: "initials", type: "text", maxLength: 3 },
+        { name: "expertise", type: "text", admin: { description: 'e.g. "Agronomy · Soil Science"' } },
+        { name: "credential", type: "textarea", admin: { description: "One-line public credential." } },
+        { name: "order", type: "number" },
+      ],
+    },
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",

@@ -10,6 +10,7 @@ import { INSIGHTS_GEN } from "./content/insights";
 import { NEWSROOM_GEN } from "./content/newsroom";
 import { EVENTS_HERO } from "./content/events-hero";
 import { EVENTS_GEN } from "./content/events";
+import { DOWNLOADS, IMPACT_REPORTS, MENTORS } from "./content/resources";
 
 /**
  * Dev-only seeding endpoint. GET /dev-seed populates ventures, insights
@@ -31,7 +32,13 @@ export async function GET() {
   const results: string[] = [];
 
   async function seed(
-    collection: "ventures" | "insights" | "events",
+    collection:
+      | "ventures"
+      | "insights"
+      | "events"
+      | "downloads"
+      | "impactReports"
+      | "mentors",
     rows: { slug: string }[]
   ) {
     for (const row of rows) {
@@ -53,6 +60,9 @@ export async function GET() {
   await seed("ventures", VENTURES);
   await seed("insights", INSIGHTS);
   await seed("events", EVENTS);
+  await seed("downloads", DOWNLOADS);
+  await seed("impactReports", IMPACT_REPORTS);
+  await seed("mentors", MENTORS);
 
   // Banner has no slug — seed one if the collection is empty.
   const banners = await payload.find({ collection: "banners", limit: 1 });
@@ -76,7 +86,14 @@ export async function GET() {
 
   return NextResponse.json({
     ok: true,
-    counts: { ventures: VENTURES.length, insights: INSIGHTS.length, events: EVENTS.length },
+    counts: {
+      ventures: VENTURES.length,
+      insights: INSIGHTS.length,
+      events: EVENTS.length,
+      downloads: DOWNLOADS.length,
+      impactReports: IMPACT_REPORTS.length,
+      mentors: MENTORS.length,
+    },
     results,
   });
 }
