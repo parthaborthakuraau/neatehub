@@ -544,6 +544,44 @@ export default buildConfig({
         { name: "order", type: "number" },
       ],
     },
+
+    // ---------- Careers ----------
+    {
+      slug: "careers",
+      labels: { singular: "Career", plural: "Careers" },
+      admin: { useAsTitle: "role", group: "Content", defaultColumns: ["role", "location", "active"] },
+      fields: [
+        { name: "role", type: "text", required: true },
+        { name: "slug", type: "text", required: true, unique: true },
+        { name: "summary", type: "textarea" },
+        { name: "location", type: "text", admin: { description: 'e.g. "Jorhat · Full-time"' } },
+        { name: "applyUrl", type: "text", admin: { description: "External application form URL." } },
+        { name: "active", type: "checkbox", defaultValue: true, admin: { description: "Show on the Careers section." } },
+        { name: "order", type: "number" },
+      ],
+    },
+
+    // ---------- Newsletter subscribers ----------
+    {
+      slug: "subscribers",
+      labels: { singular: "Subscriber", plural: "Subscribers" },
+      admin: { useAsTitle: "email", group: "Admin", defaultColumns: ["email", "source", "createdAt"] },
+      fields: [
+        { name: "email", type: "email", required: true, unique: true },
+        {
+          name: "source",
+          type: "select",
+          defaultValue: "footer",
+          admin: { description: "Where they signed up." },
+          options: [
+            { label: "Footer / newsletter", value: "footer" },
+            { label: "Article", value: "article" },
+            { label: "Homepage", value: "homepage" },
+            { label: "Other", value: "other" },
+          ],
+        },
+      ],
+    },
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import "./about.css";
 import EcosystemMap from "./EcosystemMap";
+import { getCareers } from "../lib/content";
 
 export const metadata: Metadata = {
   title: "About",
@@ -9,7 +9,12 @@ export const metadata: Metadata = {
     "NEATeHUB is a Section-8 agri-tech incubator established 2018 at Assam Agricultural University, Jorhat — funded by RKVY, NITI Aayog (AIM), ASRLM, and AAU, and recognised as a Centre of Excellence by DA&FW.",
 };
 
-export default function AboutPage() {
+// Static with ISR so the CMS-driven careers list stays current.
+export const revalidate = 60;
+
+export default async function AboutPage() {
+  const careers = await getCareers();
+
   return (
     <>
       <section className="ab-hero">
@@ -265,24 +270,25 @@ export default function AboutPage() {
           </div>
 
           <div className="mt-4">
-            <div className="career-row">
-              <div className="role">Program Manager - Saranya</div>
-              <div className="desc">Run the FY26 cohort end-to-end. Capital tranching, mentor matching, milestone reviews.</div>
-              <div className="meta">Jorhat · Full-time</div>
-              <a href="#" className="arrow"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.4" /></svg></a>
-            </div>
-            <div className="career-row">
-              <div className="role">Mentor Network Lead</div>
-              <div className="desc">Grow the mentor bench from 200 to 400. Curate, vet, onboard, retain.</div>
-              <div className="meta">Hybrid · Full-time</div>
-              <a href="#" className="arrow"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.4" /></svg></a>
-            </div>
-            <div className="career-row">
-              <div className="role">Infrastructure Engineer - Robotics Lab</div>
-              <div className="desc">Run shared infra for portfolio founders. Maintain equipment, train cohort members, set safety standards.</div>
-              <div className="meta">Jorhat · Full-time</div>
-              <a href="#" className="arrow"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.4" /></svg></a>
-            </div>
+            {careers.length === 0 ? (
+              <p className="lede">
+                No open roles right now — but we&apos;re always glad to hear from
+                people who want to build the Northeast&apos;s agri-tech ecosystem.
+              </p>
+            ) : (
+              careers.map((c) => (
+                <a className="career-row" href={c.applyUrl || "#"} key={c.slug}>
+                  <div className="role">{c.role}</div>
+                  <div className="desc">{c.summary}</div>
+                  <div className="meta">{c.location}</div>
+                  <span className="arrow">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                      <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.4" />
+                    </svg>
+                  </span>
+                </a>
+              ))
+            )}
           </div>
         </div>
       </section>

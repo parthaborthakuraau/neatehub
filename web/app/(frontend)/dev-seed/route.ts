@@ -11,6 +11,7 @@ import { NEWSROOM_GEN } from "./content/newsroom";
 import { EVENTS_HERO } from "./content/events-hero";
 import { EVENTS_GEN } from "./content/events";
 import { DOWNLOADS, IMPACT_REPORTS, MENTORS } from "./content/resources";
+import { CAREERS } from "./content/careers";
 
 /**
  * Dev-only seeding endpoint. GET /dev-seed populates ventures, insights
@@ -38,7 +39,8 @@ export async function GET() {
       | "events"
       | "downloads"
       | "impactReports"
-      | "mentors",
+      | "mentors"
+      | "careers",
     rows: { slug: string }[]
   ) {
     for (const row of rows) {
@@ -63,6 +65,7 @@ export async function GET() {
   await seed("downloads", DOWNLOADS);
   await seed("impactReports", IMPACT_REPORTS);
   await seed("mentors", MENTORS);
+  await seed("careers", CAREERS);
 
   // Banner has no slug — seed one if the collection is empty.
   const banners = await payload.find({ collection: "banners", limit: 1 });
@@ -93,6 +96,7 @@ export async function GET() {
       downloads: DOWNLOADS.length,
       impactReports: IMPACT_REPORTS.length,
       mentors: MENTORS.length,
+      careers: CAREERS.length,
     },
     results,
   });

@@ -160,3 +160,26 @@ export const getActiveBanner = unstable_cache(
   ["active-banner"],
   { revalidate: 60, tags: ["banners"] }
 );
+
+// ---------------- Careers ----------------
+
+export type CareerDoc = {
+  role: string;
+  slug: string;
+  summary?: string | null;
+  location?: string | null;
+  applyUrl?: string | null;
+  active?: boolean | null;
+  order?: number | null;
+};
+
+export async function getCareers(): Promise<CareerDoc[]> {
+  const payload = await client();
+  const res = await payload.find({
+    collection: "careers",
+    where: { active: { equals: true } },
+    limit: 100,
+    sort: "order",
+  });
+  return res.docs as unknown as CareerDoc[];
+}
