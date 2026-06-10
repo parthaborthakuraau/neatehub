@@ -520,6 +520,36 @@ section.tight { padding: clamp(40px, 5vw, 72px) 0; }
   color: var(--cream-50);
 }
 
+.lang-soon {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 80;
+  width: 230px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  box-shadow: 0 12px 30px rgba(26,22,18,0.1);
+  padding: 12px 14px;
+  font-family: var(--sans);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-700);
+}
+.lang-soon strong { color: var(--ink-900); }
+.lang-soon button {
+  display: block;
+  margin-top: 8px;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--copper-600);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.lang-soon button:hover { color: var(--copper-700); }
+
 .header__hamburger {
   display: none;
   background: none; border: 1px solid var(--line);
@@ -689,6 +719,32 @@ section.tight { padding: clamp(40px, 5vw, 72px) 0; }
 .bg-tea h2, .bg-tea h3 { color: var(--cream-50); }
 .bg-tea .h-section { color: var(--cream-300); }
 .bg-tea .lede { color: var(--cream-100); }
+
+/* =================== Floating Ask button =================== */
+.ask-fab {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 46px;
+  padding: 0 18px;
+  border-radius: 999px;
+  background: var(--tea-900);
+  color: var(--cream-50);
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 10px 30px rgba(26,22,18,0.18);
+  transition: transform .2s, background .2s;
+}
+.ask-fab:hover { background: var(--copper-600); transform: translateY(-2px); }
+.ask-fab svg { display: block; }
+@media (max-width: 600px) {
+  .ask-fab { right: 16px; bottom: 16px; height: 44px; padding: 0 14px; }
+}
 
 /* Reveal on scroll */
 .reveal { opacity: 0; transform: translateY(14px); transition: opacity .8s ease, transform .8s ease; }

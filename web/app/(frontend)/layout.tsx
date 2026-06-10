@@ -5,6 +5,7 @@ import SiteHeader from "./components/SiteHeader";
 import SiteFooter from "./components/SiteFooter";
 import ScrollReveal from "./components/ScrollReveal";
 import TopBanner from "./components/TopBanner";
+import AskFab from "./components/AskFab";
 import { getActiveBanner } from "./lib/content";
 
 const newsreader = Newsreader({
@@ -85,6 +86,7 @@ export default async function RootLayout({
         <SiteHeader />
         <main id="main">{children}</main>
         <SiteFooter />
+        <AskFab />
         <ScrollReveal />
       </body>
     </html>

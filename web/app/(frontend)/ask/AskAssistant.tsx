@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, type ReactNode } from "react";
-import Link from "next/link";
+import { askGroq } from "../actions/ask";
 
 /* =========================================================
    Intent modes
@@ -82,113 +82,29 @@ const intentOpens: Record<IntentKey, ReactNode> = {
 };
 
 /* =========================================================
-   Canned (simulated) responses
-   TODO: replace simulated responses with Groq API call
+   Render a plain-text Groq reply as paragraphs + simple bullets
    ========================================================= */
-type Canned = { match: RegExp; reply: ReactNode; cites: string[] };
-
-const CANNED: Canned[] = [
-  {
-    match: /isanya.+saranya|difference.+isanya|difference.+saranya/i,
-    reply: (
-      <>
-        <p>
-          <strong>Short answer:</strong> Both Isanya and Saranya are
-          sub-programs <em>of RKVY RAFTAAR</em> - same funder, different stages.
-        </p>
-        <ul>
-          <li>
-            <strong>Isanya</strong> - 8-week residential at Jorhat, idea or early
-            prototype, grants up to <strong>₹5L</strong>, cohort of 12.
-          </li>
-          <li>
-            <strong>Saranya</strong> - 12-18 months, revenue-generating ventures
-            (₹10L+ ARR ideal), grants up to <strong>₹25L</strong>,
-            milestone-tranched capital.
-          </li>
-        </ul>
-        <p>
-          About 30% of our Saranya cohort came up from Isanya - the structure
-          allows movement between sub-programs. Want me to run the eligibility
-          wizard with you?
-        </p>
-      </>
-    ),
-    cites: ["RKVY · Isanya", "RKVY · Saranya"],
-  },
-  {
-    match: /prototype.+revenue|prototype.+apply|where.+apply/i,
-    reply: (
-      <>
-        <p>
-          With a working prototype and ₹0 revenue, you have two paths inside the
-          RKVY structure:
-        </p>
-        <ul>
-          <li>
-            <strong>Isanya</strong> (best fit) - 8-week residential, ₹5L grant,
-            designed for exactly this stage. A sub-program of RKVY RAFTAAR.
-          </li>
-          <li>
-            <strong>AIC track</strong> - outside RKVY. If you can&apos;t relocate,
-            AIC accepts prototype-stage ventures with quarterly intake.
-          </li>
-        </ul>
-        <p>
-          Saranya (the growth-stage RKVY sub-program) usually requires pilot data
-          with at least one paying customer. I&apos;d hold it for after Isanya.
-        </p>
-      </>
-    ),
-    cites: ["RKVY · Isanya", "AIC"],
-  },
-  {
-    match: /non.?ne|outside.+northeast|not.+northeast|bangalore|delhi|mumbai/i,
-    reply: (
-      <>
-        <p>Yes, but with conditions.</p>
-        <ul>
-          <li>
-            <strong>RKVY RAFTAAR</strong> and <strong>AIC</strong> accept
-            ventures from across India. No NE-residency requirement.
-          </li>
-          <li>
-            <strong>Saranya</strong> prefers ventures with operations or
-            customers in NE India - not mandatory, but weighted in evaluation.
-          </li>
-          <li>
-            <strong>Isanya, ASRLM, AAU Student First</strong> are NE-focused.
-            Non-NE founders are not eligible.
-          </li>
-        </ul>
-        <p>
-          If your venture has even a single NE customer or pilot, mention it in
-          your application - it changes the conversation.
-        </p>
-      </>
-    ),
-    cites: ["Eligibility · Geography"],
-  },
-];
-
-const DEFAULT_REPLY: ReactNode = (
-  <>
-    <p>
-      That&apos;s a good question. In production, I&apos;d pull from the NEATeHUB
-      knowledge base and cite specific program documents - for this prototype,
-      here&apos;s the general direction:
-    </p>
-    <p>
-      Your best next step is probably the eligibility wizard - it&apos;ll narrow
-      you down to one or two programs in under two minutes. Or you can browse the{" "}
-      <Link href="/programs" className="link">
-        programs page
-      </Link>{" "}
-      for the full set.
-    </p>
-  </>
-);
-const DEFAULT_CITES = ["Programs", "Eligibility wizard"];
+function renderReply(text: string): ReactNode {
+  const blocks = text.split(/\n{2,}/).filter((b) => b.trim());
+  return (
+    <>
+      {blocks.map((block, i) => {
+        const lines = block.split(/\n/).map((l) => l.trim());
+        const isList = lines.every((l) => /^[-*•]\s+/.test(l));
+        if (isList) {
+          return (
+            <ul key={i}>
+              {lines.map((l, j) => (
+                <li key={j}>{l.replace(/^[-*•]\s+/, "")}</li>
+              ))}
+            </ul>
+          );
+        }
+        return <p key={i}>{block.trim()}</p>;
+      })}
+    </>
+  );
+}
 
 /* =========================================================
    Message model
@@ -222,8 +138,10 @@ export default function AskAssistant() {
   const [typing, setTyping] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(true);
   const [input, setInput] = useState("");
+  const [history, setHistory] = useState<
+    { role: "user" | "assistant"; content: string }[]
+  >([]);
   const bodyRef = useRef<HTMLDivElement>(null);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   function scrollToEnd() {
     requestAnimationFrame(() => {
@@ -235,19 +153,21 @@ export default function AskAssistant() {
   function switchIntent(k: IntentKey) {
     setIntent(k);
     setMessages([{ id: nextId++, who: "ai", body: intentOpens[k] }]);
+    setHistory([]);
     setShowSuggestions(true);
     setTyping(false);
   }
 
   function resetChat() {
     setMessages([{ id: nextId++, who: "ai", body: intentOpens[intent] }]);
+    setHistory([]);
     setShowSuggestions(true);
     setTyping(false);
   }
 
-  function sendUser(textOverride?: string) {
+  async function sendUser(textOverride?: string) {
     const text = (textOverride ?? input).trim();
-    if (!text) return;
+    if (!text || typing) return;
 
     setMessages((m) => [...m, { id: nextId++, who: "u", body: <p>{text}</p> }]);
     setInput("");
@@ -255,24 +175,21 @@ export default function AskAssistant() {
     setTyping(true);
     scrollToEnd();
 
-    // TODO: replace simulated responses with Groq API call
-    if (timer.current) clearTimeout(timer.current);
-    timer.current = setTimeout(() => {
-      const hit = CANNED.find((c) => c.match.test(text));
-      setTyping(false);
-      setMessages((m) => [
-        ...m,
-        hit
-          ? { id: nextId++, who: "ai", body: hit.reply, cites: hit.cites }
-          : {
-              id: nextId++,
-              who: "ai",
-              body: DEFAULT_REPLY,
-              cites: DEFAULT_CITES,
-            },
-      ]);
-      scrollToEnd();
-    }, 900 + Math.random() * 600);
+    const nextHistory = [
+      ...history,
+      { role: "user" as const, content: text },
+    ];
+    const res = await askGroq(nextHistory, intent);
+    setTyping(false);
+    setHistory([
+      ...nextHistory,
+      { role: "assistant", content: res.reply },
+    ]);
+    setMessages((m) => [
+      ...m,
+      { id: nextId++, who: "ai", body: renderReply(res.reply) },
+    ]);
+    scrollToEnd();
   }
 
   return (
