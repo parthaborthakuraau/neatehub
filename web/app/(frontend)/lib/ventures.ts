@@ -87,7 +87,7 @@ export function mapVentureToCard(d: VentureDoc): VentureCard {
     loc: d.location ?? "",
     desc: d.oneLiner ?? "",
     photo: d.photoTreatment && d.photoTreatment !== "default" ? d.photoTreatment : "",
-    url: `/portfolio/${d.slug}`,
+    url: `/${d.slug}`,
   };
 }
 

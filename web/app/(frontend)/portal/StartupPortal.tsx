@@ -192,7 +192,7 @@ export default function StartupPortal() {
         <div>
           <div className="kicker">Editing</div>
           <h2 className="display display-s">{venture.name}</h2>
-          <a className="link" href={`/portfolio/${venture.slug}`} target="_blank" rel="noreferrer">
+          <a className="link" href={`/${venture.slug}`} target="_blank" rel="noreferrer">
             View public profile ↗
           </a>
         </div>

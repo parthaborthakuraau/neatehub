@@ -39,7 +39,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   const ventureEntries: MetadataRoute.Sitemap = ventureSlugs.map((s) => ({
-    url: `${BASE}/portfolio/${s}`,
+    url: `${BASE}/${s}`,
     changeFrequency: "monthly",
     priority: 0.6,
   }));
