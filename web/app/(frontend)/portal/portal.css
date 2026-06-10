@@ -1,0 +1,38 @@
+/* Startup portal — full venture editor */
+.po-section {
+  border-top: 1px solid var(--line);
+  padding-top: 22px;
+}
+.po-section > .h-section { margin-bottom: 4px; }
+.po-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 14px;
+}
+.po-wide { grid-column: 1 / -1; }
+.po-item {
+  position: relative;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-md);
+  padding: 16px 16px 14px;
+  margin-top: 12px;
+  background: var(--cream-50);
+}
+.po-remove {
+  margin-top: 12px;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--copper-700);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.po-remove:hover { text-decoration: underline; }
+.po-save { margin-top: 10px; align-items: center; gap: 14px; }
+
+@media (max-width: 700px) {
+  .po-grid { grid-template-columns: 1fr; }
+}

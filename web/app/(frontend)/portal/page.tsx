@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "./portal.css";
 import StartupPortal from "./StartupPortal";
 
 export const metadata: Metadata = {
